@@ -20,22 +20,42 @@ const MainNavigation = () => {
         <DribbbleOutlined />
         <ul>
           <li>
-            <NavLink to="/">
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                isActive ? styles.active : undefined
+              }
+            >
               <HomeOutlined /> Home
             </NavLink>
           </li>
           <li>
-            <NavLink to="/tournaments">
+            <NavLink
+              to="/tournaments"
+              className={({ isActive }) =>
+                isActive ? styles.active : undefined
+              }
+            >
               <SkinOutlined /> Tournaments
             </NavLink>
           </li>
           <li>
-            <NavLink to="/groups">
+            <NavLink
+              to="/groups"
+              className={({ isActive }) =>
+                isActive ? styles.active : undefined
+              }
+            >
               <GlobalOutlined /> Groups
             </NavLink>
           </li>
           <li>
-            <NavLink to="/contacts">
+            <NavLink
+              to="/contacts"
+              className={({ isActive }) =>
+                isActive ? styles.active : undefined
+              }
+            >
               <FileSearchOutlined /> Contacts
             </NavLink>
           </li>
