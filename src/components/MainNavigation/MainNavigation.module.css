@@ -1,0 +1,35 @@
+.mainNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  background-color: rgba(64, 150, 255, 0.05);
+}
+
+.mainNav ul li {
+  display: inline-block;
+  /* display: inline-flex; */
+  padding: 0 1rem;
+}
+
+.mainNav ul li a {
+  color: rgba(0, 0, 0, 0.88);
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+.mainNav ul li a:hover {
+  color: rgb(64, 150, 255);
+  transition: 0.2s;
+}
+
+.mainNav ul li a:active {
+  color: rgb(9, 88, 217);
+  transition: 0.2s;
+}
+
+.mainNav ul li a:focus-visible {
+  outline-color: rgb(145, 202, 255);
+}
