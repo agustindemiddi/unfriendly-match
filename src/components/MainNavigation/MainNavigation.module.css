@@ -6,9 +6,12 @@
   background-color: rgba(64, 150, 255, 0.05);
 }
 
+.mainNav ul {
+  margin: 1em;
+}
+
 .mainNav ul li {
   display: inline-block;
-  /* display: inline-flex; */
   padding: 0 1rem;
 }
 
