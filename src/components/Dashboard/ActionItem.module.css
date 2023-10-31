@@ -1,0 +1,17 @@
+.item {
+  padding: 0 1em;
+}
+
+.iconContainer {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.itemName {
+  width: 120px;
+  padding-top: 0.5em;
+}

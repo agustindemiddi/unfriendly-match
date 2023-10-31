@@ -1,0 +1,8 @@
+.sectionTitle {
+  text-align: start;
+}
+
+.sectionContent {
+  display: flex;
+  align-items: flex-start;
+}
