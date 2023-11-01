@@ -13,7 +13,7 @@ const ListOfSection = ({ list }) => {
           <article className={styles.item}>
             <Link>
               <div className={styles.imageContainer}>
-                <img className={styles.image} src={DUMMY_IMAGE} alt="" />
+                <img className={styles.image} src={DUMMY_IMAGE} alt='' />
               </div>
               <p className={styles.itemName}>{item.name}</p>
             </Link>

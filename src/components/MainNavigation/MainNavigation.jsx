@@ -39,10 +39,10 @@ const MainNavigation = () => {
           ))}
         </ul>
         <div>
-          <Button shape="round" icon={<LoginOutlined />}>
+          <Button shape='round' icon={<LoginOutlined />}>
             Login
           </Button>
-          <Button shape="round" icon={<LogoutOutlined />}>
+          <Button shape='round' icon={<LogoutOutlined />}>
             Logout
           </Button>
         </div>

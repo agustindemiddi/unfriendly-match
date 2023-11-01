@@ -15,8 +15,6 @@ const icons = [PlusCircleFilled, PlusCircleFilled, SearchOutlined];
 const Dashboard = ({ sections }) => {
   return (
     <>
-      <h1>DASHBOARD</h1>
-
       {sections.map((section, index) => (
         <section key={section.id}>
           <h2 className={styles.sectionTitle}>{section.title}</h2>
@@ -28,7 +26,7 @@ const Dashboard = ({ sections }) => {
             />
             <ListOfSection list={section.list} />
             <ActionItem
-              label="Show all"
+              label='Show all'
               icon={MenuOutlined}
               style={{ fontSize: '72px' }}
             />

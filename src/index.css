@@ -6,7 +6,8 @@ body {
 }
 
 main {
-  margin: 0 10%;
+  margin: 0 25px;
+  display: inline-block;
 }
 
 ul {
