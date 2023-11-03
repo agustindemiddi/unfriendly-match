@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import RootLayout from './pages/RootLayout';
+import ErrorPage from './pages/ErrorPage';
+
 import HomePage from './pages/Homepage';
 import TournamentsPage from './pages/TournamentsPage';
 import GroupsPage from './pages/GroupsPage';
@@ -26,6 +28,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
       {
