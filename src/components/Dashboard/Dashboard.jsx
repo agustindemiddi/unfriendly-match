@@ -24,7 +24,7 @@ const Dashboard = ({ sections }) => {
               icon={icons[index]}
               style={{ fontSize: '90px' }}
             />
-            <ListOfSection list={section.list} />
+            <ListOfSection section={section} />
             <ActionItem
               label='Show all'
               icon={MenuOutlined}

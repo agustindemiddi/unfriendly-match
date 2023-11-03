@@ -4,7 +4,7 @@ const DUMMY_IMAGE =
 export default [
   {
     id: 't',
-    title: 'My Tournaments',
+    title: 'tournaments',
     list: [
       {
         id: 't1',
@@ -23,7 +23,7 @@ export default [
       {
         id: 't3',
         name: `Bowser's Cup`,
-        description: '',
+        description: 'lorem-ipsum',
         players: [],
         image: DUMMY_IMAGE,
       },
@@ -38,7 +38,7 @@ export default [
   },
   {
     id: 'g',
-    title: 'My Groups',
+    title: 'groups',
     list: [
       {
         id: 'g1',
@@ -56,12 +56,12 @@ export default [
   },
   {
     id: 'p',
-    title: 'My Contacts',
+    title: 'contacts',
     list: [
       {
         id: 'p1',
         name: 'Carlos Maslatón',
-        description: '',
+        description: 'lorem-ipsum',
         image: DUMMY_IMAGE,
       },
       {
@@ -73,7 +73,7 @@ export default [
       {
         id: 'p3',
         name: 'Pepino Juárez',
-        description: '',
+        description: 'lorem-ipsum',
         image: DUMMY_IMAGE,
       },
     ],
