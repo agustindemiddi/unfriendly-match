@@ -1,21 +1,34 @@
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { doc, getDoc } from 'firebase/firestore';
 
 import PageContent from '../components/UI/PageContent';
 import GroupItem from '../components/GroupItem';
 
-import DUMMY_BACKEND from '../DUMMY/DUMMY_BACKEND';
+import db from '../utils/firebaseConfig';
 
 const GroupDetailsPage = () => {
+  const [group, setGroup] = useState({});
   const params = useParams();
 
-  const item = DUMMY_BACKEND[1].list.filter(
-    (item) => item.id === params.groupId
-  )[0];
+  useEffect(
+    () => async () => {
+      const docRef = doc(db, 'groups', params.groupId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setGroup(docSnap.data());
+      } else {
+        console.log('No such document!');
+      }
+    },
+    []
+  );
 
   return (
     <PageContent title='GroupDetailsPage'>
-      <GroupItem item={item} />
+      <GroupItem item={group} />
     </PageContent>
   );
 };
+
 export default GroupDetailsPage;

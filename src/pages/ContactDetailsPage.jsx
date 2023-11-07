@@ -1,21 +1,34 @@
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { doc, getDoc } from 'firebase/firestore';
 
 import PageContent from '../components/UI/PageContent';
 import ContactItem from '../components/ContactItem';
 
-import DUMMY_BACKEND from '../DUMMY/DUMMY_BACKEND';
+import db from '../utils/firebaseConfig';
 
 const ContactDetailsPage = () => {
+  const [contact, setContact] = useState({});
   const params = useParams();
 
-  const item = DUMMY_BACKEND[2].list.filter(
-    (item) => item.id === params.contactId
-  )[0];
+  useEffect(
+    () => async () => {
+      const docRef = doc(db, 'users', params.contactId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setContact(docSnap.data());
+      } else {
+        console.log('No such document!');
+      }
+    },
+    []
+  );
 
   return (
     <PageContent title='ContactDetailsPage'>
-      <ContactItem item={item} />
+      <ContactItem item={contact} />
     </PageContent>
   );
 };
+
 export default ContactDetailsPage;
