@@ -1,10 +1,12 @@
 import PageContent from '../components/UI/PageContent';
+import CreateGroup from '../components/CreateGroup';
 
 const NewGroupPage = () => {
   return (
-    <PageContent title='NewGroupPage'>
-      <div>NewGroupPage</div>
+    <PageContent title='New Group Page'>
+      <CreateGroup />
     </PageContent>
   );
 };
+
 export default NewGroupPage;

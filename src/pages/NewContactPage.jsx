@@ -1,10 +1,12 @@
 import PageContent from '../components/UI/PageContent';
+import CreatePlayer from '../components/CreatePlayer';
 
 const NewContactPage = () => {
   return (
-    <PageContent title='NewContactPage'>
-      <div>NewContactPage</div>
+    <PageContent title='New Contact Page'>
+      <CreatePlayer />
     </PageContent>
   );
 };
+
 export default NewContactPage;
