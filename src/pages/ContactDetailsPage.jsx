@@ -18,7 +18,7 @@ const ContactDetailsPage = () => {
       if (docSnap.exists()) {
         setContact(docSnap.data());
       } else {
-        console.log('No such document!');
+        console.error('Player not found!');
       }
     },
     []

@@ -18,7 +18,7 @@ const GroupDetailsPage = () => {
       if (docSnap.exists()) {
         setGroup(docSnap.data());
       } else {
-        console.log('No such document!');
+        console.error('Group not found!');
       }
     },
     []

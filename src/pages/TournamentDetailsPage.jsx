@@ -18,7 +18,7 @@ const TournamentDetailsPage = () => {
       if (docSnap.exists()) {
         setTournament(docSnap.data());
       } else {
-        console.log('No such document!');
+        console.error('Tournament not found!');
       }
     },
     []
