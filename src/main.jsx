@@ -2,10 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+import { AuthContextProvider } from './context/AuthContext';
+
 import RootLayout from './pages/RootLayout';
 import ErrorPage from './pages/ErrorPage';
+import SignInPage from './pages/SignInPage';
+import Protected from './components/Protected';
 
-import HomePage from './pages/Homepage';
+import HomePage from './pages/HomePage';
 import TournamentsPage from './pages/TournamentsPage';
 import GroupsPage from './pages/GroupsPage';
 import ContactsPage from './pages/ContactsPage';
@@ -30,7 +34,15 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <HomePage /> },
+      {
+        index: true,
+        element: (
+          <Protected>
+            <HomePage />
+          </Protected>
+        ),
+      },
+      { path: 'signin', element: <SignInPage /> },
       {
         path: 'tournaments',
         children: [
@@ -79,6 +91,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthContextProvider>
+      <RouterProvider router={router} />
+    </AuthContextProvider>
   </React.StrictMode>
 );

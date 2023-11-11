@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { Button } from 'antd';
 import {
   HomeOutlined,
@@ -10,6 +10,8 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 
+import { getUserAuthCtx } from '../../context/AuthContext';
+
 import styles from './MainNavigation.module.css';
 
 const sections = [
@@ -20,10 +22,21 @@ const sections = [
 ];
 
 const MainNavigation = () => {
+  const { googleSignOut, user } = getUserAuthCtx();
+
+  const signOutHandler = async () => {
+    try {
+      await googleSignOut();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <nav className={styles.mainNav}>
         <DribbbleOutlined />
+        {/* {user && <span>{user.displayName}</span>} */}
         <ul>
           {sections.map((section) => (
             <li key={section.label}>
@@ -39,12 +52,19 @@ const MainNavigation = () => {
           ))}
         </ul>
         <div>
-          <Button shape='round' icon={<LoginOutlined />}>
-            Login
-          </Button>
-          <Button shape='round' icon={<LogoutOutlined />}>
-            Logout
-          </Button>
+          {user?.displayName ? (
+            <Button
+              onClick={signOutHandler}
+              shape='round'
+              icon={<LogoutOutlined />}
+            >
+              Sign out
+            </Button>
+          ) : (
+            <Button shape='round' icon={<LoginOutlined />}>
+              <Link to='/signin'>Sign in</Link>
+            </Button>
+          )}
         </div>
       </nav>
     </>

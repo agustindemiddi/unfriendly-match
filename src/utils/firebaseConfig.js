@@ -1,5 +1,7 @@
 import { initializeApp } from 'firebase/app';
+
 import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 // import { getAnalytics } from 'firebase/analytics';
 
 const firebaseConfig = {};
@@ -15,7 +17,10 @@ if (import.meta.env.MODE === 'development') {
 }
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-// const analytics = getAnalytics(app);
 
+const db = getFirestore(app);
 export default db;
+
+export const auth = getAuth(app);
+
+// const analytics = getAnalytics(app);
