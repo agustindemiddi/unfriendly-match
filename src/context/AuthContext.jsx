@@ -11,6 +11,7 @@ import { auth } from '../utils/firebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 import db from '../utils/firebaseConfig';
+import { pickRandomEmoji } from '../utils/emoji';
 
 const AuthContext = createContext();
 
@@ -42,8 +43,9 @@ export const AuthContextProvider = ({ children }) => {
               const { displayName, photoURL } = currentUser;
               setPlayer(uid, displayName, photoURL);
             } else if (signInMethod === 'password') {
-              const displayName = currentUser.email;
-              setPlayer(uid, displayName);
+              const displayName = currentUser.email.split('@')[0];
+              const randomImage = pickRandomEmoji();
+              setPlayer(uid, displayName, randomImage);
             }
           }
         } catch (error) {

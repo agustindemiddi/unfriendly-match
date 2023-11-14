@@ -5,7 +5,6 @@ import styles from './SignInForm.module.css';
 import { getUserAuthCtx } from '../../context/AuthContext';
 
 const SignInForm = ({ formModeIsSignIn }) => {
-  const nameInput = useRef();
   const emailInput = useRef();
   const passwordInput = useRef();
   const repeatPasswordInput = useRef();
@@ -26,9 +25,6 @@ const SignInForm = ({ formModeIsSignIn }) => {
 
   return (
     <form className={styles['sign-in-form']} onSubmit={handleSubmit}>
-      {!formModeIsSignIn && (
-        <input type='text' placeholder='Your name' ref={nameInput} required />
-      )}
       <input type='email' placeholder='Your email' ref={emailInput} required />
       <input
         type='password'
