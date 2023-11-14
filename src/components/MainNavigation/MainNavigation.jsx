@@ -22,15 +22,7 @@ const sections = [
 ];
 
 const MainNavigation = () => {
-  const { googleSignOut, user } = getUserAuthCtx();
-
-  const signOutHandler = async () => {
-    try {
-      await googleSignOut();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { handleSignOut, user } = getUserAuthCtx();
 
   return (
     <>
@@ -52,9 +44,9 @@ const MainNavigation = () => {
           ))}
         </ul>
         <div>
-          {user?.displayName ? (
+          {user ? (
             <Button
-              onClick={signOutHandler}
+              onClick={handleSignOut}
               shape='round'
               icon={<LogoutOutlined />}
             >

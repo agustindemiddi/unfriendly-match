@@ -1,32 +1,21 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { GoogleButton } from 'react-google-button';
+import { Navigate } from 'react-router-dom';
+
+import PageContent from '../components/UI/PageContent';
+import SignIn from '../components/SignIn/SignIn';
 
 import { getUserAuthCtx } from '../context/AuthContext';
 
 const SignInPage = () => {
-  const { googleSignIn, user } = getUserAuthCtx();
-  const navigate = useNavigate();
+  const { user } = getUserAuthCtx();
 
-  const googleSignInHandler = async () => {
-    try {
-      await googleSignIn();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    user?.displayName && navigate('/');
-  }, [user]);
+  if (user) {
+    return <Navigate to='/' />;
+  }
 
   return (
-    <div>
-      <h1>Sign In</h1>
-      <div>
-        <GoogleButton onClick={googleSignInHandler} />
-      </div>
-    </div>
+    <PageContent title='Sign In'>
+      <SignIn />
+    </PageContent>
   );
 };
 

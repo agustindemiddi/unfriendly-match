@@ -1,0 +1,33 @@
+.sign-in {
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  padding: 2rem;
+}
+
+.form-modes {
+  display: flex;
+  width: 100%;
+}
+
+.form-mode {
+  flex: 1;
+  padding: 1rem;
+}
+
+.form-mode:hover {
+  cursor: pointer;
+}
+
+.selectedFormMode {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.selectedFormMode:hover {
+  cursor: default;
+}
+
+.or {
+  color: white;
+  padding: 3rem;
+}

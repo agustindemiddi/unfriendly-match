@@ -7,7 +7,6 @@ import { AuthContextProvider } from './context/AuthContext';
 import RootLayout from './pages/RootLayout';
 import ErrorPage from './pages/ErrorPage';
 import SignInPage from './pages/SignInPage';
-import Protected from './components/Protected';
 
 import HomePage from './pages/HomePage';
 import TournamentsPage from './pages/TournamentsPage';
@@ -36,11 +35,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <Protected>
-            <HomePage />
-          </Protected>
-        ),
+        element: <HomePage />,
       },
       { path: 'signin', element: <SignInPage /> },
       {
