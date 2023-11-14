@@ -11,7 +11,8 @@ import { auth } from '../utils/firebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 import db from '../utils/firebaseConfig';
-import { pickRandomEmoji } from '../utils/emoji';
+// import { pickRandomEmoji } from '../utils/emoji';
+import defaultProfileImage from '../assets/profile-circle-svgrepo-com.svg'
 
 const AuthContext = createContext();
 
@@ -25,7 +26,7 @@ export const AuthContextProvider = ({ children }) => {
         image: profilePicture,
       });
     } catch {
-      console.error('Could not save player!');
+      console.log('Could not save player!');
     }
   };
 
@@ -44,12 +45,12 @@ export const AuthContextProvider = ({ children }) => {
               setPlayer(uid, displayName, photoURL);
             } else if (signInMethod === 'password') {
               const displayName = currentUser.email.split('@')[0];
-              const randomImage = pickRandomEmoji();
-              setPlayer(uid, displayName, randomImage);
+              // const randomImage = pickRandomEmoji();
+              setPlayer(uid, displayName, defaultProfileImage);
             }
           }
         } catch (error) {
-          console.error(error);
+          console.log(error);
         }
       }
     });
@@ -77,7 +78,7 @@ export const AuthContextProvider = ({ children }) => {
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
-      console.error(errorCode, errorMessage);
+      console.log(errorCode, errorMessage);
     }
   };
 
@@ -87,7 +88,7 @@ export const AuthContextProvider = ({ children }) => {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
@@ -95,7 +96,7 @@ export const AuthContextProvider = ({ children }) => {
     try {
       signOut(auth);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
