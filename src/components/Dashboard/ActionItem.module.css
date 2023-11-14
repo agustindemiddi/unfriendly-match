@@ -8,10 +8,14 @@
   display: flex;
   justify-content: center;
   background-color: white;
-  border-radius: 10px;
+  border-radius: 120px;
+}
+
+.icon {
+  max-width: 65%;
 }
 
 .itemName {
-  width: 120px;
+  width: 100%;
   padding-top: 0.5em;
 }

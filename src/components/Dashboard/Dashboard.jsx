@@ -1,12 +1,11 @@
 import { Link } from 'react-router-dom';
 
-import {
-  PlusCircleFilled,
-  SearchOutlined,
-  MenuOutlined,
-} from '@ant-design/icons';
-
 import ActionItem from './ActionItem';
+
+import cupIcon from '../../assets/icons/cup/cup-svgrepo-com.svg';
+import groupIcon from '../../assets/icons/team/football-team-people-svgrepo-com.svg';
+import searchUserIcon from '../../assets/icons/user-search/user-search-svgrepo-com.svg';
+import archiveIcon from '../../assets/icons/archive/archive-2-svgrepo-com.svg';
 
 import styles from './Dashboard.module.css';
 
@@ -17,47 +16,44 @@ const Dashboard = ({ list, urlBase }) => {
   if (urlBase === '/tournaments') {
     title = 'My tournaments';
     label = 'Create new tournament';
-    icon = PlusCircleFilled;
+    icon = cupIcon;
   }
 
   if (urlBase === '/groups') {
     title = 'My groups';
     label = 'Create new group';
-    icon = PlusCircleFilled;
+    icon = groupIcon;
   }
 
   if (urlBase === '/contacts') {
     title = 'My contacts';
     label = 'Search players';
-    icon = SearchOutlined;
+    icon = searchUserIcon;
   }
 
   return (
-      <section key={urlBase}>
-        <h2 className={styles.sectionTitle}>{title}</h2>
-        <div className={styles.sectionContent}>
-          <ActionItem label={label} icon={icon} style={{ fontSize: '90px' }} />
-          <ul className={styles.listContent}>
-            {list.map((item) => (
-              <li key={item.id}>
-                <article className={styles.item}>
-                  <Link to={`${urlBase}/${item.id}`}>
-                    <div className={styles.imageContainer}>
-                      <img className={styles.image} src={item.image} alt='' />
-                    </div>
-                    <p className={styles.itemName}>{item.name}</p>
-                  </Link>
-                </article>
-              </li>
-            ))}
-          </ul>
-          <ActionItem
-            label='Show all'
-            icon={MenuOutlined}
-            style={{ fontSize: '72px' }}
-          />
-        </div>
-      </section>
+    <section key={urlBase}>
+      <h2 className={styles.sectionTitle}>{title}</h2>
+      <div className={styles.sectionContent}>
+        {/* <ActionItem label={label} icon={icon} style={{ fontSize: '90px' }} /> */}
+        <ActionItem label={label} icon={icon} />
+        <ul className={styles.listContent}>
+          {list.map((item) => (
+            <li key={item.id}>
+              <article className={styles.item}>
+                <Link to={`${urlBase}/${item.id}`}>
+                  <div className={styles.imageContainer}>
+                    <img className={styles.image} src={item.image} alt='' />
+                  </div>
+                  <p className={styles.itemName}>{item.name}</p>
+                </Link>
+              </article>
+            </li>
+          ))}
+        </ul>
+        <ActionItem label='Show all' icon={archiveIcon} />
+      </div>
+    </section>
   );
 };
 

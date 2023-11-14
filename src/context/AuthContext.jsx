@@ -11,8 +11,7 @@ import { auth } from '../utils/firebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 import db from '../utils/firebaseConfig';
-// import { pickRandomEmoji } from '../utils/emoji';
-import defaultProfileImage from '../assets/profile-circle-svgrepo-com.svg'
+import defaultProfileImage from '../assets/icons/default-profile/profile-circle-svgrepo-com.svg';
 
 const AuthContext = createContext();
 
@@ -45,7 +44,6 @@ export const AuthContextProvider = ({ children }) => {
               setPlayer(uid, displayName, photoURL);
             } else if (signInMethod === 'password') {
               const displayName = currentUser.email.split('@')[0];
-              // const randomImage = pickRandomEmoji();
               setPlayer(uid, displayName, defaultProfileImage);
             }
           }
