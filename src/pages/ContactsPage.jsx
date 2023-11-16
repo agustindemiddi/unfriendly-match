@@ -12,7 +12,7 @@ const ContactsPage = () => {
   useEffect(
     () => async () => {
       const contactsList = [];
-      const querySnapshot = await getDocs(collection(db, 'users'));
+      const querySnapshot = await getDocs(collection(db, 'players'));
       querySnapshot.forEach((doc) => {
         const item = {};
         item.id = doc.id;

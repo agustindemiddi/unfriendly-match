@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom';
 
 import styles from './ActionItem.module.css';
 
-const ActionItem = ({ label, icon }) => {
+const ActionItem = ({ url, icon, label }) => {
   return (
     <article className={styles.item}>
-      <Link>
+      <Link to={url}>
         <div className={styles.iconContainer}>
           <img className={styles.icon} src={icon} />
         </div>

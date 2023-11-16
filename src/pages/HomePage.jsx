@@ -39,7 +39,7 @@ const HomePage = () => {
       });
 
       const contactsList = [];
-      const contactsSnapshot = await getDocs(collection(db, 'users'));
+      const contactsSnapshot = await getDocs(collection(db, 'players'));
       contactsSnapshot.forEach((doc) => {
         const item = {};
         item.id = doc.id;

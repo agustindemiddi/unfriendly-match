@@ -12,7 +12,8 @@ import styles from './Dashboard.module.css';
 const Dashboard = ({ list, urlBase }) => {
   let title = '';
   let label = '';
-  let icon = {};
+  let icon = '';
+
   if (urlBase === '/tournaments') {
     title = 'My tournaments';
     label = 'Create new tournament';
@@ -35,7 +36,6 @@ const Dashboard = ({ list, urlBase }) => {
     <section key={urlBase}>
       <h2 className={styles.sectionTitle}>{title}</h2>
       <div className={styles.sectionContent}>
-        {/* <ActionItem label={label} icon={icon} style={{ fontSize: '90px' }} /> */}
         <ActionItem label={label} icon={icon} />
         <ul className={styles.listContent}>
           {list.map((item) => (
@@ -51,7 +51,7 @@ const Dashboard = ({ list, urlBase }) => {
             </li>
           ))}
         </ul>
-        <ActionItem label='Show all' icon={archiveIcon} />
+        <ActionItem url={urlBase} icon={archiveIcon} label='Show all' />
       </div>
     </section>
   );
