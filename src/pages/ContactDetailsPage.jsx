@@ -13,7 +13,7 @@ const ContactDetailsPage = () => {
 
   useEffect(
     () => async () => {
-      const docRef = doc(db, 'users', params.contactId);
+      const docRef = doc(db, 'players', params.contactId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setContact(docSnap.data());

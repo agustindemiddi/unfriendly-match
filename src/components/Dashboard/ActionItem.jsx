@@ -4,14 +4,14 @@ import styles from './ActionItem.module.css';
 
 const ActionItem = ({ url, icon, label }) => {
   return (
-    <article className={styles.item}>
-      <Link to={url}>
+    <Link to={url}>
+      <article className={styles.item}>
         <div className={styles.iconContainer}>
           <img className={styles.icon} src={icon} />
         </div>
         <p className={styles.itemName}>{label}</p>
-      </Link>
-    </article>
+      </article>
+    </Link>
   );
 };
 

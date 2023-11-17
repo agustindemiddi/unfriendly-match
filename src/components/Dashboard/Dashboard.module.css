@@ -17,7 +17,8 @@
 }
 
 .item {
-  padding: 0 1em;
+  max-width: 120px;
+  margin: 0 1rem 1rem;
 }
 
 .imageContainer {
@@ -25,6 +26,8 @@
   height: 120px;
   border-radius: 120px;
   background-color: white;
+  padding: 5px;
+  box-sizing: border-box;
 }
 
 .image {
@@ -33,10 +36,9 @@
   height: 100%;
   vertical-align: middle;
   border-radius: 120px;
-  clip-path: circle(45%);
 }
 
 .itemName {
   width: 120px;
-  padding-top: 0.5em;
+  margin-top: 0.5rem;
 }

@@ -1,14 +1,17 @@
 .item {
-  padding: 0 1em;
+  max-width: 120px;
+  margin: 0 1rem 1rem;
 }
 
 .iconContainer {
   width: 120px;
   height: 120px;
+  border-radius: 120px;
   display: flex;
   justify-content: center;
   background-color: white;
-  border-radius: 120px;
+  padding: 5px;
+  box-sizing: border-box;
 }
 
 .icon {
@@ -17,5 +20,5 @@
 
 .itemName {
   width: 100%;
-  padding-top: 0.5em;
+  margin-top: 0.5em;
 }

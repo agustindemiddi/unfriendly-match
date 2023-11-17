@@ -40,14 +40,14 @@ const Dashboard = ({ list, urlBase }) => {
         <ul className={styles.listContent}>
           {list.map((item) => (
             <li key={item.id}>
-              <article className={styles.item}>
-                <Link to={`${urlBase}/${item.id}`}>
+              <Link to={`${urlBase}/${item.id}`}>
+                <article className={styles.item}>
                   <div className={styles.imageContainer}>
                     <img className={styles.image} src={item.image} alt='' />
                   </div>
                   <p className={styles.itemName}>{item.name}</p>
-                </Link>
-              </article>
+                </article>
+              </Link>
             </li>
           ))}
         </ul>
