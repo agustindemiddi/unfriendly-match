@@ -6,6 +6,13 @@
   background-color: rgba(245, 255, 250, 0.5);
 }
 
+.logo {
+  width: 48px;
+  position: relative;
+  top: 12px;
+  left: 6px;
+}
+
 .mainNav ul {
   margin: 1em;
 }

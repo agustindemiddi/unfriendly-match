@@ -5,12 +5,12 @@ import {
   SkinOutlined,
   GlobalOutlined,
   FileSearchOutlined,
-  DribbbleOutlined,
   LoginOutlined,
   LogoutOutlined,
 } from '@ant-design/icons';
 
 import { getUserAuthCtx } from '../../context/AuthContext';
+import logo from '../../../public/logo.svg';
 
 import styles from './MainNavigation.module.css';
 
@@ -27,7 +27,9 @@ const MainNavigation = () => {
   return (
     <>
       <nav className={styles.mainNav}>
-        <DribbbleOutlined />
+        <Link to='/'>
+          <img className={styles.logo} src={logo} alt='logo' />
+        </Link>
         {/* {user && <span>{user.displayName}</span>} */}
         <ul>
           {sections.map((section) => (
