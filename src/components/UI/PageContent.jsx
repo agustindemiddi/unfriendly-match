@@ -6,4 +6,5 @@ const PageContent = ({ title, children }) => {
     </>
   );
 };
+
 export default PageContent;

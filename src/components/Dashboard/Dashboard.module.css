@@ -17,16 +17,19 @@
 }
 
 .item {
-  max-width: 120px;
+  max-width: 75px;
   margin: 0 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .imageContainer {
-  width: 120px;
-  height: 120px;
-  border-radius: 120px;
+  width: 75px;
+  height: 75px;
+  border-radius: 75px;
   background-color: white;
-  padding: 5px;
+  padding: 3px;
   box-sizing: border-box;
 }
 
@@ -39,6 +42,6 @@
 }
 
 .itemName {
-  width: 120px;
+  width: 75px;
   margin-top: 0.5rem;
 }

@@ -1,0 +1,22 @@
+.body-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  align-self: stretch;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 25px;
+  flex: 1;
+}
+
+footer {
+  padding: 1rem;
+  background-color: rgba(245, 255, 250, 0.5);
+  align-self: stretch;
+}
