@@ -30,7 +30,7 @@ const TournamentsPage = () => {
   return (
     <PageContent title='My Tournaments'>
       {tournamentsList && tournamentsList.length > 0 && (
-        <Dashboard list={tournamentsList} urlBase='/tournaments' />
+        <Dashboard list={tournamentsList} url='/tournaments' />
       )}
     </PageContent>
   );

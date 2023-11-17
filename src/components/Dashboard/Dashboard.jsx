@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import ActionItem from './ActionItem';
+import DashboardItem from './DashboardItem';
 
 import cupIcon from '../../assets/icons/cup/cup-svgrepo-com.svg';
 import groupIcon from '../../assets/icons/team/football-team-people-svgrepo-com.svg';
@@ -9,49 +9,48 @@ import archiveIcon from '../../assets/icons/archive/archive-2-svgrepo-com.svg';
 
 import styles from './Dashboard.module.css';
 
-const Dashboard = ({ list, urlBase }) => {
+const Dashboard = ({ list, url }) => {
   let title = '';
   let label = '';
   let icon = '';
 
-  if (urlBase === '/tournaments') {
+  if (url === '/tournaments') {
     title = 'My tournaments';
     label = 'Create new tournament';
     icon = cupIcon;
   }
 
-  if (urlBase === '/groups') {
+  if (url === '/groups') {
     title = 'My groups';
     label = 'Create new group';
     icon = groupIcon;
   }
 
-  if (urlBase === '/contacts') {
+  if (url === '/contacts') {
     title = 'My contacts';
-    label = 'Search players';
+    label = 'Create new player';
     icon = searchUserIcon;
   }
 
   return (
-    <section key={urlBase}>
+    <section key={url}>
       <h2 className={styles.sectionTitle}>{title}</h2>
       <div className={styles.sectionContent}>
-        <ActionItem label={label} icon={icon} />
+      <Link to={`${url}/new`}>
+          <DashboardItem url={url} image={icon} label={label} />
+        </Link>
         <ul className={styles.listContent}>
-          {list.map((item) => (
-            <li key={item.id}>
-              <Link to={`${urlBase}/${item.id}`}>
-                <article className={styles.item}>
-                  <div className={styles.imageContainer}>
-                    <img className={styles.image} src={item.image} alt='' />
-                  </div>
-                  <p className={styles.itemName}>{item.name}</p>
-                </article>
+          {list.map(({ id, image, name }) => (
+            <li key={id}>
+              <Link to={`${url}/${id}`}>
+                <DashboardItem id={id} url={url} image={image} label={name} />
               </Link>
             </li>
           ))}
         </ul>
-        <ActionItem url={urlBase} icon={archiveIcon} label='Show all' />
+        <Link to={url}>
+          <DashboardItem url={url} image={archiveIcon} label='Show all' />
+        </Link>
       </div>
     </section>
   );

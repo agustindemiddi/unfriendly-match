@@ -29,7 +29,7 @@ const ContactsPage = () => {
   return (
     <PageContent title='My Contacts'>
       {contactsList && contactsList.length > 0 && (
-        <Dashboard list={contactsList} urlBase='/contacts' />
+        <Dashboard list={contactsList} url='/contacts' />
       )}
     </PageContent>
   );

@@ -29,7 +29,7 @@ const GroupsPage = () => {
   return (
     <PageContent title='My Groups'>
       {groupsList && groupsList.length > 0 && (
-        <Dashboard list={groupsList} urlBase='/groups' />
+        <Dashboard list={groupsList} url='/groups' />
       )}
     </PageContent>
   );

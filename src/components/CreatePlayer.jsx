@@ -13,7 +13,7 @@ const CreatePlayer = () => {
   }, []);
 
   const addPlayer = async (playerName) => {
-    const docRef = await addDoc(collection(db, 'users'), {
+    const docRef = await addDoc(collection(db, 'players'), {
       name: playerName,
     });
 

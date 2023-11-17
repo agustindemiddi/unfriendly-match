@@ -55,9 +55,9 @@ const HomePage = () => {
 
   return (
     <PageContent title='Dashboard'>
-      <Dashboard list={tournamentsList} urlBase='/tournaments' />
-      <Dashboard list={groupsList} urlBase='/groups' />
-      <Dashboard list={contactsList} urlBase='/contacts' />
+      <Dashboard list={tournamentsList} url='/tournaments' />
+      <Dashboard list={groupsList} url='/groups' />
+      <Dashboard list={contactsList} url='/contacts' />
     </PageContent>
   );
 };
