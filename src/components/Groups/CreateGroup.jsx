@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
-import db from '../utils/firebaseConfig';
+import db from '../../utils/firebaseConfig';
 
 const CreateGroup = () => {
   const nameInput = useRef();

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 
 import PageContent from '../components/UI/PageContent';
-import TournamentItem from '../components/TournamentItem';
+import TournamentItem from '../components/Tournaments/TournamentItem';
 
 import db from '../utils/firebaseConfig';
 

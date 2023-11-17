@@ -1,5 +1,5 @@
 import PageContent from '../components/UI/PageContent';
-import CreateGroup from '../components/CreateGroup';
+import CreateGroup from '../components/Groups/CreateGroup';
 
 const NewGroupPage = () => {
   return (

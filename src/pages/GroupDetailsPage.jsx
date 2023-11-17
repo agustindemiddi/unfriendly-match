@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 
 import PageContent from '../components/UI/PageContent';
-import GroupItem from '../components/GroupItem';
+import GroupItem from '../components/Groups/GroupItem';
 
 import db from '../utils/firebaseConfig';
 

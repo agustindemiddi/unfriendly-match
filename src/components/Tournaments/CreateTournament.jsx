@@ -2,9 +2,9 @@ import { useRef, useEffect } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
-import db from '../utils/firebaseConfig';
+import db from '../../utils/firebaseConfig';
 
-const CreatePlayer = () => {
+const CreateTournament = () => {
   const nameInput = useRef();
   const navigate = useNavigate();
 
@@ -12,9 +12,9 @@ const CreatePlayer = () => {
     nameInput.current.focus();
   }, []);
 
-  const addPlayer = async (playerName) => {
-    const docRef = await addDoc(collection(db, 'players'), {
-      name: playerName,
+  const addTournament = async (tournamentName) => {
+    const docRef = await addDoc(collection(db, 'tournaments'), {
+      name: tournamentName,
     });
 
     // console.log('Document written with ID: ', docRef.id);
@@ -22,22 +22,22 @@ const CreatePlayer = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    addPlayer(nameInput.current.value);
+    addTournament(nameInput.current.value);
     navigate('..', { relative: 'path' });
   };
 
   return (
     <>
-      <h2>Create Unregistered Player Basic Form</h2>
+      <h2>Create Tournament Basic Form</h2>
       <form onSubmit={submitHandler}>
         <label>
-          Player Name:
+          Tournament Name:
           <input type='text' ref={nameInput} required />
         </label>
-        <button type='submit'>Create Player</button>
+        <button type='submit'>Create Tournament</button>
       </form>
     </>
   );
 };
 
-export default CreatePlayer;
+export default CreateTournament;

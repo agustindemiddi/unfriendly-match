@@ -1,5 +1,5 @@
 import PageContent from '../components/UI/PageContent';
-import CreatePlayer from '../components/CreatePlayer';
+import CreatePlayer from '../components/Contacts/CreatePlayer';
 
 const NewContactPage = () => {
   return (

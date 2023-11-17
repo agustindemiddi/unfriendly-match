@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 
 import PageContent from '../components/UI/PageContent';
-import ContactItem from '../components/ContactItem';
+import ContactItem from '../components/Contacts/ContactItem';
 
 import db from '../utils/firebaseConfig';
 
