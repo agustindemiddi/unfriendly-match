@@ -4,6 +4,9 @@ import { collection, getDocs } from 'firebase/firestore';
 import PageContent from '../components/UI/PageContent';
 import Dashboard from '../components/Dashboard/Dashboard';
 
+import SoccerField from '../components/Field/SoccerField';
+import Match from '../components/Match/Match';
+
 import db from '../utils/firebaseConfig';
 
 const HomePage = () => {
@@ -55,6 +58,8 @@ const HomePage = () => {
 
   return (
     <PageContent title='Dashboard'>
+      <SoccerField />
+      <Match />
       <Dashboard list={tournamentsList} url='/tournaments' />
       <Dashboard list={groupsList} url='/groups' />
       <Dashboard list={contactsList} url='/contacts' />
