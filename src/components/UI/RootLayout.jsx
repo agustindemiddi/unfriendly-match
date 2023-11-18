@@ -11,7 +11,12 @@ const RootLayout = () => {
         <MainNavigation />
       </header>
       <main>
-        <Outlet />
+        <aside>
+          SIDE NAV MENU
+        </aside>
+        <section>
+          <Outlet />
+        </section>
       </main>
       <footer>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur

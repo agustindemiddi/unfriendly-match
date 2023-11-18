@@ -2,19 +2,25 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
-  align-items: stretch;
-}
-
-header {
-  /* align-self: stretch; */
 }
 
 main {
-  /* max-width: 1200px; */
-  /* min-width: 800px; */
-  margin: 0 25px;
   flex: 1;
+
+  display: flex;
+  justify-content: stretch;
+}
+
+aside {
+  flex: 1;
+
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 1rem;
+  border-radius: 0.5rem;
+}
+
+section {
+  flex: 5;
 
   display: flex;
   flex-direction: column;
@@ -22,7 +28,6 @@ main {
 }
 
 footer {
-  padding: 1rem;
   background-color: rgba(245, 255, 250, 0.5);
-  /* align-self: stretch; */
+  padding: 1rem;
 }
