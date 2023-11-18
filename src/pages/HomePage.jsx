@@ -58,11 +58,10 @@ const HomePage = () => {
 
   return (
     <PageContent title='Dashboard'>
-      <SoccerField />
       <Match />
-      <Dashboard list={tournamentsList} url='/tournaments' />
+      {/* <Dashboard list={tournamentsList} url='/tournaments' />
       <Dashboard list={groupsList} url='/groups' />
-      <Dashboard list={contactsList} url='/contacts' />
+      <Dashboard list={contactsList} url='/contacts' /> */}
     </PageContent>
   );
 };

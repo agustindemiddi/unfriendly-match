@@ -1,7 +1,8 @@
 .mainDiv {
-  max-width: 600px;
+  width: 600px;
   display: flex;
   flex-direction: column;
+  margin-bottom: 2rem;
 }
 
 .header {
@@ -10,8 +11,8 @@
   align-items: center;
 }
 
-.tournament {
-  padding: 0.5rem 0.5rem 0.5rem 2rem;
+.tournamentIcon {
+  padding: 0.5rem 0.5rem 0.5rem 1.65rem;
 }
 
 .dateLocation {
@@ -61,5 +62,5 @@
 
 .footer {
   text-align: start;
-  padding: 0.5rem 2rem;
+  padding: 1rem 2rem;
 }

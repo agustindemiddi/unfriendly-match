@@ -2,21 +2,27 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
+  align-items: stretch;
 }
 
 header {
-  align-self: stretch;
+  /* align-self: stretch; */
 }
 
 main {
-  max-width: 1200px;
+  /* max-width: 1200px; */
+  /* min-width: 800px; */
   margin: 0 25px;
   flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 footer {
   padding: 1rem;
   background-color: rgba(245, 255, 250, 0.5);
-  align-self: stretch;
+  /* align-self: stretch; */
 }
