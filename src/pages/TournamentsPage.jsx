@@ -15,6 +15,15 @@ const TournamentsPage = () => {
   const activeTournaments = [];
   const finishedTournaments = [];
 
+  const finishedTournamentsContent = () => {
+    return (
+      <article className={styles.finishedTournaments}>
+        <h2>Finished Tournaments:</h2>
+        <div>display active tournaments here...</div>
+      </article>
+    );
+  };
+
   useEffect(
     () => async () => {
       const tournamentsList = [];
@@ -34,28 +43,26 @@ const TournamentsPage = () => {
   );
 
   return (
-    <PageContent title='My Tournaments'>
-      {/* {tournamentsList && tournamentsList.length > 0 && (
+    <>
+      <PageContent title='My Tournaments'>
+        {/* {tournamentsList && tournamentsList.length > 0 && (
         <Dashboard list={tournamentsList} url='/tournaments' />
       )} */}
-      <div className={styles.TournamentsPageLayout}>
-        <div className={styles.header}>
-          <button>Create new tournament</button>
-        </div>
-        <div className={styles.content}>
+        {/* <button className={styles.button}>Create new tournament</button> */}
+        <article className={styles.activeTournaments}>
           <h2>Active Tournaments:</h2>
-          <div>
-            <div className={styles.imageContainer}>
+          <ul className={styles.tournamentsList}>
+            <li className={styles.imageContainer}>
               <img className={styles.image} src={DUMMY_IMAGE2} alt='' />
-            </div>
-          </div>
-        </div>
-        <div className={styles.content}>
-          <h2>Finished Tournaments:</h2>
-          <div>display active tournaments here...</div>
-        </div>
-      </div>
-    </PageContent>
+            </li>
+            <li className={styles.imageContainer}>
+              <img className={styles.image} src={DUMMY_IMAGE2} alt='' />
+            </li>
+          </ul>
+        </article>
+        {finishedTournaments.length ? finishedTournamentsContent : null}
+      </PageContent>
+    </>
   );
 };
 

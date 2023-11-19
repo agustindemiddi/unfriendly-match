@@ -1,19 +1,16 @@
-.TournamentsPageLayout {
-  display: flex;
-  flex-direction: column;
+.button {
+  padding: 1rem;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-}
-
-.content {
-  width: 800px;
-
+.activeTournaments {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.tournamentsList {
+  display: flex;
+  gap: 2rem;
 }
 
 .imageContainer {

@@ -2,18 +2,14 @@ import { Outlet } from 'react-router-dom';
 
 import MainNavigation from '../MainNavigation/MainNavigation';
 
-import styles from './Rootlayout.module.css';
-
 const RootLayout = () => {
   return (
-    <div className={styles['body-container']}>
+    <>
       <header>
         <MainNavigation />
       </header>
       <main>
-        <aside>
-          SIDE NAV MENU
-        </aside>
+        <aside>SIDE NAV MENU</aside>
         <section>
           <Outlet />
         </section>
@@ -22,7 +18,7 @@ const RootLayout = () => {
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur
         nulla praesentium atque ipsa quasi iste nam harum accusamus obcaecati.
       </footer>
-    </div>
+    </>
   );
 };
 
