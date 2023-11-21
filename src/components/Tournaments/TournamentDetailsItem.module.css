@@ -1,0 +1,28 @@
+.tournamentDetailsSection {
+  display: flex;
+  justify-content: center;
+}
+
+.matches {
+  flex: 1;
+}
+
+.nextMatch {
+  width: 200px;
+  height: 200px;
+  background-color: lightpink;
+}
+
+.lastMatch {
+  width: 200px;
+  height: 200px;
+  background-color: pink;
+}
+
+.standings {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: start;
+}

@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 
-import PageContent from '../components/UI/PageContent';
 import TournamentItem from '../components/Tournaments/TournamentItem';
+
+import TournamentDetailsItem from '../components/Tournaments/TournamentDetailsItem';
 
 import db from '../utils/firebaseConfig';
 
@@ -25,9 +26,10 @@ const TournamentDetailsPage = () => {
   );
 
   return (
-    <PageContent title='TournamentDetailsPage'>
-      <TournamentItem item={tournament} />
-    </PageContent>
+    <>
+      <TournamentDetailsItem item={tournament} />
+      {/* <TournamentItem item={tournament} /> */}
+    </>
   );
 };
 

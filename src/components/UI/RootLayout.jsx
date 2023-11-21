@@ -10,9 +10,7 @@ const RootLayout = () => {
       </header>
       <main>
         <aside>SIDE NAV MENU</aside>
-        <section>
-          <Outlet />
-        </section>
+        <Outlet />
       </main>
       <footer>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 
-import PageContent from '../components/UI/PageContent';
 import Dashboard from '../components/Dashboard/Dashboard';
 
 import styles from './TournamentsPage.module.css';
@@ -43,26 +42,24 @@ const TournamentsPage = () => {
   );
 
   return (
-    <>
-      <PageContent title='My Tournaments'>
-        {/* {tournamentsList && tournamentsList.length > 0 && (
+    <section className={styles.tournamentSection}>
+      {tournamentsList && tournamentsList.length > 0 && (
         <Dashboard list={tournamentsList} url='/tournaments' />
-      )} */}
-        {/* <button className={styles.button}>Create new tournament</button> */}
-        <article className={styles.activeTournaments}>
-          <h2>Active Tournaments:</h2>
-          <ul className={styles.tournamentsList}>
-            <li className={styles.imageContainer}>
-              <img className={styles.image} src={DUMMY_IMAGE2} alt='' />
-            </li>
-            <li className={styles.imageContainer}>
-              <img className={styles.image} src={DUMMY_IMAGE2} alt='' />
-            </li>
-          </ul>
-        </article>
-        {finishedTournaments.length ? finishedTournamentsContent : null}
-      </PageContent>
-    </>
+      )}
+      {/* <button className={styles.button}>Create new tournament</button> */}
+      <article className={styles.activeTournaments}>
+        <h2>Active Tournaments:</h2>
+        <ul className={styles.tournamentsList}>
+          <li className={styles.imageContainer}>
+            <img className={styles.image} src={DUMMY_IMAGE2} alt='' />
+          </li>
+          <li className={styles.imageContainer}>
+            <img className={styles.image} src={DUMMY_IMAGE2} alt='' />
+          </li>
+        </ul>
+      </article>
+      {finishedTournaments.length ? finishedTournamentsContent : null}
+    </section>
   );
 };
 
