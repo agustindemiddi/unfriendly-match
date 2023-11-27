@@ -6,24 +6,22 @@ import { AuthContextProvider } from './context/AuthContext';
 
 import RootLayout from './components/UI/RootLayout';
 import ErrorPage from './pages/ErrorPage';
+
 import SignInPage from './pages/SignInPage';
-
 import HomePage from './pages/HomePage';
-import TournamentsPage from './pages/TournamentsPage';
-import GroupsPage from './pages/GroupsPage';
-import ContactsPage from './pages/ContactsPage';
 
-import TournamentDetailsPage from './pages/TournamentDetailsPage';
-import GroupDetailsPage from './pages/GroupDetailsPage';
-import ContactDetailsPage from './pages/ContactDetailsPage';
+import ContactsPage from './pages/contacts/ContactsPage';
+import ContactDetailPage from './pages/contacts/ContactDetailPage';
 
-import NewTournamentPage from './pages/NewTournamentPage';
-import NewGroupPage from './pages/NewGroupPage';
-import NewContactPage from './pages/NewContactPage';
+import TournamentsPage from './pages/tournaments/TournamentsPage';
+import TournamentDetailPage from './pages/tournaments/TournamentDetailPage';
+import NewTournamentPage from './pages/tournaments/NewTournamentPage';
+import EditTournamentPage from './pages/tournaments/EditTournamentPage';
 
-import EditTournamentPage from './pages/EditTournamentPage';
-import EditGroupPage from './pages/EditGroupPage';
-import EditContactPage from './pages/EditContactPage';
+import MatchesPage from './pages/matches/MatchesPage';
+import NewMatchPage from './pages/matches/NewMatchPage';
+import MatchDetailPage from './pages/matches/MatchDetailPage';
+import EditMatchPage from './pages/matches/EditMatchPage';
 
 import './index.css';
 
@@ -39,45 +37,41 @@ const router = createBrowserRouter([
       },
       { path: 'signin', element: <SignInPage /> },
       {
-        path: 'tournaments',
-        children: [
-          { index: true, element: <TournamentsPage /> },
-          {
-            path: ':tournamentId',
-            children: [
-              { index: true, element: <TournamentDetailsPage /> },
-              { path: 'edit', element: <EditTournamentPage /> },
-            ],
-          },
-          { path: 'new', element: <NewTournamentPage /> },
-        ],
-      },
-      {
-        path: 'groups',
-        children: [
-          { index: true, element: <GroupsPage /> },
-          {
-            path: ':groupId',
-            children: [
-              { index: true, element: <GroupDetailsPage /> },
-              { path: 'edit', element: <EditGroupPage /> },
-            ],
-          },
-          { path: 'new', element: <NewGroupPage /> },
-        ],
-      },
-      {
         path: 'contacts',
         children: [
           { index: true, element: <ContactsPage /> },
           {
             path: ':contactId',
+            children: [{ index: true, element: <ContactDetailPage /> }],
+          },
+        ],
+      },
+      {
+        path: 'tournaments',
+        children: [
+          { index: true, element: <TournamentsPage /> },
+          { path: 'new', element: <NewTournamentPage /> },
+          {
+            path: ':tournamentId',
             children: [
-              { index: true, element: <ContactDetailsPage /> },
-              { path: 'edit', element: <EditContactPage /> },
+              { index: true, element: <TournamentDetailPage /> },
+              { path: 'edit', element: <EditTournamentPage /> },
+              {
+                path: 'matches',
+                children: [
+                  { index: true, element: <MatchesPage /> },
+                  { path: 'new', element: <NewMatchPage /> },
+                  {
+                    path: ':matchId',
+                    children: [
+                      { index: true, element: <MatchDetailPage /> },
+                      { path: 'edit', element: <EditMatchPage /> },
+                    ],
+                  },
+                ],
+              },
             ],
           },
-          { path: 'new', element: <NewContactPage /> },
         ],
       },
     ],

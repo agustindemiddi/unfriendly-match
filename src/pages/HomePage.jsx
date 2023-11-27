@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 
+import Section from '../components/UI/Section';
 import Dashboard from '../components/Dashboard/Dashboard';
 
-import SoccerField from '../components/Field/SoccerField';
-import Match from '../components/Match/Match';
-import styles from './HomePage.module.css';
+import MatchField from '../components/matches/MatchField/MatchField';
 
 import db from '../utils/firebaseConfig';
 
 const HomePage = () => {
   const [tournamentsList, setTournamentsList] = useState([]);
-  const [groupsList, setGroupsList] = useState([]);
   const [contactsList, setContactsList] = useState([]);
 
   useEffect(
@@ -27,18 +25,6 @@ const HomePage = () => {
         item.players = doc.data().players;
         tournamentsList.push(item);
         setTournamentsList(tournamentsList);
-      });
-
-      const groupsList = [];
-      const groupsSnapshot = await getDocs(collection(db, 'groups'));
-      groupsSnapshot.forEach((doc) => {
-        const item = {};
-        item.id = doc.id;
-        item.name = doc.data().name;
-        item.image = doc.data().image;
-        item.players = doc.data().players;
-        groupsList.push(item);
-        setGroupsList(groupsList);
       });
 
       const contactsList = [];
@@ -57,14 +43,11 @@ const HomePage = () => {
   );
 
   return (
-    <>
-      <section className={styles.dashboard}>
-        <Match />
-      </section>
+    <Section>
+      <MatchField />
       {/* <Dashboard list={tournamentsList} url='/tournaments' />
-      <Dashboard list={groupsList} url='/groups' />
       <Dashboard list={contactsList} url='/contacts' /> */}
-    </>
+    </Section>
   );
 };
 

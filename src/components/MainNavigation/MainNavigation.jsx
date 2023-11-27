@@ -3,7 +3,6 @@ import { Button } from 'antd';
 import {
   HomeOutlined,
   SkinOutlined,
-  GlobalOutlined,
   FileSearchOutlined,
   LoginOutlined,
   LogoutOutlined,
@@ -17,7 +16,6 @@ import styles from './MainNavigation.module.css';
 const sections = [
   { url: '/', icon: <HomeOutlined />, label: 'Home' },
   { url: '/tournaments', icon: <SkinOutlined />, label: 'Tournaments' },
-  { url: '/groups', icon: <GlobalOutlined />, label: 'Groups' },
   { url: '/contacts', icon: <FileSearchOutlined />, label: 'Contacts' },
 ];
 

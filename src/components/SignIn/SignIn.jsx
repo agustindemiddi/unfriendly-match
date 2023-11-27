@@ -18,7 +18,7 @@ const SignIn = () => {
   }, [user]);
 
   return (
-    <section className={styles['sign-in']}>
+    <div className={styles['sign-in']}>
       <div className={styles['form-modes']}>
         <div
           onClick={() => setFormModeIsSignIn(true)}
@@ -40,7 +40,7 @@ const SignIn = () => {
       <SignInForm formModeIsSignIn={formModeIsSignIn} />
       <p className={styles.or}>or</p>
       <GoogleButton onClick={handleGoogleSignIn} />
-    </section>
+    </div>
   );
 };
 

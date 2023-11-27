@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 
-import PageContent from '../components/UI/PageContent';
+import Section from '../components/UI/Section';
 import SignIn from '../components/SignIn/SignIn';
 
 import { getUserAuthCtx } from '../context/AuthContext';
@@ -13,9 +13,9 @@ const SignInPage = () => {
   }
 
   return (
-    <PageContent title='Sign In'>
+    <Section>
       <SignIn />
-    </PageContent>
+    </Section>
   );
 };
 

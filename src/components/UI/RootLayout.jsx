@@ -13,8 +13,7 @@ const RootLayout = () => {
         <Outlet />
       </main>
       <footer>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur
-        nulla praesentium atque ipsa quasi iste nam harum accusamus obcaecati.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur.
       </footer>
     </>
   );
