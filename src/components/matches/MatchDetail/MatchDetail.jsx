@@ -2,10 +2,12 @@ import { Link } from 'react-router-dom';
 
 import styles from './MatchDetail.module.css';
 
-const MatchDetail = () => {
+import SoccerField from '../SoccerField/SoccerField';
+
+const MatchDetail = ({ match }) => {
   return (
     <>
-      <div>MatchDetailsPage</div>
+      <SoccerField match={match} />
       <Link to='edit'>
         <button>editar PARTIDO</button>
       </Link>

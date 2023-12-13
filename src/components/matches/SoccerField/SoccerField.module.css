@@ -1,4 +1,4 @@
-.mainDiv {
+.container {
   width: 600px;
   display: flex;
   flex-direction: column;
@@ -9,18 +9,19 @@
   display: flex;
   justify-content: start;
   align-items: center;
+  margin: 0 0 1rem 1.7rem;
 }
 
 .tournamentIcon {
-  padding: 0.5rem 0.5rem 0.5rem 1.65rem;
+  width: 36px;
 }
 
-.dateLocation {
+.dateTimeLocation {
   text-align: start;
-  padding: 0.5rem;
+  margin-left: 0.75rem;
 }
 
-.content {
+.soccerField {
   min-height: 450px;
 
   background: rgba(0, 0, 0, 0.5)
@@ -34,7 +35,20 @@
 
   display: flex;
   justify-content: center;
+  align-items: flex-end;
+}
+
+.isFinishedMatch {
   align-items: stretch;
+}
+
+.matchPlayers {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin: 0 6rem 4rem;
 }
 
 .team {
@@ -62,5 +76,5 @@
 
 .footer {
   text-align: start;
-  padding: 1rem 2rem;
+  margin: 1rem 0 0 1.7rem;
 }

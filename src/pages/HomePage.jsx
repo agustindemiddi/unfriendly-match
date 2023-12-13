@@ -1,54 +1,41 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { getDocs, collection } from 'firebase/firestore';
 
-import Section from '../components/UI/Section';
-import Dashboard from '../components/Dashboard/Dashboard';
+import { getUserAuthCtx } from '../context/AuthContext';
+import db from '../utils/firebase/firebaseConfig';
 
-import MatchField from '../components/matches/MatchField/MatchField';
+import Home from '../components/Home/Home';
 
-import db from '../utils/firebaseConfig';
+import createMatchObjectFromFirestore from '../utils/firebase/firestore/createMatchObjectFromFirestore';
 
 const HomePage = () => {
-  const [tournamentsList, setTournamentsList] = useState([]);
-  const [contactsList, setContactsList] = useState([]);
+  const { userPlayerProfile } = getUserAuthCtx();
+  const [userMatches, setUserMatches] = useState([]);
 
-  useEffect(
-    () => async () => {
-      const tournamentsList = [];
-      const tournamentsSnapshot = await getDocs(collection(db, 'tournaments'));
-      tournamentsSnapshot.forEach((doc) => {
-        const item = {};
-        item.id = doc.id;
-        item.name = doc.data().name;
-        item.description = doc.data().description;
-        item.image = doc.data().image;
-        item.players = doc.data().players;
-        tournamentsList.push(item);
-        setTournamentsList(tournamentsList);
-      });
+  // get all user active tournaments matches >>>
+  useEffect(() => {
+    if (userPlayerProfile) {
+      const fetchData = async () => {
+        const userMatchesInActiveTournamentsArray = await Promise.all(
+          userPlayerProfile.activeTournaments.map(async (tournamentId) => {
+            const querySnapshot = await getDocs(
+              collection(db, 'tournaments', tournamentId, 'matches')
+            );
+            const matchesArray = querySnapshot.docs.map((match) =>
+              createMatchObjectFromFirestore(match)
+            );
+            return matchesArray;
+          })
+        );
+        setUserMatches(userMatchesInActiveTournamentsArray.flat());
+      };
 
-      const contactsList = [];
-      const contactsSnapshot = await getDocs(collection(db, 'players'));
-      contactsSnapshot.forEach((doc) => {
-        const item = {};
-        item.id = doc.id;
-        item.name = doc.data().name;
-        item.description = doc.data().description;
-        item.image = doc.data().image;
-        contactsList.push(item);
-        setContactsList(contactsList);
-      });
-    },
-    []
-  );
+      fetchData();
+    }
+  }, [userPlayerProfile]);
+  // get all user active tournaments matches (end) <<<
 
-  return (
-    <Section>
-      <MatchField />
-      {/* <Dashboard list={tournamentsList} url='/tournaments' />
-      <Dashboard list={contactsList} url='/contacts' /> */}
-    </Section>
-  );
+  return <Home userMatches={userMatches} />;
 };
 
 export default HomePage;

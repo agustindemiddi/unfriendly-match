@@ -5,7 +5,7 @@ import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import Section from '../../components/UI/Section';
 import TournamentDetail from '../../components/tournaments/TournamentDetail/TournamentDetail';
 
-import db from '../../utils/firebaseConfig';
+import db from '../../utils/firebase/firebaseConfig';
 
 const TournamentDetailPage = () => {
   const [tournament, setTournament] = useState({});

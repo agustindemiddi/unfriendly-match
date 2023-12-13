@@ -7,7 +7,7 @@ import Dashboard from '../../components/Dashboard/Dashboard';
 
 import styles from './TournamentsPage.module.css';
 
-import db from '../../utils/firebaseConfig';
+import db from '../../utils/firebase/firebaseConfig';
 
 import DUMMY_IMAGE2 from '../../assets/icons/cup/cup-svgrepo-com.svg';
 

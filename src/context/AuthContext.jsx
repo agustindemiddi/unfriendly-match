@@ -7,23 +7,24 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
-import { auth } from '../utils/firebaseConfig';
+import { auth } from '../utils/firebase/firebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
-import db from '../utils/firebaseConfig';
-import defaultProfileImage from '../assets/icons/default-profile/profile-circle-svgrepo-com.svg';
+import db from '../utils/firebase/firebaseConfig';
 
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
+  const [userPlayerProfile, setUserPlayerProfile] = useState(null);
 
-  const setPlayer = async (id, playerName, profilePicture = null) => {
+  const createPlayerFromUser = async (id, username, profilePicture) => {
     try {
-      await setDoc(doc(db, 'players', id), {
-        name: playerName,
-        image: profilePicture,
-      });
+      const playerData = {
+        username: username,
+      };
+      if (profilePicture) playerData.image = profilePicture;
+      await setDoc(doc(db, 'players', id), playerData);
     } catch {
       console.log('Could not save player!');
     }
@@ -31,21 +32,32 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     const unsuscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
       if (currentUser) {
+        setUser(currentUser);
+
         const signInMethod = currentUser.providerData[0].providerId;
         const { uid } = currentUser;
+        // localStorage.setItem('userId', uid);
         try {
           const docRef = doc(db, 'players', uid);
           const docSnap = await getDoc(docRef);
-          if (!docSnap.exists()) {
+          if (docSnap.exists()) {
+            setUserPlayerProfile({ ...docSnap.data(), id: docSnap.id });
+            const userPlayerProfile = { ...docSnap.data(), id: docSnap.id };
+            // localStorage.setItem('userPlayerProfile', userPlayerProfile);
+          } else {
             if (signInMethod === 'google.com') {
               const { displayName, photoURL } = currentUser;
-              setPlayer(uid, displayName, photoURL);
+              await createPlayerFromUser(uid, displayName, photoURL);
             } else if (signInMethod === 'password') {
               const displayName = currentUser.email.split('@')[0];
-              setPlayer(uid, displayName, defaultProfileImage);
+              await createPlayerFromUser(uid, displayName);
             }
+            const docRef = doc(db, 'players', uid);
+            const docSnap = await getDoc(docRef);
+            setUserPlayerProfile({ ...docSnap.data(), id: docSnap.id });
+            const userPlayerProfile = { ...docSnap.data(), id: docSnap.id };
+            // localStorage.setItem('userPlayerProfile', userPlayerProfile);
           }
         } catch (error) {
           console.log(error);
@@ -93,6 +105,9 @@ export const AuthContextProvider = ({ children }) => {
   const handleSignOut = () => {
     try {
       signOut(auth);
+      setUser(null);
+      // localStorage.removeItem('userId');
+      // localStorage.removeItem('userPlayerProfile');
     } catch (error) {
       console.log(error);
     }
@@ -105,8 +120,8 @@ export const AuthContextProvider = ({ children }) => {
         handleEmailSignIn,
         handleSignOut,
         user,
-      }}
-    >
+        userPlayerProfile,
+      }}>
       {children}
     </AuthContext.Provider>
   );

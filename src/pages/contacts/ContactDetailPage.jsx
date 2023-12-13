@@ -5,18 +5,18 @@ import { doc, getDoc } from 'firebase/firestore';
 import Section from '../../components/UI/Section';
 import ContactDetail from '../../components/contacts/ContactDetail/ContactDetail';
 
-import db from '../../utils/firebaseConfig';
+import db from '../../utils/firebase/firebaseConfig';
 
 const ContactDetailPage = () => {
-  const [contact, setContact] = useState({});
+  const [player, setPlayer] = useState({});
   const params = useParams();
 
   useEffect(
     () => async () => {
-      const docRef = doc(db, 'players', params.contactId);
+      const docRef = doc(db, 'players', params.playerId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setContact(docSnap.data());
+        setPlayer(docSnap.data());
       } else {
         console.error('Player not found!');
       }
@@ -26,7 +26,8 @@ const ContactDetailPage = () => {
 
   return (
     <Section>
-      <ContactDetail item={contact} />
+      <button onClick={() =>   console.log(params)}>click</button>
+      <ContactDetail item={player} />
     </Section>
   );
 };

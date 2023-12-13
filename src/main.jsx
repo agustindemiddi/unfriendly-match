@@ -23,6 +23,8 @@ import NewMatchPage from './pages/matches/NewMatchPage';
 import MatchDetailPage from './pages/matches/MatchDetailPage';
 import EditMatchPage from './pages/matches/EditMatchPage';
 
+import Test from './pages/Test';
+
 import './index.css';
 
 const router = createBrowserRouter([
@@ -36,15 +38,14 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       { path: 'signin', element: <SignInPage /> },
+      { path: 'test', element: <Test /> },
+      {
+        path: ':playerId',
+        element: <ContactDetailPage />,
+      },
       {
         path: 'contacts',
-        children: [
-          { index: true, element: <ContactsPage /> },
-          {
-            path: ':contactId',
-            children: [{ index: true, element: <ContactDetailPage /> }],
-          },
-        ],
+        children: [{ index: true, element: <ContactsPage /> }],
       },
       {
         path: 'tournaments',

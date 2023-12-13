@@ -1,0 +1,8 @@
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.selectedTournamentImage {
+  width: 40px;
+}

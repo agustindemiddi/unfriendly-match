@@ -1,8 +1,7 @@
 .sign-in {
   display: flex;
   flex-direction: column;
-  place-items: center;
-  padding: 2rem;
+  margin: 2rem;
 }
 
 .form-modes {
