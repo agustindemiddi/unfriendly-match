@@ -15,6 +15,7 @@ import db from '../../../utils/firebase/firebaseConfig';
 
 import createPlayerObjectFromFirestore from '../../../utils/firebase/firestore/createPlayerObjectFromFirestore';
 import getMatchStatus from '../../../utils/getMatchStatus';
+import formatDate from '../../../utils/formatDate';
 
 const SoccerFieldContainer = ({
   match: {
@@ -37,6 +38,7 @@ const SoccerFieldContainer = ({
   const [registeredPlayers, setRegisteredPlayers] = useState([]);
   const [teamAPlayers, setTeamAPlayers] = useState([]);
   const [teamBPlayers, setTeamBPlayers] = useState([]);
+  const [matchRegistryCountdown, setMatchRegistryCountdown] = useState('');
 
   const {
     isActive,
@@ -127,20 +129,47 @@ const SoccerFieldContainer = ({
   }, [teamA, teamB]);
   // get match teams (end) <<<
 
+  // set countdown to match registry date time >>>
+  useEffect(() => {
+    const calculateCountdown = () => {
+      const currentDateTime = new Date();
+      const timeDifference = registryDateTime - currentDateTime;
+
+      if (timeDifference > 0) {
+        const seconds = Math.floor((timeDifference / 1000) % 60);
+        const minutes = Math.floor((timeDifference / 1000 / 60) % 60);
+        const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
+        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+        setMatchRegistryCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+      } else {
+        setMatchRegistryCountdown('Match registry already started');
+      }
+    };
+
+    const intervalId = setInterval(calculateCountdown, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [registryDateTime]);
+  // set countdown to match registry date time <<<
+
+  const formattedRegistryDateTime = formatDate(registryDateTime);
+  const formattedDateTime = formatDate(dateTime);
+
   return (
     <SoccerField
       matchProps={{
         tournament,
-        creator,
-        admins,
-        creationDateTime,
+        // creator,
+        // admins,
+        // creationDateTime,
         registryDateTime,
         dateTime,
         address,
-        playerQuota,
-        players,
-        teamA,
-        teamB,
+        // playerQuota,
+        // players,
+        // teamA,
+        // teamB,
         result,
         // mvps,
         isActive,
@@ -153,6 +182,9 @@ const SoccerFieldContainer = ({
         registeredPlayers,
         teamAPlayers,
         teamBPlayers,
+        formattedRegistryDateTime,
+        formattedDateTime,
+        matchRegistryCountdown,
       }}
     />
   );

@@ -22,7 +22,7 @@
 }
 
 .soccerField {
-  min-height: 450px;
+  height: 450px;
 
   background: rgba(0, 0, 0, 0.5)
     url('../../../assets/images/isolated-soccer-field-ball-game-striped-green-background-competitive-sport-lawn-stadium-with-markings_265358-60.avif');
@@ -34,21 +34,50 @@
   border-radius: 0.5rem;
 
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
 }
 
-.isFinishedMatch {
-  align-items: stretch;
+.soccerFieldContent {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.soccerFieldContent-isFinishedMatch {
+  flex: 1;
+
+  display: flex;
+  justify-content: stretch;
+}
+
+.matchSubscriptionStatus {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 18px 106px 0 106px;
+
+  /* background-color: rgba(255, 0, 0, 0.1); */
+}
+
+.matchPlayersContainer {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 106px 18px 106px;
+
+  /* background-color: rgba(0, 0, 255, 0.1); */
 }
 
 .matchPlayers {
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 1.5rem;
+  justify-content: space-around;
+  /* align-items: center; */
+  gap: 25px;
   flex-wrap: wrap;
-  margin: 0 6rem 4rem;
 }
 
 .team {

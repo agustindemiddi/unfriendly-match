@@ -4,21 +4,19 @@ import PlayerIcon from '../PlayerIcon/PlayerIcon';
 
 import styles from './SoccerField.module.css';
 
-import formatDate from '../../../utils/formatDate';
-
 const SoccerField = ({
   matchProps: {
     tournament,
-    creator,
-    admins,
-    creationDateTime,
+    // creator,
+    // admins,
+    // creationDateTime,
     registryDateTime,
     dateTime,
     address,
-    playerQuota,
-    players,
-    teamA,
-    teamB,
+    // playerQuota,
+    // players,
+    // teamA,
+    // teamB,
     result,
     // mvps,
     isActive,
@@ -31,6 +29,9 @@ const SoccerField = ({
     registeredPlayers,
     teamAPlayers,
     teamBPlayers,
+    formattedRegistryDateTime,
+    formattedDateTime,
+    matchRegistryCountdown,
   },
 }) => {
   return (
@@ -71,10 +72,8 @@ const SoccerField = ({
       {mvpsString ? <p>{mvpsString}</p> : <p>MVP has not yet been selected</p>}
 
       <time dateTime={registryDateTime.toISOString()}>
-        Registry Starts: {formatDate(registryDateTime)}
+        Registry Starts: {formattedRegistryDateTime}
       </time>
-
-      <br />
       {/* temporary <<< */}
 
       <div className={styles.container}>
@@ -83,39 +82,69 @@ const SoccerField = ({
             <img className={styles.tournamentIcon} src={tournamentImage} />
           </Link>
           <div className={styles.dateTimeLocation}>
-            <time dateTime={dateTime.toISOString()}>
-              {formatDate(dateTime)}
-            </time>
+            <time dateTime={dateTime.toISOString()}>{formattedDateTime}</time>
             <p>{address}</p>
           </div>
         </div>
 
         <div
-          className={`${styles.soccerField} ${
-            Object.keys(result).length > 0 ? styles.isFinishedMatch : ''
-          }`}>
+          // className={`${styles.soccerField} ${
+          //   Object.keys(result).length > 0
+          //     ? styles['soccerField-isFinishedMatch']
+          //     : ''
+          // }`}
+          className={styles.soccerField}>
           {Object.keys(result).length === 0 && (
-            <ul className={`${styles.matchPlayers}`}>
-              {registeredPlayers &&
-                registeredPlayers.length > 0 &&
-                registeredPlayers.map((player) => (
-                  <li key={player.id}>
-                    <Link to={`/${player.id}`}>
-                      <PlayerIcon image={player.image} />
-                    </Link>
-                  </li>
-                ))}
-              {remainingPlayersQuota > 0 &&
-                [...Array(remainingPlayersQuota)].map((_, index) => (
-                  <li key={`empty-${index}`}>
-                    <PlayerIcon />
-                  </li>
-                ))}
-            </ul>
+            <div className={styles.soccerFieldContent}>
+              <div className={styles.matchSubscriptionStatus}>
+                {!isRegistryStarted && (
+                  <div>
+                    <p>Subscription to this match is not open yet</p>
+                    <p>Subscription starts: {formattedRegistryDateTime}</p>
+                    <p>Countdown: {matchRegistryCountdown}</p>
+                  </div>
+                )}
+                {isRegistryOpen && (
+                  <div>
+                    <p>Subscription to this match is open!</p>
+                    <p>Remaining places: {remainingPlayersQuota}</p>
+                    <p>You can join this match by clicking here</p>
+                  </div>
+                )}
+                {isRegistryEnded && Object.keys(result).length === 0 && (
+                  <div>
+                    <p>Subscription to this match is closed</p>
+                    <p>Awaiting for admin to submit the result</p>
+                  </div>
+                )}
+              </div>
+              <div className={styles.matchPlayersContainer}>
+                {/* para ver formato y estilo dependiendo del playerQuota debo sacar el siguiente condicional isRegistryStarted */}
+                {isRegistryStarted && (
+                  <ul className={styles.matchPlayers}>
+                    {registeredPlayers &&
+                      registeredPlayers.length > 0 &&
+                      registeredPlayers.map((player) => (
+                        <li key={player.id}>
+                          <Link to={`/${player.id}`}>
+                            <PlayerIcon image={player.image} />
+                          </Link>
+                        </li>
+                      ))}
+                    {remainingPlayersQuota > 0 &&
+                      [...Array(remainingPlayersQuota)].map((_, index) => (
+                        <li key={`empty-${index}`}>
+                          <PlayerIcon />
+                        </li>
+                      ))}
+                  </ul>
+                )}
+              </div>
+            </div>
           )}
 
           {Object.keys(result).length > 0 && (
-            <>
+            <div className={styles['soccerFieldContent-isFinishedMatch']}>
               <ul className={`${styles.team} ${styles.teamA}`}>
                 {teamAPlayers &&
                   teamAPlayers.length > 0 &&
@@ -142,7 +171,7 @@ const SoccerField = ({
                     </li>
                   ))}
               </ul>
-            </>
+            </div>
           )}
         </div>
 
