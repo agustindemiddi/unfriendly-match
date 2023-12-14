@@ -41,6 +41,7 @@
 
   display: flex;
   flex-direction: column;
+  padding: 37px 65px 38px 63px;
 }
 
 .soccerFieldContent-isFinishedMatch {
@@ -54,11 +55,9 @@
   flex: 1;
 
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 18px 106px 0 106px;
-
-  /* background-color: rgba(255, 0, 0, 0.1); */
 }
 
 .matchPlayersContainer {
@@ -67,17 +66,31 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 106px 18px 106px;
-
-  /* background-color: rgba(0, 0, 255, 0.1); */
+  flex-wrap: wrap;
 }
 
 .matchPlayers {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   /* align-items: center; */
-  gap: 25px;
+  gap: 2px;
   flex-wrap: wrap;
+}
+
+.matchPlayersAlternative {
+  gap: 0px;
+}
+
+.playerIconAlternative12P {
+  padding: 5px 15px;
+}
+
+.playerIconAlternative14P {
+  padding: 5px 10px;
+}
+
+.playerIconAlternative16P {
+  padding: 5px;
 }
 
 .team {

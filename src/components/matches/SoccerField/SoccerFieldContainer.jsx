@@ -166,7 +166,7 @@ const SoccerFieldContainer = ({
         registryDateTime,
         dateTime,
         address,
-        // playerQuota,
+        playerQuota,
         // players,
         // teamA,
         // teamB,

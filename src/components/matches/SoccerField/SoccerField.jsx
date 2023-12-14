@@ -13,7 +13,7 @@ const SoccerField = ({
     registryDateTime,
     dateTime,
     address,
-    // playerQuota,
+    playerQuota,
     // players,
     // teamA,
     // teamB,
@@ -87,45 +87,81 @@ const SoccerField = ({
           </div>
         </div>
 
-        <div
-          // className={`${styles.soccerField} ${
-          //   Object.keys(result).length > 0
-          //     ? styles['soccerField-isFinishedMatch']
-          //     : ''
-          // }`}
-          className={styles.soccerField}>
+        <div className={styles.soccerField}>
           {Object.keys(result).length === 0 && (
             <div className={styles.soccerFieldContent}>
               <div className={styles.matchSubscriptionStatus}>
                 {!isRegistryStarted && (
-                  <div>
+                  <>
                     <p>Subscription to this match is not open yet</p>
                     <p>Subscription starts: {formattedRegistryDateTime}</p>
                     <p>Countdown: {matchRegistryCountdown}</p>
-                  </div>
+                  </>
                 )}
                 {isRegistryOpen && (
-                  <div>
+                  <>
                     <p>Subscription to this match is open!</p>
                     <p>Remaining places: {remainingPlayersQuota}</p>
                     <p>You can join this match by clicking here</p>
-                  </div>
+                  </>
                 )}
                 {isRegistryEnded && Object.keys(result).length === 0 && (
-                  <div>
+                  <>
                     <p>Subscription to this match is closed</p>
                     <p>Awaiting for admin to submit the result</p>
-                  </div>
+                  </>
                 )}
               </div>
               <div className={styles.matchPlayersContainer}>
-                {/* para ver formato y estilo dependiendo del playerQuota debo sacar el siguiente condicional isRegistryStarted */}
+                {!isRegistryStarted && (
+                  <ul
+                    className={`${styles.matchPlayers} ${
+                      playerQuota >= 12 ? styles.matchPlayersAlternative : ''
+                    }`}>
+                    {[...Array(playerQuota)].map((_, index) => (
+                      <li
+                        className={
+                          playerQuota === 12
+                            ? styles.playerIconAlternative12P
+                            : playerQuota === 14
+                            ? styles.playerIconAlternative14P
+                            : playerQuota === 16
+                            ? styles.playerIconAlternative16P
+                            : playerQuota === 18
+                            ? styles.playerIconAlternative12P
+                            : playerQuota === 22
+                            ? styles.playerIconAlternative16P
+                            : ''
+                        }
+                        key={`empty-${index}`}>
+                        <PlayerIcon />
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 {isRegistryStarted && (
-                  <ul className={styles.matchPlayers}>
+                  <ul
+                    className={`${styles.matchPlayers} ${
+                      playerQuota >= 12 ? styles.matchPlayersAlternative : ''
+                    }`}>
                     {registeredPlayers &&
                       registeredPlayers.length > 0 &&
                       registeredPlayers.map((player) => (
-                        <li key={player.id}>
+                        <li
+                          className={
+                            playerQuota === 12
+                              ? styles.playerIconAlternative12P
+                              : playerQuota === 14
+                              ? styles.playerIconAlternative14P
+                              : playerQuota === 16
+                              ? styles.playerIconAlternative16P
+                              : playerQuota === 18
+                              ? styles.playerIconAlternative12P
+                              : playerQuota === 22
+                              ? styles.playerIconAlternative16P
+                              : ''
+                          }
+                          key={player.id}>
                           <Link to={`/${player.id}`}>
                             <PlayerIcon image={player.image} />
                           </Link>
@@ -133,7 +169,21 @@ const SoccerField = ({
                       ))}
                     {remainingPlayersQuota > 0 &&
                       [...Array(remainingPlayersQuota)].map((_, index) => (
-                        <li key={`empty-${index}`}>
+                        <li
+                          className={
+                            playerQuota === 12
+                              ? styles.playerIconAlternative12P
+                              : playerQuota === 14
+                              ? styles.playerIconAlternative14P
+                              : playerQuota === 16
+                              ? styles.playerIconAlternative16P
+                              : playerQuota === 18
+                              ? styles.playerIconAlternative12P
+                              : playerQuota === 22
+                              ? styles.playerIconAlternative16P
+                              : ''
+                          }
+                          key={`empty-${index}`}>
                           <PlayerIcon />
                         </li>
                       ))}
