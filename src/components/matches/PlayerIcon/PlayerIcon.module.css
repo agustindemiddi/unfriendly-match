@@ -1,4 +1,4 @@
-.imageContainer {
+.playerIconContainer {
   width: 45px;
   height: 45px;
   border-radius: 45px;
@@ -6,7 +6,7 @@
   padding: 2px;
 }
 
-.image {
+.playerIcon {
   object-fit: cover;
   width: 100%;
   height: 100%;
@@ -14,10 +14,30 @@
   /* vertical-align: middle; */
 }
 
-.noPlayer {
+.noPlayerContainer {
   min-width: 45px;
   min-height: 45px;
   border-radius: 45px;
   background-color: transparent;
   border: 2px dashed white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.noPlayerContainerIsRegistryOpen:hover {
+  cursor: pointer;
+}
+
+.suscribe {
+  visibility: hidden;
+}
+
+.noPlayerContainerIsRegistryOpen:hover .suscribe {
+  visibility: visible;
+}
+
+.noPlayerContainerIsRegistryOpen:active .suscribe {
+  font-size: 1.2rem;
 }

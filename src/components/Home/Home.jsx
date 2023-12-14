@@ -25,14 +25,14 @@ const Home = ({ userMatches }) => {
       {lastMatch && <SoccerField match={lastMatch} />} */}
 
       {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES >>> */}
-      {/* <h2>Test Match:</h2>
-      {sortedUpcomingMatches && sortedUpcomingMatches[1] && (
-        <SoccerField match={sortedUpcomingMatches[1]} />
-      )} */}
+      <h2>Test Match:</h2>
+      {sortedUpcomingMatches && sortedUpcomingMatches[2] && (
+        <SoccerField match={sortedUpcomingMatches[2]} />
+      )}
       {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES <<< */}
 
       {/* temporary >>> */}
-      <h2>Upcoming Matches:</h2>
+      {/* <h2>Upcoming Matches:</h2>
       {sortedUpcomingMatches && sortedUpcomingMatches.length > 0 && (
         <ul>
           {sortedUpcomingMatches.map((match) => (
@@ -48,7 +48,7 @@ const Home = ({ userMatches }) => {
               <SoccerField key={match.id} match={match} />
             ))}
           </ul>
-        )}
+        )} */}
       {/* temporary <<< */}
     </Section>
   );

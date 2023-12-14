@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 
 import { getUserAuthCtx } from '../../context/AuthContext';
-import logo from '../../assets/logo/logo.svg';
+import logo from '/logo.svg';
 
 import styles from './MainNavigation.module.css';
 

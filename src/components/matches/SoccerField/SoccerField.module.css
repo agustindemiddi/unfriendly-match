@@ -24,16 +24,19 @@
 .soccerField {
   height: 450px;
 
-  background: rgba(0, 0, 0, 0.5)
-    url('../../../assets/images/isolated-soccer-field-ball-game-striped-green-background-competitive-sport-lawn-stadium-with-markings_265358-60.avif');
+  background: url('/soccer-field.avif') rgba(0, 0, 0, 0.5);
   background-blend-mode: overlay;
-  background-position: center;
+  background-position: center !important;
   background-repeat: no-repeat;
   background-size: cover;
   overflow: hidden;
   border-radius: 0.5rem;
 
   display: flex;
+}
+
+.soccerFieldIsRegistryOpen {
+  background: url('/soccer-field.avif') rgba(0, 0, 0, 0.25);
 }
 
 .soccerFieldContent {
@@ -66,8 +69,8 @@
   display: flex;
   justify-content: space-between;
   /* align-items: center; */
-  gap: 2px;
   flex-wrap: wrap;
+  gap: 2px;
 }
 
 .matchPlayersAlternative {
@@ -90,24 +93,27 @@
   flex: 1;
 
   display: flex;
-  /* justify-content: stretch; */
-  padding: 37px 45px 38px 43px;
+  padding: 57px 45px 58px 43px;
 }
 
 .team {
-  flex: 2;
+  flex: 3;
 
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+  /* gap: 5px; // .team */
+  gap: 5px;
 }
 
-.teamA {
-  /* align-items: end; */
+.teamB {
+  direction: rtl;
 }
 
-.result {
+.resultContainer {
   flex: 5;
 
   display: flex;
@@ -116,7 +122,7 @@
   font-size: 100px;
 }
 
-.resultTeamA {
+.resultTeam {
   flex-grow: 3;
   flex-basis: 0;
 
@@ -125,21 +131,16 @@
   margin-bottom: 5px;
 }
 
+.resultTeamB {
+  justify-content: flex-start;
+}
+
 .resultSeparator {
   flex-grow: 1;
   flex-basis: 0;
 
-  margin-bottom: 23.5px;
+  margin-bottom: 23.25px;
   /* .resultSeparator margin-bottom depends on .result font-size */
-}
-
-.resultTeamB {
-  flex-grow: 3;
-  flex-basis: 0;
-
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 5px;
 }
 
 .footer {

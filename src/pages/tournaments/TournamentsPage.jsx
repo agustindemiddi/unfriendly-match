@@ -9,7 +9,7 @@ import styles from './TournamentsPage.module.css';
 
 import db from '../../utils/firebase/firebaseConfig';
 
-import DUMMY_IMAGE2 from '../../assets/icons/cup/cup-svgrepo-com.svg';
+// import DUMMY_IMAGE2 from '../../assets/icons/cup/cup-svgrepo-com.svg';
 
 const TournamentsPage = () => {
   const [tournaments, setTournaments] = useState([]);
@@ -52,7 +52,8 @@ const TournamentsPage = () => {
         <Dashboard list={tournaments} url='/tournaments' />
       )}
       {/* <button className={styles.button}>Create new tournament</button> */}
-      <article className={styles.activeTournaments}>
+
+      {/* <article className={styles.activeTournaments}>
         <h2>Active Tournaments:</h2>
         <ul className={styles.tournamentsList}>
           <li className={styles.imageContainer}>
@@ -62,7 +63,8 @@ const TournamentsPage = () => {
             <img className={styles.image} src={DUMMY_IMAGE2} alt='' />
           </li>
         </ul>
-      </article>
+      </article> */}
+
       {finishedTournaments.length ? finishedTournamentsContent : null}
     </Section>
   );

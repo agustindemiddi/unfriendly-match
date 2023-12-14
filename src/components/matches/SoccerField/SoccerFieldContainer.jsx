@@ -7,11 +7,14 @@ import {
   getDocs,
   doc,
   getDoc,
+  updateDoc,
+  arrayUnion,
 } from 'firebase/firestore';
 
 import SoccerField from './SoccerField';
 
 import db from '../../../utils/firebase/firebaseConfig';
+import { getUserAuthCtx } from '../../../context/AuthContext';
 
 import createPlayerObjectFromFirestore from '../../../utils/firebase/firestore/createPlayerObjectFromFirestore';
 import getMatchStatus from '../../../utils/getMatchStatus';
@@ -19,6 +22,7 @@ import formatDate from '../../../utils/formatDate';
 
 const SoccerFieldContainer = ({
   match: {
+    id,
     tournament,
     creator,
     admins,
@@ -39,6 +43,7 @@ const SoccerFieldContainer = ({
   const [teamAPlayers, setTeamAPlayers] = useState([]);
   const [teamBPlayers, setTeamBPlayers] = useState([]);
   const [matchRegistryCountdown, setMatchRegistryCountdown] = useState('');
+  const { userPlayerProfile } = getUserAuthCtx();
 
   const {
     isActive,
@@ -156,6 +161,14 @@ const SoccerFieldContainer = ({
   const formattedRegistryDateTime = formatDate(registryDateTime);
   const formattedDateTime = formatDate(dateTime);
 
+  const handleSuscribeToMatch = async () => {
+    // const matchRef = doc(db, `tournaments/${tournament}/matches/${id}`);
+
+    // await updateDoc(matchRef, {
+    //   players: arrayUnion(userPlayerProfile.id),
+    // });
+  };
+
   return (
     <SoccerField
       matchProps={{
@@ -172,7 +185,7 @@ const SoccerFieldContainer = ({
         // teamB,
         result,
         // mvps,
-        isActive,
+        // isActive,
         isRegistryStarted,
         isRegistryEnded,
         remainingPlayersQuota,
@@ -185,6 +198,7 @@ const SoccerFieldContainer = ({
         formattedRegistryDateTime,
         formattedDateTime,
         matchRegistryCountdown,
+        handleSuscribeToMatch,
       }}
     />
   );
