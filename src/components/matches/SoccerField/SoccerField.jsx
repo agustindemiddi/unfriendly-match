@@ -206,10 +206,11 @@ const SoccerField = ({
                     </li>
                   ))}
               </ul>
-              <div
-                className={
-                  styles.result
-                }>{`${result.teamA} - ${result.teamB}`}</div>
+              <div className={styles.result}>
+                <div className={styles.resultTeamA}>{result.teamA}</div>
+                <div className={styles.resultSeparator}>-</div>
+                <div className={styles.resultTeamB}>{result.teamB}</div>
+              </div>
               <ul className={`${styles.team} ${styles.teamB}`}>
                 {teamBPlayers &&
                   teamBPlayers.length > 0 &&

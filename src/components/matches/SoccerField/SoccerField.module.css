@@ -7,7 +7,7 @@
 
 .header {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   margin: 0 0 1rem 1.7rem;
 }
@@ -42,13 +42,6 @@
   display: flex;
   flex-direction: column;
   padding: 37px 65px 38px 63px;
-}
-
-.soccerFieldContent-isFinishedMatch {
-  flex: 1;
-
-  display: flex;
-  justify-content: stretch;
 }
 
 .matchSubscriptionStatus {
@@ -93,27 +86,60 @@
   padding: 5px;
 }
 
+.soccerFieldContent-isFinishedMatch {
+  flex: 1;
+
+  display: flex;
+  /* justify-content: stretch; */
+  padding: 37px 45px 38px 43px;
+}
+
 .team {
   flex: 2;
 
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  padding: 4.5rem 0;
+  align-items: center;
 }
 
 .teamA {
-  align-items: end;
+  /* align-items: end; */
 }
 
 .result {
-  font-size: 120px;
-  flex: 6;
+  flex: 5;
 
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 1.68rem;
+  font-size: 100px;
+}
+
+.resultTeamA {
+  flex-grow: 3;
+  flex-basis: 0;
+
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 5px;
+}
+
+.resultSeparator {
+  flex-grow: 1;
+  flex-basis: 0;
+
+  margin-bottom: 23.5px;
+  /* .resultSeparator margin-bottom depends on .result font-size */
+}
+
+.resultTeamB {
+  flex-grow: 3;
+  flex-basis: 0;
+
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 5px;
 }
 
 .footer {
