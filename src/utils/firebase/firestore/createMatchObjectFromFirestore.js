@@ -1,19 +1,19 @@
-const createMatchObjectFromFirestore = (match) => ({
-  ...match.data(),
-  id: match.id,
-  creationDateTime: match.data().creationDateTime?.toDate(),
-  registryDateTime: match.data().registryDateTime?.toDate(),
-  dateTime: match.data().dateTime?.toDate(),
-  // tournament: match.data().tournament,
-  // creator: match.data().creator,
-  // admins: match.data().admins,
-  // address: match.data().address,
-  // playerQuota: match.data().playerQuota,
-  // players: match.data().players, // name playerList in future
-  // teamA: match.data().teamA,
-  // teamB: match.data().teamB,
-  // result: match.data().result,
-  // mvp: match.data().mvp,
+const createMatchObjectFromFirestore = (matchDoc) => ({
+  ...matchDoc.data(),
+  id: matchDoc.id,
+  creationDateTime: matchDoc.data().creationDateTime?.toDate(),
+  registryDateTime: matchDoc.data().registryDateTime?.toDate(),
+  dateTime: matchDoc.data().dateTime?.toDate(),
+  // tournament: matchDoc.data().tournament,
+  // creator: matchDoc.data().creator,
+  // admins: matchDoc.data().admins,
+  // address: matchDoc.data().address,
+  // playerQuota: matchDoc.data().playerQuota,
+  // players: matchDoc.data().players, // name playerList in future
+  // teamA: matchDoc.data().teamA,
+  // teamB: matchDoc.data().teamB,
+  // result: matchDoc.data().result,
+  // mvp: matchDoc.data().mvp,
 });
 
 export default createMatchObjectFromFirestore;

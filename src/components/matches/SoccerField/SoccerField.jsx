@@ -32,7 +32,8 @@ const SoccerField = ({
     formattedRegistryDateTime,
     formattedDateTime,
     matchRegistryCountdown,
-    handleSuscribeToMatch,
+    handleSubscribeToMatch,
+    isUserSubscribed,
   },
 }) => {
   return (
@@ -148,8 +149,9 @@ const SoccerField = ({
                         }
                         key={`empty-${index}`}>
                         <PlayerIcon
-                          onClick={handleSuscribeToMatch}
+                          onClick={handleSubscribeToMatch}
                           isRegistryOpen={isRegistryOpen}
+                          isUserSubscribed={isUserSubscribed}
                         />
                       </li>
                     ))}

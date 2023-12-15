@@ -30,14 +30,22 @@
   cursor: pointer;
 }
 
-.suscribe {
+.noPlayerContainerIsUserSubscribed:hover {
+  cursor: default;
+}
+
+.subscribe {
   visibility: hidden;
 }
 
-.noPlayerContainerIsRegistryOpen:hover .suscribe {
+.noPlayerContainerIsRegistryOpen:active .subscribe {
+  font-size: 1.2rem;
+}
+
+.noPlayerContainerIsRegistryOpen:hover .subscribe {
   visibility: visible;
 }
 
-.noPlayerContainerIsRegistryOpen:active .suscribe {
-  font-size: 1.2rem;
+.noPlayerContainerIsRegistryOpen:hover .isUserSubscribed {
+  visibility: hidden;
 }

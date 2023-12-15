@@ -19,10 +19,20 @@ import { getUserAuthCtx } from '../../../context/AuthContext';
 import createPlayerObjectFromFirestore from '../../../utils/firebase/firestore/createPlayerObjectFromFirestore';
 import getMatchStatus from '../../../utils/getMatchStatus';
 import formatDate from '../../../utils/formatDate';
+import createMatchObjectFromFirestore from '../../../utils/firebase/firestore/createMatchObjectFromFirestore';
 
-const SoccerFieldContainer = ({
-  match: {
-    id,
+const SoccerFieldContainer = ({ match }) => {
+  const [updatedMatch, setUpdatedMatch] = useState(match);
+  const [tournamentImage, setTournamentImage] = useState('');
+  const [registeredPlayers, setRegisteredPlayers] = useState([]);
+  const [teamAPlayers, setTeamAPlayers] = useState([]);
+  const [teamBPlayers, setTeamBPlayers] = useState([]);
+  const [matchRegistryCountdown, setMatchRegistryCountdown] = useState('');
+  const { userPlayerProfile } = getUserAuthCtx();
+  const userPlayerId = userPlayerProfile.id;
+
+  const {
+    id: matchId,
     tournament,
     creator,
     admins,
@@ -36,14 +46,7 @@ const SoccerFieldContainer = ({
     teamB,
     result,
     mvps,
-  },
-}) => {
-  const [tournamentImage, setTournamentImage] = useState('');
-  const [registeredPlayers, setRegisteredPlayers] = useState([]);
-  const [teamAPlayers, setTeamAPlayers] = useState([]);
-  const [teamBPlayers, setTeamBPlayers] = useState([]);
-  const [matchRegistryCountdown, setMatchRegistryCountdown] = useState('');
-  const { userPlayerProfile } = getUserAuthCtx();
+  } = updatedMatch;
 
   const {
     isActive,
@@ -52,6 +55,7 @@ const SoccerFieldContainer = ({
     remainingPlayersQuota,
     isRegistryOpen,
     mvpsString,
+    isUserSubscribed,
   } = getMatchStatus({
     result,
     dateTime,
@@ -61,6 +65,7 @@ const SoccerFieldContainer = ({
     teamAPlayers,
     teamBPlayers,
     mvps,
+    userPlayerId,
   });
 
   // get tournament image >>>
@@ -101,7 +106,7 @@ const SoccerFieldContainer = ({
 
       fetchData();
     }
-  }, [players]);
+  }, [players, updatedMatch.players]);
   // get match registered players (end) <<<
 
   // get match teams >>>
@@ -161,12 +166,37 @@ const SoccerFieldContainer = ({
   const formattedRegistryDateTime = formatDate(registryDateTime);
   const formattedDateTime = formatDate(dateTime);
 
-  const handleSuscribeToMatch = async () => {
-    // const matchRef = doc(db, `tournaments/${tournament}/matches/${id}`);
+  const handleSubscribeToMatch = async () => {
+    if (!isUserSubscribed) {
+      const updateMatch = async () => {
+        const matchRef = doc(
+          db,
+          `tournaments/${tournament}/matches/${matchId}`
+        );
 
-    // await updateDoc(matchRef, {
-    //   players: arrayUnion(userPlayerProfile.id),
-    // });
+        await updateDoc(matchRef, {
+          players: arrayUnion(userPlayerProfile.id),
+        });
+      };
+
+      updateMatch();
+
+      const fetchMatch = async () => {
+        const matchRef = doc(
+          db,
+          `tournaments/${tournament}/matches/${matchId}`
+        );
+        const matchSnap = await getDoc(matchRef);
+
+        if (matchSnap.exists()) {
+          setUpdatedMatch(createMatchObjectFromFirestore(matchSnap));
+        } else {
+          console.log('Match not found!');
+        }
+      };
+
+      fetchMatch();
+    }
   };
 
   return (
@@ -198,7 +228,8 @@ const SoccerFieldContainer = ({
         formattedRegistryDateTime,
         formattedDateTime,
         matchRegistryCountdown,
-        handleSuscribeToMatch,
+        handleSubscribeToMatch,
+        isUserSubscribed,
       }}
     />
   );

@@ -21,8 +21,8 @@ const HomePage = () => {
             const querySnapshot = await getDocs(
               collection(db, 'tournaments', tournamentId, 'matches')
             );
-            const matchesArray = querySnapshot.docs.map((match) =>
-              createMatchObjectFromFirestore(match)
+            const matchesArray = querySnapshot.docs.map((matchDoc) =>
+              createMatchObjectFromFirestore(matchDoc)
             );
             return matchesArray;
           })

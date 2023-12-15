@@ -1,6 +1,6 @@
 import styles from './PlayerIcon.module.css';
 
-const PlayerIcon = ({ image, onClick, isRegistryOpen }) => {
+const PlayerIcon = ({ image, onClick, isRegistryOpen, isUserSubscribed }) => {
   return (
     <>
       {image ? (
@@ -11,10 +11,17 @@ const PlayerIcon = ({ image, onClick, isRegistryOpen }) => {
         <div
           className={`${styles.noPlayerContainer} ${
             isRegistryOpen ? styles.noPlayerContainerIsRegistryOpen : ''
+          } ${
+            isUserSubscribed ? styles.noPlayerContainerIsUserSubscribed : ''
           }`}
           onClick={isRegistryOpen ? onClick : null}>
           {isRegistryOpen && (
-            <p className={isRegistryOpen ? styles.suscribe : null}>in!</p>
+            <p
+              className={`${isRegistryOpen ? styles.subscribe : null} ${
+                isUserSubscribed ? styles.isUserSubscribed : ''
+              }`}>
+              in!
+            </p>
           )}
         </div>
       )}

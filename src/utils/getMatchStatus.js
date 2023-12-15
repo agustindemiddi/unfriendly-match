@@ -7,15 +7,17 @@ const getMatchStatus = ({
   teamAPlayers,
   teamBPlayers,
   mvps,
+  userPlayerId,
 }) => {
   const currentTime = new Date();
 
+  // user is subscribed derived state >>>
+  let isUserSubscribed = players.some((playerId) => playerId === userPlayerId);
+  // user is subscribed derived state (end) <<<
+
   // match is active/finished derived state >>>
   // will check if needed
-  let isActive = true;
-  if (Object.keys(result).length !== 0 || currentTime >= dateTime) {
-    isActive = false;
-  }
+  let isActive = Object.keys(result).length !== 0 || currentTime >= dateTime;
   // match is active/finished derived state (end) <<<
 
   // match registry started derived state >>>
@@ -66,6 +68,7 @@ const getMatchStatus = ({
     remainingPlayersQuota,
     isRegistryOpen,
     mvpsString,
+    isUserSubscribed,
   };
 };
 
