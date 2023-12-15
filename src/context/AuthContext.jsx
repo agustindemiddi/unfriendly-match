@@ -64,9 +64,8 @@ export const AuthContextProvider = ({ children }) => {
         }
       }
     });
-    return () => {
-      unsubscribe();
-    };
+
+    return () => unsubscribe();
   }, []);
 
   const handleEmailSignIn = async (email, password, formModeIsSignIn) => {

@@ -291,6 +291,7 @@ const SoccerFieldContainer = ({ match }) => {
         handleSubscribeToMatch,
         isUserSubscribed,
         handleUnsubscribeToMatch,
+        userId,
       }}
     />
   );

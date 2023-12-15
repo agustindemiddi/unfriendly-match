@@ -35,6 +35,7 @@ const SoccerField = ({
     handleSubscribeToMatch,
     isUserSubscribed,
     handleUnsubscribeToMatch,
+    userId,
   },
 }) => {
   return (
@@ -134,14 +135,14 @@ const SoccerField = ({
                             isUserSubscribed={isUserSubscribed}
                             username={player.username}
                             playerId={player.id}
+                            userId={userId}
+                            isRegistryOpen={isRegistryOpen}
                           />
                         ) : (
-                          <Link to={`/${player.id}`}>
-                            <PlayerIcon
-                              image={player.image}
-                              username={player.username}
-                            />
-                          </Link>
+                          <PlayerIcon
+                            image={player.image}
+                            username={player.username}
+                          />
                         )}
                       </li>
                     ))}
@@ -182,12 +183,10 @@ const SoccerField = ({
                 teamAPlayers.length > 0 &&
                 teamAPlayers.map((player) => (
                   <li key={player.id}>
-                    <Link to={`/${player.id}`}>
-                      <PlayerIcon
-                        image={player.image}
-                        username={player.username}
-                      />
-                    </Link>
+                    <PlayerIcon
+                      image={player.image}
+                      username={player.username}
+                    />
                   </li>
                 ))}
             </ul>
@@ -205,12 +204,10 @@ const SoccerField = ({
                 teamBPlayers.length > 0 &&
                 teamBPlayers.map((player) => (
                   <li key={player.id}>
-                    <Link to={`/${player.id}`}>
-                      <PlayerIcon
-                        image={player.image}
-                        username={player.username}
-                      />
-                    </Link>
+                    <PlayerIcon
+                      image={player.image}
+                      username={player.username}
+                    />
                   </li>
                 ))}
             </ul>
