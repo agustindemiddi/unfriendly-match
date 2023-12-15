@@ -133,6 +133,7 @@ const SoccerField = ({
                             onClick={handleUnsubscribeToMatch}
                             isUserSubscribed={isUserSubscribed}
                             username={player.username}
+                            playerId={player.id}
                           />
                         ) : (
                           <Link to={`/${player.id}`}>

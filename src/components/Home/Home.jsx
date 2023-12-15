@@ -26,8 +26,8 @@ const Home = ({ userMatches }) => {
 
       {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES >>> */}
       {/* <h2>Test Match:</h2>
-      {sortedUpcomingMatches && sortedUpcomingMatches[2] && (
-        <SoccerField match={sortedUpcomingMatches[2]} />
+      {sortedUpcomingMatches && sortedUpcomingMatches[1] && (
+        <SoccerField match={sortedUpcomingMatches[1]} />
       )} */}
       {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES <<< */}
 

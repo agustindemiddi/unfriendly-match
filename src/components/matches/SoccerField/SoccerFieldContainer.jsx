@@ -150,12 +150,12 @@ const SoccerFieldContainer = ({ match }) => {
       const timeDifference = registryDateTime - currentDateTime;
 
       if (timeDifference > 0) {
-        const seconds = Math.floor((timeDifference / 1000) % 60);
+        // const seconds = Math.floor((timeDifference / 1000) % 60);
         const minutes = Math.floor((timeDifference / 1000 / 60) % 60);
         const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
         const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
-        setMatchRegistryCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+        setMatchRegistryCountdown(`${days}d ${hours}h ${minutes}m`);
       } else {
         setMatchRegistryCountdown('Match registry already started');
       }
@@ -203,8 +203,8 @@ const SoccerFieldContainer = ({ match }) => {
     }
   };
 
-  const handleUnsubscribeToMatch = async () => {
-    if (isRegistryOpen && isUserSubscribed) {
+  const handleUnsubscribeToMatch = async (playerId) => {
+    if (playerId === userId && isRegistryOpen && isUserSubscribed) {
       const updateMatch = async () => {
         const matchRef = doc(
           db,

@@ -6,6 +6,7 @@ const PlayerIcon = ({
   isRegistryOpen,
   isUserSubscribed,
   username,
+  playerId,
 }) => {
   // evaluar si necesito que los onClicks sean reusables o si aplico directo acá (importando) los subscribe y unsubscribe handlers en lugar de traerlos x props
 
@@ -18,7 +19,7 @@ const PlayerIcon = ({
           className={`${styles.playerIconContainer} ${
             isUserSubscribed ? styles.playerIconContainerIsUserSubscribed : ''
           }`}
-          onClick={onClick}>
+          onClick={() => onClick(playerId)}>
           <img className={styles.playerIcon} src={image} alt='Player image' />
           {username ? <span className={styles.hidden}>{username}</span> : null}
         </div>
