@@ -131,6 +131,7 @@ const SoccerField = ({
                           <PlayerIcon
                             image={player.image}
                             onClick={handleUnsubscribeToMatch}
+                            isUserSubscribed={isUserSubscribed}
                           />
                         ) : (
                           <Link to={`/${player.id}`}>

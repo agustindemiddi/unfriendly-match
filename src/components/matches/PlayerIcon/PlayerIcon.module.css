@@ -6,6 +6,11 @@
   padding: 2px;
 }
 
+.playerIconContainerIsUserSubscribed:hover {
+  /* to point out the action of unsuscribeFromMatch() */
+  cursor: pointer;
+}
+
 .playerIcon {
   object-fit: cover;
   width: 100%;
@@ -27,25 +32,28 @@
 }
 
 .noPlayerContainerIsRegistryOpen:hover {
+  /* to point out the action of suscribeToMatch() */
   cursor: pointer;
 }
 
 .noPlayerContainerIsUserSubscribed:hover {
+  /* if user is subscribed, overwrites .noPlayerContainerIsRegistryOpen:hover */
   cursor: default;
 }
 
-.subscribe {
+.noPlayerContainer p {
   visibility: hidden;
 }
 
-.noPlayerContainerIsRegistryOpen:active .subscribe {
-  font-size: 1.2rem;
-}
-
-.noPlayerContainerIsRegistryOpen:hover .subscribe {
+.noPlayerContainerIsRegistryOpen:hover p {
   visibility: visible;
 }
 
-.noPlayerContainerIsRegistryOpen:hover .isUserSubscribed {
+.noPlayerContainerIsRegistryOpen:active p {
+  font-size: 1.2rem;
+}
+
+.noPlayerContainer:hover .isUserSubscribed {
+  /* if user is subscribed, overwrites .noPlayerContainerIsRegistryOpen:hover p */
   visibility: hidden;
 }
