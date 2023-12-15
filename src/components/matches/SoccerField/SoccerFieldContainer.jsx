@@ -203,7 +203,7 @@ const SoccerFieldContainer = ({ match }) => {
     }
   };
 
-  const handleUnsubscribeToMatch = async (playerId) => {
+  const handleUnsubscribeFromMatch = async (playerId) => {
     if (playerId === userId && isRegistryOpen && isUserSubscribed) {
       const updateMatch = async () => {
         const matchRef = doc(
@@ -290,7 +290,7 @@ const SoccerFieldContainer = ({ match }) => {
         matchRegistryCountdown,
         handleSubscribeToMatch,
         isUserSubscribed,
-        handleUnsubscribeToMatch,
+        handleUnsubscribeFromMatch,
         userId,
       }}
     />

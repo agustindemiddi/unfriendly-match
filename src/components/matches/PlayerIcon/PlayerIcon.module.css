@@ -8,11 +8,6 @@
   position: relative;
 }
 
-/* to point out the action of unsuscribeFromMatch()
-.playerIconContainerIsUserSubscribed:hover {
-  cursor: pointer;
-} */
-
 .playerIcon {
   object-fit: cover;
   width: 100%;
@@ -78,7 +73,7 @@
   display: block;
 }
 
-.delete {
+.unsubscribe {
   width: 20px;
   height: 20px;
   border-radius: 20px;
@@ -95,11 +90,11 @@
 }
 
 /* to point out the action of unsuscribeFromMatch() */
-.deleteIsUserSubscribed:hover {
+.unsubscribeIsUserSubscribed:hover {
   cursor: pointer;
 }
 
-/* prevent the display of .hidden when hovering over .delete */
-.delete:hover ~ a > .hidden {
+/* prevent the display of .hidden when hovering over .unsubscribe */
+.unsubscribe:hover ~ a > .hidden {
   display: none;
 }

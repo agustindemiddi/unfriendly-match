@@ -34,7 +34,7 @@ const SoccerField = ({
     matchRegistryCountdown,
     handleSubscribeToMatch,
     isUserSubscribed,
-    handleUnsubscribeToMatch,
+    handleUnsubscribeFromMatch,
     userId,
   },
 }) => {
@@ -131,7 +131,7 @@ const SoccerField = ({
                         {isRegistryOpen ? (
                           <PlayerIcon
                             image={player.image}
-                            onClick={handleUnsubscribeToMatch}
+                            onClick={handleUnsubscribeFromMatch}
                             isUserSubscribed={isUserSubscribed}
                             username={player.username}
                             playerId={player.id}
