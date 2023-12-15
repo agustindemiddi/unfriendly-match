@@ -9,6 +9,7 @@ import {
   getDoc,
   updateDoc,
   arrayUnion,
+  arrayRemove,
 } from 'firebase/firestore';
 
 import SoccerField from './SoccerField';
@@ -33,7 +34,7 @@ const SoccerFieldContainer = ({ match }) => {
 
   const {
     id: matchId,
-    tournament,
+    tournament: tournamentId,
     creator,
     admins,
     creationDateTime,
@@ -57,10 +58,10 @@ const SoccerFieldContainer = ({ match }) => {
     isUserSubscribed,
   } = getMatchStatus({
     result,
-    dateTime,
     registryDateTime,
-    players,
+    dateTime,
     playerQuota,
+    players,
     teamAPlayers,
     teamBPlayers,
     mvps,
@@ -69,10 +70,10 @@ const SoccerFieldContainer = ({ match }) => {
 
   // get tournament image >>>
   useEffect(() => {
-    if (tournament) {
+    if (tournamentId) {
       // 'if' statement maybe not needed > check
       const fetchData = async () => {
-        const docRef = doc(db, `tournaments/${tournament}`);
+        const docRef = doc(db, `tournaments/${tournamentId}`);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -84,28 +85,30 @@ const SoccerFieldContainer = ({ match }) => {
 
       fetchData();
     }
-  }, [tournament]);
+  }, [tournamentId]);
   // get tournament image (end) <<<
 
   // get match registered players >>>
   useEffect(() => {
     if (players && players.length > 0) {
-      const fetchData = async () => {
+      const fetchMatchPlayers = async () => {
         const q = query(
           collection(db, 'players'),
           where(documentId(), 'in', players)
         );
         const querySnapshot = await getDocs(q);
 
-        const registeredPlayersList = querySnapshot.docs.map((player) =>
-          createPlayerObjectFromFirestore(player)
+        const registeredPlayersList = querySnapshot.docs.map((playerDoc) =>
+          createPlayerObjectFromFirestore(playerDoc)
         );
         setRegisteredPlayers(registeredPlayersList);
       };
 
-      fetchData();
+      fetchMatchPlayers();
+    } else {
+      setRegisteredPlayers([]);
     }
-  }, [players, updatedMatch.players]);
+  }, [players]);
   // get match registered players (end) <<<
 
   // get match teams >>>
@@ -166,11 +169,11 @@ const SoccerFieldContainer = ({ match }) => {
   const formattedDateTime = formatDate(dateTime);
 
   const handleSubscribeToMatch = async () => {
-    if (!isUserSubscribed) {
+    if (isRegistryOpen && !isUserSubscribed) {
       const updateMatch = async () => {
         const matchRef = doc(
           db,
-          `tournaments/${tournament}/matches/${matchId}`
+          `tournaments/${tournamentId}/matches/${matchId}`
         );
 
         await updateDoc(matchRef, {
@@ -183,7 +186,7 @@ const SoccerFieldContainer = ({ match }) => {
       const fetchMatch = async () => {
         const matchRef = doc(
           db,
-          `tournaments/${tournament}/matches/${matchId}`
+          `tournaments/${tournamentId}/matches/${matchId}`
         );
         const matchSnap = await getDoc(matchRef);
 
@@ -198,10 +201,48 @@ const SoccerFieldContainer = ({ match }) => {
     }
   };
 
+  const handleUnsubscribeToMatch = async () => {
+    if (isRegistryOpen && isUserSubscribed) {
+      console.log('is fuckin runnin');
+      const updateMatch = async () => {
+        const matchRef = doc(
+          db,
+          `tournaments/${tournamentId}/matches/${matchId}`
+        );
+
+        await updateDoc(matchRef, {
+          players: arrayRemove(userPlayerProfile.id),
+        });
+      };
+
+      updateMatch();
+
+      const fetchMatch = async () => {
+        const matchRef = doc(
+          db,
+          `tournaments/${tournamentId}/matches/${matchId}`
+        );
+        const matchSnap = await getDoc(matchRef);
+
+        if (matchSnap.exists()) {
+          setUpdatedMatch(createMatchObjectFromFirestore(matchSnap));
+          console.log(
+            'visualizar partido supuestamente actualizado justo despues de borrar de db y fetchear de nuevo el partido:',
+            createMatchObjectFromFirestore(matchSnap)
+          );
+        } else {
+          console.log('Match not found!');
+        }
+      };
+
+      fetchMatch();
+    }
+  };
+
   return (
     <SoccerField
       matchProps={{
-        tournament,
+        tournamentId,
         // creator,
         // admins,
         // creationDateTime,
@@ -229,6 +270,7 @@ const SoccerFieldContainer = ({ match }) => {
         matchRegistryCountdown,
         handleSubscribeToMatch,
         isUserSubscribed,
+        handleUnsubscribeToMatch,
       }}
     />
   );

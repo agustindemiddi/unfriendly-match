@@ -6,7 +6,7 @@ import styles from './SoccerField.module.css';
 
 const SoccerField = ({
   matchProps: {
-    tournament,
+    tournamentId,
     // creator,
     // admins,
     // creationDateTime,
@@ -34,12 +34,13 @@ const SoccerField = ({
     matchRegistryCountdown,
     handleSubscribeToMatch,
     isUserSubscribed,
+    handleUnsubscribeToMatch,
   },
 }) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <Link to={`/tournaments/${tournament}`} style={{ fontSize: '0' }}>
+        <Link to={`/tournaments/${tournamentId}`} style={{ fontSize: '0' }}>
           <img className={styles.tournamentIcon} src={tournamentImage} />
         </Link>
         <div className={styles.dateTimeLocation}>
@@ -126,9 +127,16 @@ const SoccerField = ({
                             : ''
                         }
                         key={player.id}>
-                        <Link to={`/${player.id}`}>
-                          <PlayerIcon image={player.image} />
-                        </Link>
+                        {isRegistryOpen ? (
+                          <PlayerIcon
+                            image={player.image}
+                            onClick={handleUnsubscribeToMatch}
+                          />
+                        ) : (
+                          <Link to={`/${player.id}`}>
+                            <PlayerIcon image={player.image} />
+                          </Link>
+                        )}
                       </li>
                     ))}
                   {remainingPlayersQuota > 0 &&

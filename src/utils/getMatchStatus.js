@@ -1,9 +1,9 @@
 const getMatchStatus = ({
   result,
-  dateTime,
   registryDateTime,
-  players,
+  dateTime,
   playerQuota,
+  players,
   teamAPlayers,
   teamBPlayers,
   mvps,
@@ -22,7 +22,10 @@ const getMatchStatus = ({
 
   // match subscription is open/closed derived state:
   let isRegistryOpen =
-    isRegistryStarted && !isRegistryEnded && remainingPlayersQuota >= 1;
+    isRegistryStarted &&
+    !isRegistryEnded &&
+    remainingPlayersQuota >= 1 &&
+    Object.keys(result).length === 0;
 
   // mvps derived state:
   const allPlayers = [...teamAPlayers, ...teamBPlayers];
