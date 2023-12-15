@@ -49,7 +49,6 @@ const SoccerFieldContainer = ({ match }) => {
   } = updatedMatch;
 
   const {
-    isActive,
     isRegistryStarted,
     isRegistryEnded,
     remainingPlayersQuota,

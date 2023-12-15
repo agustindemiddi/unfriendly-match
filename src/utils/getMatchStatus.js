@@ -11,47 +11,22 @@ const getMatchStatus = ({
 }) => {
   const currentTime = new Date();
 
-  // user is subscribed derived state >>>
-  let isUserSubscribed = players.some((playerId) => playerId === userPlayerId);
-  // user is subscribed derived state (end) <<<
+  // match subscription started derived state:
+  let isRegistryStarted = currentTime >= registryDateTime;
 
-  // match is active/finished derived state >>>
-  // will check if needed
-  let isActive = Object.keys(result).length !== 0 || currentTime >= dateTime;
-  // match is active/finished derived state (end) <<<
+  // match subscription ended derived state:
+  let isRegistryEnded = currentTime >= dateTime;
 
-  // match registry started derived state >>>
-  // will check if needed
-  let isRegistryStarted = false;
-  if (currentTime >= registryDateTime) {
-    isRegistryStarted = true;
-  }
-  // match registry started derived state (end) <<<
-
-  // match registry ended derived state >>>
-  // will check if needed
-  let isRegistryEnded = false;
-  if (currentTime >= dateTime) {
-    isRegistryEnded = true;
-  }
-  // match registry ended derived state (end) <<<
-
-  // remaining players quota derived state >>>
+  // remaining players quota derived state:
   let remainingPlayersQuota = playerQuota - players.length;
-  // remaining players quota derived state (end) <<<
 
-  // match registry is open/closed derived state >>>
-  // will check if needed
-  let isRegistryOpen = false;
-  if (isRegistryStarted && !isRegistryEnded && remainingPlayersQuota >= 1) {
-    isRegistryOpen = true;
-  }
-  // match registry is open/closed derived state (end) <<<
+  // match subscription is open/closed derived state:
+  let isRegistryOpen =
+    isRegistryStarted && !isRegistryEnded && remainingPlayersQuota >= 1;
 
-  // mvps derived state >>>
+  // mvps derived state:
   const allPlayers = [...teamAPlayers, ...teamBPlayers];
   const mvpPlayers = allPlayers.filter((player) => mvps.includes(player.id));
-
   let mvpsString;
   if (mvpPlayers.length === 1) {
     mvpsString = `MVP: ${mvpPlayers[0].username}`;
@@ -59,10 +34,11 @@ const getMatchStatus = ({
     const mvpPlayerNames = mvpPlayers.map((player) => player.username);
     mvpsString = `MVPs: ${mvpPlayerNames.join(', ')}`;
   }
-  // mvps derived state (end) <<<
+
+  // user is subscribed to match derived state:
+  let isUserSubscribed = players.some((playerId) => playerId === userPlayerId);
 
   return {
-    isActive,
     isRegistryStarted,
     isRegistryEnded,
     remainingPlayersQuota,
