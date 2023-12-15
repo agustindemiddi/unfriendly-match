@@ -4,6 +4,8 @@
   border-radius: 45px;
   background-color: white;
   padding: 2px;
+
+  position: relative;
 }
 
 .playerIconContainerIsUserSubscribed:hover {
@@ -56,4 +58,22 @@
 .noPlayerContainer:hover .isUserSubscribed {
   /* if user is subscribed, overwrites .noPlayerContainerIsRegistryOpen:hover p */
   visibility: hidden;
+}
+
+.hidden {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 90px;
+  background-color: rgba(0, 100, 25, 0.2);
+  padding: 5px 3px;
+  margin-top: -5px;
+  border-radius: .25rem;
+}
+
+.playerIconContainer:hover .hidden {
+  display: block;
 }

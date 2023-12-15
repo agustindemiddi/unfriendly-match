@@ -29,8 +29,9 @@ const SoccerFieldContainer = ({ match }) => {
   const [teamAPlayers, setTeamAPlayers] = useState([]);
   const [teamBPlayers, setTeamBPlayers] = useState([]);
   const [matchRegistryCountdown, setMatchRegistryCountdown] = useState('');
-  const { userPlayerProfile } = getUserAuthCtx();
-  const userPlayerId = userPlayerProfile.id;
+  const {
+    userPlayerProfile: { id: userId },
+  } = getUserAuthCtx();
 
   const {
     id: matchId,
@@ -65,7 +66,7 @@ const SoccerFieldContainer = ({ match }) => {
     teamAPlayers,
     teamBPlayers,
     mvps,
-    userPlayerId,
+    userId,
   });
 
   // get tournament image >>>
@@ -177,7 +178,7 @@ const SoccerFieldContainer = ({ match }) => {
         );
 
         await updateDoc(matchRef, {
-          players: arrayUnion(userPlayerProfile.id),
+          players: arrayUnion(userId),
         });
       };
 
@@ -203,7 +204,6 @@ const SoccerFieldContainer = ({ match }) => {
 
   const handleUnsubscribeToMatch = async () => {
     if (isRegistryOpen && isUserSubscribed) {
-      console.log('is fuckin runnin');
       const updateMatch = async () => {
         const matchRef = doc(
           db,
@@ -211,7 +211,7 @@ const SoccerFieldContainer = ({ match }) => {
         );
 
         await updateDoc(matchRef, {
-          players: arrayRemove(userPlayerProfile.id),
+          players: arrayRemove(userId),
         });
       };
 
@@ -226,10 +226,6 @@ const SoccerFieldContainer = ({ match }) => {
 
         if (matchSnap.exists()) {
           setUpdatedMatch(createMatchObjectFromFirestore(matchSnap));
-          console.log(
-            'visualizar partido supuestamente actualizado justo despues de borrar de db y fetchear de nuevo el partido:',
-            createMatchObjectFromFirestore(matchSnap)
-          );
         } else {
           console.log('Match not found!');
         }

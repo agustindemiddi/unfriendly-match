@@ -7,7 +7,7 @@ const getMatchStatus = ({
   teamAPlayers,
   teamBPlayers,
   mvps,
-  userPlayerId,
+  userId,
 }) => {
   const currentTime = new Date();
 
@@ -39,7 +39,7 @@ const getMatchStatus = ({
   }
 
   // user is subscribed to match derived state:
-  let isUserSubscribed = players.some((playerId) => playerId === userPlayerId);
+  let isUserSubscribed = players.some((playerId) => playerId === userId);
 
   return {
     isRegistryStarted,

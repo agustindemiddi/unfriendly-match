@@ -132,10 +132,14 @@ const SoccerField = ({
                             image={player.image}
                             onClick={handleUnsubscribeToMatch}
                             isUserSubscribed={isUserSubscribed}
+                            username={player.username}
                           />
                         ) : (
                           <Link to={`/${player.id}`}>
-                            <PlayerIcon image={player.image} />
+                            <PlayerIcon
+                              image={player.image}
+                              username={player.username}
+                            />
                           </Link>
                         )}
                       </li>
@@ -178,7 +182,10 @@ const SoccerField = ({
                 teamAPlayers.map((player) => (
                   <li key={player.id}>
                     <Link to={`/${player.id}`}>
-                      <PlayerIcon image={player.image} />
+                      <PlayerIcon
+                        image={player.image}
+                        username={player.username}
+                      />
                     </Link>
                   </li>
                 ))}
@@ -198,7 +205,10 @@ const SoccerField = ({
                 teamBPlayers.map((player) => (
                   <li key={player.id}>
                     <Link to={`/${player.id}`}>
-                      <PlayerIcon image={player.image} />
+                      <PlayerIcon
+                        image={player.image}
+                        username={player.username}
+                      />
                     </Link>
                   </li>
                 ))}
