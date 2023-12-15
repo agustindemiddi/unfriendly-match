@@ -31,7 +31,7 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsuscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
 
@@ -65,7 +65,7 @@ export const AuthContextProvider = ({ children }) => {
       }
     });
     return () => {
-      unsuscribe();
+      unsubscribe();
     };
   }, []);
 

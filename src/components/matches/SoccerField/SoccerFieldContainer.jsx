@@ -10,6 +10,7 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  onSnapshot,
 } from 'firebase/firestore';
 
 import SoccerField from './SoccerField';
@@ -184,21 +185,21 @@ const SoccerFieldContainer = ({ match }) => {
 
       updateMatch();
 
-      const fetchMatch = async () => {
-        const matchRef = doc(
-          db,
-          `tournaments/${tournamentId}/matches/${matchId}`
-        );
-        const matchSnap = await getDoc(matchRef);
+      // const fetchMatch = async () => {
+      //   const matchRef = doc(
+      //     db,
+      //     `tournaments/${tournamentId}/matches/${matchId}`
+      //   );
+      //   const matchSnap = await getDoc(matchRef);
 
-        if (matchSnap.exists()) {
-          setUpdatedMatch(createMatchObjectFromFirestore(matchSnap));
-        } else {
-          console.log('Match not found!');
-        }
-      };
+      //   if (matchSnap.exists()) {
+      //     setUpdatedMatch(createMatchObjectFromFirestore(matchSnap));
+      //   } else {
+      //     console.log('Match not found!');
+      //   }
+      // };
 
-      fetchMatch();
+      // fetchMatch();
     }
   };
 
@@ -217,23 +218,46 @@ const SoccerFieldContainer = ({ match }) => {
 
       updateMatch();
 
-      const fetchMatch = async () => {
-        const matchRef = doc(
-          db,
-          `tournaments/${tournamentId}/matches/${matchId}`
-        );
-        const matchSnap = await getDoc(matchRef);
+      // const fetchMatch = async () => {
+      //   const matchRef = doc(
+      //     db,
+      //     `tournaments/${tournamentId}/matches/${matchId}`
+      //   );
+      //   const matchSnap = await getDoc(matchRef);
 
-        if (matchSnap.exists()) {
-          setUpdatedMatch(createMatchObjectFromFirestore(matchSnap));
-        } else {
-          console.log('Match not found!');
-        }
-      };
+      //   if (matchSnap.exists()) {
+      //     setUpdatedMatch(createMatchObjectFromFirestore(matchSnap));
+      //   } else {
+      //     console.log('Match not found!');
+      //   }
+      // };
 
-      fetchMatch();
+      // fetchMatch();
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      doc(db, `tournaments/${tournamentId}/matches/${matchId}`),
+      { includeMetadataChanges: true },
+      (doc) => {
+        // Check for changes in the "players" property
+        const previousPlayers = players;
+        const currentPlayers = doc.data()?.players;
+
+        if (previousPlayers !== currentPlayers) {
+          // Do something with the changed players data
+          setUpdatedMatch((prevState) => ({
+            ...prevState,
+            players: currentPlayers,
+          }));
+        }
+      }
+    );
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <SoccerField
