@@ -14,12 +14,7 @@ const SoccerField = ({
     dateTime,
     address,
     playerQuota,
-    // players,
-    // teamA,
-    // teamB,
     result,
-    // mvps,
-    // isActive,
     isRegistryStarted,
     isRegistryEnded,
     remainingPlayersQuota,
@@ -27,17 +22,16 @@ const SoccerField = ({
     mvpsString,
     tournamentImage,
     registeredPlayers,
-    teamAPlayers,
-    teamBPlayers,
+    teams,
     formattedRegistryDateTime,
     formattedDateTime,
     matchRegistryCountdown,
-    handleSubscribeToMatch,
     isUserSubscribed,
-    handleUnsubscribeFromMatch,
-    userId,
+    matchId,
   },
 }) => {
+  const { teamA, teamB } = teams;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -60,7 +54,12 @@ const SoccerField = ({
               {!isRegistryStarted && (
                 <>
                   <p>Subscription to this match is not open yet</p>
-                  <p>Subscription starts: {formattedRegistryDateTime}</p>
+                  <p>
+                    Subscription starts:{' '}
+                    <time dateTime={registryDateTime.toISOString()}>
+                      {formattedRegistryDateTime}
+                    </time>
+                  </p>
                   <p>Countdown: {matchRegistryCountdown}</p>
                 </>
               )}
@@ -131,12 +130,12 @@ const SoccerField = ({
                         {isRegistryOpen ? (
                           <PlayerIcon
                             image={player.image}
-                            onClick={handleUnsubscribeFromMatch}
                             isUserSubscribed={isUserSubscribed}
                             username={player.username}
                             playerId={player.id}
-                            userId={userId}
                             isRegistryOpen={isRegistryOpen}
+                            tournamentId={tournamentId}
+                            matchId={matchId}
                           />
                         ) : (
                           <PlayerIcon
@@ -164,9 +163,10 @@ const SoccerField = ({
                         }
                         key={`empty-${index}`}>
                         <PlayerIcon
-                          onClick={handleSubscribeToMatch}
                           isRegistryOpen={isRegistryOpen}
                           isUserSubscribed={isUserSubscribed}
+                          tournamentId={tournamentId}
+                          matchId={matchId}
                         />
                       </li>
                     ))}
@@ -179,9 +179,9 @@ const SoccerField = ({
         {Object.keys(result).length > 0 && (
           <div className={styles['soccerFieldContent-isFinishedMatch']}>
             <ul className={styles.team}>
-              {teamAPlayers &&
-                teamAPlayers.length > 0 &&
-                teamAPlayers.map((player) => (
+              {teamA &&
+                teamA.length > 0 &&
+                teamA.map((player) => (
                   <li key={player.id}>
                     <PlayerIcon
                       image={player.image}
@@ -200,9 +200,9 @@ const SoccerField = ({
             </div>
 
             <ul className={`${styles.team} ${styles.teamB}`}>
-              {teamBPlayers &&
-                teamBPlayers.length > 0 &&
-                teamBPlayers.map((player) => (
+              {teamB &&
+                teamB.length > 0 &&
+                teamB.map((player) => (
                   <li key={player.id}>
                     <PlayerIcon
                       image={player.image}

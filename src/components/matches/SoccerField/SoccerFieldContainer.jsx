@@ -1,34 +1,25 @@
 import { useState, useEffect } from 'react';
-import {
-  query,
-  collection,
-  where,
-  documentId,
-  getDocs,
-  doc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-  onSnapshot,
-} from 'firebase/firestore';
 
 import SoccerField from './SoccerField';
 
-import db from '../../../utils/firebase/firebaseConfig';
 import { getUserAuthCtx } from '../../../context/AuthContext';
 
-import createPlayerObjectFromFirestore from '../../../utils/firebase/firestore/createPlayerObjectFromFirestore';
+import {
+  subscribeToMatchChanges,
+  getTournamentImage,
+  getMatchTeams,
+  getMatchPlayers,
+} from '../../../utils/firebase/firestore';
 import getMatchStatus from '../../../utils/getMatchStatus';
 import formatDate from '../../../utils/formatDate';
-import createMatchObjectFromFirestore from '../../../utils/firebase/firestore/createMatchObjectFromFirestore';
+
+// import calculateCountdown from '../../../utils/calculateCountdownToMatch';
 
 const SoccerFieldContainer = ({ match }) => {
   const [updatedMatch, setUpdatedMatch] = useState(match);
   const [tournamentImage, setTournamentImage] = useState('');
   const [registeredPlayers, setRegisteredPlayers] = useState([]);
-  const [teamAPlayers, setTeamAPlayers] = useState([]);
-  const [teamBPlayers, setTeamBPlayers] = useState([]);
+  const [teams, setTeams] = useState({ teamA: [], teamB: [] });
   const [matchRegistryCountdown, setMatchRegistryCountdown] = useState('');
   const {
     userPlayerProfile: { id: userId },
@@ -64,200 +55,66 @@ const SoccerFieldContainer = ({ match }) => {
     dateTime,
     playerQuota,
     players,
-    teamAPlayers,
-    teamBPlayers,
+    teams,
     mvps,
     userId,
   });
 
-  // get tournament image >>>
+  // add listener to matchDoc for players property changes:
   useEffect(() => {
-    if (tournamentId) {
-      // 'if' statement maybe not needed > check
-      const fetchData = async () => {
-        const docRef = doc(db, `tournaments/${tournamentId}`);
-        const docSnap = await getDoc(docRef);
+    const unsubscribe = subscribeToMatchChanges(
+      tournamentId,
+      matchId,
+      players,
+      setUpdatedMatch
+    );
+    return () => unsubscribe();
+  }, [tournamentId, matchId]);
 
-        if (docSnap.exists()) {
-          setTournamentImage(docSnap.data().image);
-        } else {
-          console.log('No such document!');
-        }
-      };
-
-      fetchData();
-    }
+  // get tournament image:
+  useEffect(() => {
+    if (tournamentId) getTournamentImage(tournamentId, setTournamentImage);
   }, [tournamentId]);
-  // get tournament image (end) <<<
 
-  // get match registered players >>>
+  // get match players:
   useEffect(() => {
-    if (players && players.length > 0) {
-      const fetchMatchPlayers = async () => {
-        const q = query(
-          collection(db, 'players'),
-          where(documentId(), 'in', players)
-        );
-        const querySnapshot = await getDocs(q);
-
-        const registeredPlayersList = querySnapshot.docs.map((playerDoc) =>
-          createPlayerObjectFromFirestore(playerDoc)
-        );
-        setRegisteredPlayers(registeredPlayersList);
-      };
-
-      fetchMatchPlayers();
-    } else {
-      setRegisteredPlayers([]);
-    }
+    if (players && players.length > 0)
+      getMatchPlayers(players, setRegisteredPlayers);
   }, [players]);
-  // get match registered players (end) <<<
 
-  // get match teams >>>
+  // get match teams:
   useEffect(() => {
-    if (teamA && teamA.length > 0 && teamB && teamB.length > 0) {
-      const fetchData = async () => {
-        const qA = query(
-          collection(db, 'players'),
-          where(documentId(), 'in', teamA)
-        );
-        const querySnapshotA = await getDocs(qA);
-        const teamAArray = querySnapshotA.docs.map((player) =>
-          createPlayerObjectFromFirestore(player)
-        );
-        setTeamAPlayers(teamAArray);
-
-        const qB = query(
-          collection(db, 'players'),
-          where(documentId(), 'in', teamB)
-        );
-        const querySnapshotB = await getDocs(qB);
-        const teamBArray = querySnapshotB.docs.map((player) =>
-          createPlayerObjectFromFirestore(player)
-        );
-        setTeamBPlayers(teamBArray);
-      };
-
-      fetchData();
-    }
+    getMatchTeams(teamA, teamB, setTeams);
   }, [teamA, teamB]);
-  // get match teams (end) <<<
-
-  // set countdown to match registry date time >>>
-  useEffect(() => {
-    const calculateCountdown = () => {
-      const currentDateTime = new Date();
-      const timeDifference = registryDateTime - currentDateTime;
-
-      if (timeDifference > 0) {
-        // const seconds = Math.floor((timeDifference / 1000) % 60);
-        const minutes = Math.floor((timeDifference / 1000 / 60) % 60);
-        const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-        setMatchRegistryCountdown(`${days}d ${hours}h ${minutes}m`);
-      } else {
-        setMatchRegistryCountdown('Match registry already started');
-      }
-    };
-
-    const intervalId = setInterval(calculateCountdown, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [registryDateTime]);
-  // set countdown to match registry date time <<<
 
   const formattedRegistryDateTime = formatDate(registryDateTime);
   const formattedDateTime = formatDate(dateTime);
 
-  const handleSubscribeToMatch = async () => {
-    if (isRegistryOpen && !isUserSubscribed) {
-      const updateMatch = async () => {
-        const matchRef = doc(
-          db,
-          `tournaments/${tournamentId}/matches/${matchId}`
-        );
+  // // set countdown to match registry date time >>>
+  // useEffect(() => {
+  //   const calculateCountdown = () => {
+  //     const currentDateTime = new Date();
+  //     const timeDifference = registryDateTime - currentDateTime;
 
-        await updateDoc(matchRef, {
-          players: arrayUnion(userId),
-        });
-      };
+  //     if (timeDifference > 0) {
+  //       const seconds = Math.floor((timeDifference / 1000) % 60);
+  //       const minutes = Math.floor((timeDifference / 1000 / 60) % 60);
+  //       const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
+  //       const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
-      updateMatch();
+  //       setMatchRegistryCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+  //     } else {
+  //       setMatchRegistryCountdown('Match registry already started');
+  //     }
+  //   };
 
-      // const fetchMatch = async () => {
-      //   const matchRef = doc(
-      //     db,
-      //     `tournaments/${tournamentId}/matches/${matchId}`
-      //   );
-      //   const matchSnap = await getDoc(matchRef);
+  //   // calculateCountdown(registryDateTime, setMatchRegistryCountdown);
 
-      //   if (matchSnap.exists()) {
-      //     setUpdatedMatch(createMatchObjectFromFirestore(matchSnap));
-      //   } else {
-      //     console.log('Match not found!');
-      //   }
-      // };
+  //   const intervalId = setInterval(calculateCountdown, 1000);
 
-      // fetchMatch();
-    }
-  };
-
-  const handleUnsubscribeFromMatch = async (playerId) => {
-    if (playerId === userId && isRegistryOpen && isUserSubscribed) {
-      const updateMatch = async () => {
-        const matchRef = doc(
-          db,
-          `tournaments/${tournamentId}/matches/${matchId}`
-        );
-
-        await updateDoc(matchRef, {
-          players: arrayRemove(userId),
-        });
-      };
-
-      updateMatch();
-
-      // const fetchMatch = async () => {
-      //   const matchRef = doc(
-      //     db,
-      //     `tournaments/${tournamentId}/matches/${matchId}`
-      //   );
-      //   const matchSnap = await getDoc(matchRef);
-
-      //   if (matchSnap.exists()) {
-      //     setUpdatedMatch(createMatchObjectFromFirestore(matchSnap));
-      //   } else {
-      //     console.log('Match not found!');
-      //   }
-      // };
-
-      // fetchMatch();
-    }
-  };
-
-  useEffect(() => {
-    const unsubscribe = onSnapshot(
-      doc(db, `tournaments/${tournamentId}/matches/${matchId}`),
-      { includeMetadataChanges: true },
-      (doc) => {
-        // Check for changes in the "players" property
-        const previousPlayers = players;
-        const currentPlayers = doc.data()?.players;
-
-        if (previousPlayers !== currentPlayers) {
-          // Do something with the changed players data
-          setUpdatedMatch((prevState) => ({
-            ...prevState,
-            players: currentPlayers,
-          }));
-        }
-      }
-    );
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  //   return () => clearInterval(intervalId);
+  // }, [registryDateTime]);
+  // // set countdown to match registry date time <<<
 
   return (
     <SoccerField
@@ -270,12 +127,7 @@ const SoccerFieldContainer = ({ match }) => {
         dateTime,
         address,
         playerQuota,
-        // players,
-        // teamA,
-        // teamB,
         result,
-        // mvps,
-        // isActive,
         isRegistryStarted,
         isRegistryEnded,
         remainingPlayersQuota,
@@ -283,15 +135,12 @@ const SoccerFieldContainer = ({ match }) => {
         mvpsString,
         tournamentImage,
         registeredPlayers,
-        teamAPlayers,
-        teamBPlayers,
+        teams,
         formattedRegistryDateTime,
         formattedDateTime,
         matchRegistryCountdown,
-        handleSubscribeToMatch,
         isUserSubscribed,
-        handleUnsubscribeFromMatch,
-        userId,
+        matchId,
       }}
     />
   );

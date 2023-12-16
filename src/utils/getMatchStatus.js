@@ -4,8 +4,7 @@ const getMatchStatus = ({
   dateTime,
   playerQuota,
   players,
-  teamAPlayers,
-  teamBPlayers,
+  teams,
   mvps,
   userId,
 }) => {
@@ -28,7 +27,7 @@ const getMatchStatus = ({
     Object.keys(result).length === 0;
 
   // mvps derived state:
-  const allPlayers = [...teamAPlayers, ...teamBPlayers];
+  const allPlayers = [...teams.teamA, ...teams.teamB];
   const mvpPlayers = allPlayers.filter((player) => mvps.includes(player.id));
   let mvpsString;
   if (mvpPlayers.length === 1) {

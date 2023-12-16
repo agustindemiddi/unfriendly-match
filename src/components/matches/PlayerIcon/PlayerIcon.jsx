@@ -2,15 +2,50 @@ import { Link } from 'react-router-dom';
 
 import styles from './PlayerIcon.module.css';
 
+import { getUserAuthCtx } from '../../../context/AuthContext';
+import {
+  subscribeToMatch,
+  unsubscribeFromMatch,
+} from '../../../utils/firebase/firestore';
+
 const PlayerIcon = ({
   image,
-  onClick,
   isRegistryOpen,
   isUserSubscribed,
   username,
   playerId,
-  userId,
+  tournamentId,
+  matchId,
 }) => {
+  const {
+    userPlayerProfile: { id: userId },
+  } = getUserAuthCtx();
+
+  const handleSubscribeToMatch = (
+    isRegistryOpen,
+    isUserSubscribed,
+    tournamentId,
+    matchId,
+    userId
+  ) => {
+    if (isRegistryOpen && !isUserSubscribed) {
+      subscribeToMatch(tournamentId, matchId, userId);
+    }
+  };
+
+  const handleUnsubscribeFromMatch = (
+    isRegistryOpen,
+    isUserSubscribed,
+    tournamentId,
+    matchId,
+    userId,
+    playerId
+  ) => {
+    if (playerId === userId && isRegistryOpen && isUserSubscribed) {
+      unsubscribeFromMatch(tournamentId, matchId, userId);
+    }
+  };
+
   return (
     <>
       {image ? (
@@ -20,7 +55,16 @@ const PlayerIcon = ({
               className={`${styles.unsubscribe} ${
                 isUserSubscribed ? styles.unsubscribeIsUserSubscribed : ''
               }`}
-              onClick={() => onClick(playerId)}>
+              onClick={() =>
+                handleUnsubscribeFromMatch(
+                  isRegistryOpen,
+                  isUserSubscribed,
+                  tournamentId,
+                  matchId,
+                  userId,
+                  playerId
+                )
+              }>
               x
             </div>
           )}
@@ -38,7 +82,15 @@ const PlayerIcon = ({
           } ${
             isUserSubscribed ? styles.noPlayerContainerIsUserSubscribed : ''
           }`}
-          onClick={onClick}>
+          onClick={() =>
+            handleSubscribeToMatch(
+              isRegistryOpen,
+              isUserSubscribed,
+              tournamentId,
+              matchId,
+              userId
+            )
+          }>
           {isRegistryOpen && (
             <p className={isUserSubscribed ? styles.isUserSubscribed : ''}>
               in!
