@@ -13,6 +13,7 @@ import PlayerIcon from '../../components/matches/PlayerIcon/PlayerIcon';
 
 import db from '../../utils/firebase/firebaseConfig';
 import { getUserAuthCtx } from '../../context/AuthContext';
+import { createPlayerObjectFromFirestore } from '../../utils/firebase/firestore/firestoreActions';
 
 const ContactsPage = () => {
   const { userPlayerProfile } = getUserAuthCtx();
@@ -47,7 +48,8 @@ const ContactsPage = () => {
 
         const userContactsArray = [];
         querySnapshotP.forEach((doc) => {
-          const player = { ...doc.data(), id: doc.id };
+          // const player = { ...doc.data(), id: doc.id };
+          const player = createPlayerObjectFromFirestore(doc);
           userContactsArray.push(player);
         });
         setUserContacts(userContactsArray);

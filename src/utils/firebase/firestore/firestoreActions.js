@@ -1,44 +1,59 @@
 import {
+  doc,
+  getDocs,
+  onSnapshot,
+  getDoc,
   query,
   collection,
   where,
   documentId,
-  getDocs,
-  doc,
-  getDoc,
-  onSnapshot,
   updateDoc,
   arrayUnion,
   arrayRemove,
 } from 'firebase/firestore';
-import db from '../../../utils/firebase/firebaseConfig';
-
-// HANDLERS:
+import db from '../firebaseConfig';
 
 export const createPlayerObjectFromFirestore = (playerDoc) => ({
+  ...playerDoc.data(),
   id: playerDoc.id,
-  username: playerDoc.data().username,
   image: playerDoc.data().image ?? '/default-user.svg',
+});
+
+export const createMatchObjectFromFirestore = (matchDoc) => ({
+  ...matchDoc.data(),
+  id: matchDoc.id,
+  creationDateTime: matchDoc.data().creationDateTime?.toDate(),
+  registryDateTime: matchDoc.data().registryDateTime?.toDate(),
+  dateTime: matchDoc.data().dateTime?.toDate(),
 });
 
 const getTournamentRef = (tournamentId) =>
   doc(db, `tournaments/${tournamentId}`);
 
+const getTournamentMatchesRef = (tournamentId) =>
+  collection(db, 'tournaments', tournamentId, 'matches');
+
 const getMatchRef = (tournamentId, matchId) =>
   doc(db, `tournaments/${tournamentId}/matches/${matchId}`);
 
-// FIRESTORE QUERIES:
-
-// fetch match:
-export const fetchMatch = async (tournamentId, matchId) => {
-  const matchRef = getMatchRef(tournamentId, matchId);
-  const matchSnap = await getDoc(matchRef);
-  matchSnap.exists()
-    ? console.log('matchData: ', matchSnap.data())
-    : console.log('Match not found!');
+// get user active tournaments matches:
+export const getUserActiveTournamentsMatches = async (
+  userPlayerProfile,
+  setUserMatches
+) => {
+  const userActiveTournamentsMatchesArray = await Promise.all(
+    userPlayerProfile.activeTournaments.map(async (tournamentId) => {
+      const querySnapshot = await getDocs(
+        getTournamentMatchesRef(tournamentId)
+      );
+      const matchesList = querySnapshot.docs.map((matchDoc) =>
+        createMatchObjectFromFirestore(matchDoc)
+      );
+      return matchesList;
+    })
+  );
+  setUserMatches(userActiveTournamentsMatchesArray.flat());
 };
-
-// ACTIONS:
 
 // add listener to matchDoc for players property changes:
 export const subscribeToMatchChanges = (
@@ -47,11 +62,12 @@ export const subscribeToMatchChanges = (
   players,
   setUpdatedMatch
 ) =>
+  // add listener to matchDoc
   onSnapshot(
-    doc(db, `tournaments/${tournamentId}/matches/${matchId}`),
+    getMatchRef(tournamentId, matchId),
     { includeMetadataChanges: true },
     (matchDocSnapshot) => {
-      // Check for changes in the "players" property
+      // check for players property changes:
       const previousPlayers = players;
       const currentPlayers = matchDocSnapshot.data()?.players;
       if (previousPlayers !== currentPlayers) {
@@ -87,6 +103,20 @@ export const getMatchPlayers = async (players, setSubscribedPlayers) => {
   setSubscribedPlayers(matchPlayersList);
 };
 
+// subscribe user to match:
+export const subscribeToMatch = async (tournamentId, matchId, userId) => {
+  await updateDoc(getMatchRef(tournamentId, matchId), {
+    players: arrayUnion(userId),
+  });
+};
+
+// unsubscribe user from match:
+export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
+  await updateDoc(getMatchRef(tournamentId, matchId), {
+    players: arrayRemove(userId),
+  });
+};
+
 // get match teams:
 export const getMatchTeams = async (
   teamAPlayersRefs,
@@ -111,19 +141,5 @@ export const getMatchTeams = async (
         [newKey]: teamPlayersList,
       }));
     }
-  });
-};
-
-// subscribe user to match:
-export const subscribeToMatch = async (tournamentId, matchId, userId) => {
-  await updateDoc(getMatchRef(tournamentId, matchId), {
-    players: arrayUnion(userId),
-  });
-};
-
-// unsubscribe user to match:
-export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
-  await updateDoc(getMatchRef(tournamentId, matchId), {
-    players: arrayRemove(userId),
   });
 };

@@ -6,7 +6,7 @@ import Section from '../../components/UI/Section';
 import MatchDetail from '../../components/matches/MatchDetail/MatchDetail';
 
 import db from '../../utils/firebase/firebaseConfig';
-import createMatchObjectFromFirestore from '../../utils/firebase/firestore/createMatchObjectFromFirestore';
+import { createMatchObjectFromFirestore } from '../../utils/firebase/firestore/firestoreActions';
 
 const MatchDetailPage = () => {
   const { tournamentId, matchId } = useParams();

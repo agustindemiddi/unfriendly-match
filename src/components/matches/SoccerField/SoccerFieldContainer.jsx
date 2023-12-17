@@ -9,7 +9,7 @@ import {
   getTournamentImage,
   getMatchTeams,
   getMatchPlayers,
-} from '../../../utils/firebase/firestore';
+} from '../../../utils/firebase/firestore/firestoreActions';
 import getMatchStatus from '../../../utils/getMatchStatus';
 import formatDate from '../../../utils/formatDate';
 

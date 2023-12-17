@@ -6,7 +6,7 @@ import { getUserAuthCtx } from '../../../context/AuthContext';
 import {
   subscribeToMatch,
   unsubscribeFromMatch,
-} from '../../../utils/firebase/firestore';
+} from '../../../utils/firebase/firestore/firestoreActions';
 
 const PlayerIcon = ({
   image,
