@@ -59,7 +59,7 @@ export const getUserActiveTournamentsMatches = async (
 export const subscribeToMatchChanges = (
   tournamentId,
   matchId,
-  players,
+  // players,
   setUpdatedMatch
 ) =>
   // add listener to matchDoc
@@ -67,15 +67,16 @@ export const subscribeToMatchChanges = (
     getMatchRef(tournamentId, matchId),
     { includeMetadataChanges: true },
     (matchDocSnapshot) => {
-      // check for players property changes:
-      const previousPlayers = players;
-      const currentPlayers = matchDocSnapshot.data()?.players;
-      if (previousPlayers !== currentPlayers) {
-        setUpdatedMatch((prevState) => ({
-          ...prevState,
-          players: currentPlayers,
-        }));
-      }
+      setUpdatedMatch(createMatchObjectFromFirestore(matchDocSnapshot));
+      // // check for players property changes:
+      // const previousPlayers = players;
+      // const currentPlayers = matchDocSnapshot.data()?.players;
+      // if (previousPlayers !== currentPlayers) {
+      //   setUpdatedMatch((prevState) => ({
+      //     ...prevState,
+      //     players: currentPlayers,
+      //   }));
+      // }
     },
     (error) => {
       // error handling

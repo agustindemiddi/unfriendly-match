@@ -25,7 +25,7 @@ const SoccerField = ({
     teams,
     formattedRegistryDateTime,
     formattedDateTime,
-    matchRegistryCountdown,
+    matchSubscriptionCountdown,
     isUserSubscribed,
     matchId,
   },
@@ -60,7 +60,7 @@ const SoccerField = ({
                       {formattedRegistryDateTime}
                     </time>
                   </p>
-                  <p>Countdown: {matchRegistryCountdown}</p>
+                  <p>Countdown: {matchSubscriptionCountdown}</p>
                 </>
               )}
               {isRegistryOpen && (

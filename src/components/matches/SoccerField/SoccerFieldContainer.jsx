@@ -13,14 +13,16 @@ import {
 import getMatchStatus from '../../../utils/getMatchStatus';
 import formatDate from '../../../utils/formatDate';
 
-// import calculateCountdown from '../../../utils/calculateCountdownToMatch';
+import calculateCountdown from '../../../utils/calculateCountdownToMatchSubscription';
 
 const SoccerFieldContainer = ({ match }) => {
   const [updatedMatch, setUpdatedMatch] = useState(match);
   const [tournamentImage, setTournamentImage] = useState('');
   const [registeredPlayers, setRegisteredPlayers] = useState([]);
   const [teams, setTeams] = useState({ teamA: [], teamB: [] });
-  const [matchRegistryCountdown, setMatchRegistryCountdown] = useState('');
+  const [matchSubscriptionCountdown, setMatchSubscriptionCountdown] =
+    useState('');
+
   const {
     userPlayerProfile: { id: userId },
   } = getUserAuthCtx();
@@ -60,12 +62,12 @@ const SoccerFieldContainer = ({ match }) => {
     userId,
   });
 
-  // add listener to matchDoc for players property changes:
+  // add listener to matchDoc:
   useEffect(() => {
     const unsubscribe = subscribeToMatchChanges(
       tournamentId,
       matchId,
-      players,
+      // players,
       setUpdatedMatch
     );
     return () => unsubscribe();
@@ -90,31 +92,14 @@ const SoccerFieldContainer = ({ match }) => {
   const formattedRegistryDateTime = formatDate(registryDateTime);
   const formattedDateTime = formatDate(dateTime);
 
-  // // set countdown to match registry date time >>>
-  // useEffect(() => {
-  //   const calculateCountdown = () => {
-  //     const currentDateTime = new Date();
-  //     const timeDifference = registryDateTime - currentDateTime;
-
-  //     if (timeDifference > 0) {
-  //       const seconds = Math.floor((timeDifference / 1000) % 60);
-  //       const minutes = Math.floor((timeDifference / 1000 / 60) % 60);
-  //       const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
-  //       const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-  //       setMatchRegistryCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
-  //     } else {
-  //       setMatchRegistryCountdown('Match registry already started');
-  //     }
-  //   };
-
-  //   // calculateCountdown(registryDateTime, setMatchRegistryCountdown);
-
-  //   const intervalId = setInterval(calculateCountdown, 1000);
-
-  //   return () => clearInterval(intervalId);
-  // }, [registryDateTime]);
-  // // set countdown to match registry date time <<<
+  // set countdown to match date time subscription:
+  useEffect(() => {
+    const intervalId = setInterval(
+      () => setMatchSubscriptionCountdown(calculateCountdown(registryDateTime)),
+      1000
+    );
+    return () => clearInterval(intervalId);
+  }, [registryDateTime]);
 
   return (
     <SoccerField
@@ -138,7 +123,7 @@ const SoccerFieldContainer = ({ match }) => {
         teams,
         formattedRegistryDateTime,
         formattedDateTime,
-        matchRegistryCountdown,
+        matchSubscriptionCountdown,
         isUserSubscribed,
         matchId,
       }}
