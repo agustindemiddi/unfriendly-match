@@ -2,12 +2,6 @@ import { Link } from 'react-router-dom';
 
 import styles from './PlayerIcon.module.css';
 
-import { getUserAuthCtx } from '../../../context/AuthContext';
-import {
-  subscribeToMatch,
-  unsubscribeFromMatch,
-} from '../../../utils/firebase/firestore/firestoreActions';
-
 const PlayerIcon = ({
   image,
   isRegistryOpen,
@@ -16,36 +10,10 @@ const PlayerIcon = ({
   playerId,
   tournamentId,
   matchId,
+  userId,
+  handleSubscribeToMatch,
+  handleUnsubscribeFromMatch,
 }) => {
-  const {
-    userPlayerProfile: { id: userId },
-  } = getUserAuthCtx();
-
-  const handleSubscribeToMatch = (
-    isRegistryOpen,
-    isUserSubscribed,
-    tournamentId,
-    matchId,
-    userId
-  ) => {
-    if (isRegistryOpen && !isUserSubscribed) {
-      subscribeToMatch(tournamentId, matchId, userId);
-    }
-  };
-
-  const handleUnsubscribeFromMatch = (
-    isRegistryOpen,
-    isUserSubscribed,
-    tournamentId,
-    matchId,
-    userId,
-    playerId
-  ) => {
-    if (playerId === userId && isRegistryOpen && isUserSubscribed) {
-      unsubscribeFromMatch(tournamentId, matchId, userId);
-    }
-  };
-
   return (
     <>
       {image ? (

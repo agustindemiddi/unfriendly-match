@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import PlayerIcon from '../PlayerIcon/PlayerIcon';
+import PlayerIconContainer from '../PlayerIcon/PlayerIconContainer';
 
 import styles from './SoccerField.module.css';
 
@@ -99,7 +99,7 @@ const SoccerField = ({
                           : ''
                       }
                       key={`empty-${index}`}>
-                      <PlayerIcon />
+                      <PlayerIconContainer />
                     </li>
                   ))}
                 </ul>
@@ -128,7 +128,7 @@ const SoccerField = ({
                         }
                         key={player.id}>
                         {isRegistryOpen ? (
-                          <PlayerIcon
+                          <PlayerIconContainer
                             image={player.image}
                             isUserSubscribed={isUserSubscribed}
                             username={player.username}
@@ -138,7 +138,7 @@ const SoccerField = ({
                             matchId={matchId}
                           />
                         ) : (
-                          <PlayerIcon
+                          <PlayerIconContainer
                             image={player.image}
                             username={player.username}
                           />
@@ -162,7 +162,7 @@ const SoccerField = ({
                             : ''
                         }
                         key={`empty-${index}`}>
-                        <PlayerIcon
+                        <PlayerIconContainer
                           isRegistryOpen={isRegistryOpen}
                           isUserSubscribed={isUserSubscribed}
                           tournamentId={tournamentId}
@@ -183,7 +183,7 @@ const SoccerField = ({
                 teamA.length > 0 &&
                 teamA.map((player) => (
                   <li key={player.id}>
-                    <PlayerIcon
+                    <PlayerIconContainer
                       image={player.image}
                       username={player.username}
                     />
@@ -204,7 +204,7 @@ const SoccerField = ({
                 teamB.length > 0 &&
                 teamB.map((player) => (
                   <li key={player.id}>
-                    <PlayerIcon
+                    <PlayerIconContainer
                       image={player.image}
                       username={player.username}
                     />
