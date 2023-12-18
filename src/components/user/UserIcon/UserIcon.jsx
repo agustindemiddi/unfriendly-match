@@ -16,16 +16,15 @@ const UserIcon = () => {
   return (
     <>
       {user && (
-        <div className={styles.playerIconContainer}>
-          <img
-            className={styles.playerIcon}
-            src={user.image}
-            alt='User image'
-          />
-          <Link to={`/${user.id}`}>
-            <span className={styles.hidden}>{user.username}</span>
-          </Link>
-        </div>
+        <Link to={`/${user.id}`}>
+          <div className={styles.playerIconContainer}>
+            <img
+              className={styles.playerIcon}
+              src={user.image}
+              alt='User image'
+            />
+          </div>
+        </Link>
       )}
     </>
   );

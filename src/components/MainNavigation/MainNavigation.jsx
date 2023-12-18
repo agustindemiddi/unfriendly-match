@@ -36,7 +36,7 @@ const MainNavigation = () => {
               <NavLink
                 to={section.url}
                 className={({ isActive }) =>
-                  isActive ? styles.active : undefined
+                  isActive ? styles.activeLink : undefined
                 }>
                 {section.icon} {section.label}
               </NavLink>

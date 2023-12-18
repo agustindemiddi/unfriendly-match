@@ -35,14 +35,21 @@
   transition: 0.2s;
 }
 
-.mainNav ul li a.active {
+.mainNav ul li a.activeLink {
   color: rgb(145, 202, 255);
-  transition: 0.2s;
 }
 
 .mainNav ul li a:active {
   color: rgb(9, 88, 217);
   transition: 0.2s;
+}
+
+.mainNav ul li a.activeLink:hover {
+  cursor: default;
+}
+
+.mainNav ul li a.activeLink:active {
+  color: rgb(145, 202, 255);
 }
 
 .mainNav ul li a:focus-visible {

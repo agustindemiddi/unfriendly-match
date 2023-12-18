@@ -8,29 +8,19 @@
   position: relative;
 }
 
+.playerIconContainer:hover {
+  background-color: rgb(64, 150, 255);
+  transition: 0.2s;
+}
+
+.playerIconContainer:active {
+  background-color: rgb(9, 88, 217);
+  transition: 0.2s;
+}
+
 .playerIcon {
   object-fit: cover;
   width: 100%;
   height: 100%;
   border-radius: 45px;
-  /* vertical-align: middle; */
-}
-
-.hidden {
-  display: none;
-  position: absolute;
-  top: 100%;
-  /* left: 50%; */
-  transform: translateX(-50%);
-
-  width: 90px;
-  background-color: rgb(40, 40, 40);
-  padding: 5px 3px;
-  margin-top: -5px;
-  border-radius: 0.25rem;
-  z-index: 1;
-}
-
-.playerIconContainer:hover .hidden {
-  display: block;
 }
