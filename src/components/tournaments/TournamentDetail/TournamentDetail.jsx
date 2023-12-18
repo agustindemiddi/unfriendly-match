@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import StandingsTable from '../StandingsTable/StandingsTable';
+import StandingsTable from './StandingsTable/StandingsTable';
 
 import styles from './TournamentDetail.module.css';
 

@@ -1,5 +1,5 @@
 import Section from '../../components/UI/Section';
-import TournamentForm from '../../components/tournaments/TournamentForm/TournamentForm';
+import TournamentForm from '../../components/Tournaments/TournamentForm/TournamentForm';
 
 const NewTournamentPage = () => {
   return (

@@ -1,5 +1,5 @@
 import Section from '../UI/Section';
-import SoccerField from '../matches/SoccerField';
+import SoccerFieldContainer from '../matches/SoccerField/SoccerFieldContainer';
 
 import separateMatches from '../../utils/separateMatches';
 
@@ -17,17 +17,17 @@ const Home = ({ userMatches }) => {
       {sortedUpcomingMatches && sortedUpcomingMatches.length > 0 && (
         <ul>
           {sortedUpcomingMatches.map((match) => (
-            <SoccerField key={match.id} match={match} />
+            <SoccerFieldContainer key={match.id} match={match} />
           ))}
         </ul>
       )}
       <h2>Last Match:</h2>
-      {lastMatch && <SoccerField match={lastMatch} />} */}
+      {lastMatch && <SoccerFieldContainer match={lastMatch} />} */}
 
       {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES >>> */}
       {/* <h2>Test Match:</h2>
       {sortedUpcomingMatches && sortedUpcomingMatches[1] && (
-        <SoccerField match={sortedUpcomingMatches[1]} />
+        <SoccerFieldContainer match={sortedUpcomingMatches[1]} />
       )} */}
       {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES <<< */}
 
@@ -36,7 +36,7 @@ const Home = ({ userMatches }) => {
       {sortedUpcomingMatches && sortedUpcomingMatches.length > 0 && (
         <ul>
           {sortedUpcomingMatches.map((match) => (
-            <SoccerField key={match.id} match={match} />
+            <SoccerFieldContainer key={match.id} match={match} />
           ))}
         </ul>
       )}
@@ -45,7 +45,7 @@ const Home = ({ userMatches }) => {
         reverseSortedPreviousMatches.length > 0 && (
           <ul>
             {reverseSortedPreviousMatches.map((match) => (
-              <SoccerField key={match.id} match={match} />
+              <SoccerFieldContainer key={match.id} match={match} />
             ))}
           </ul>
         )}
