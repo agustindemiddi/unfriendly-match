@@ -9,7 +9,9 @@ import {
 } from '@ant-design/icons';
 
 import { getUserAuthCtx } from '../../context/AuthContext';
+
 import logo from '/logo.svg';
+import UserIcon from '../user/UserIcon/UserIcon';
 
 import styles from './MainNavigation.module.css';
 
@@ -28,7 +30,6 @@ const MainNavigation = () => {
         <Link to='/'>
           <img className={styles.logo} src={logo} alt='logo' />
         </Link>
-        {/* {user && <span>{user.displayName}</span>} */}
         <ul>
           {sections.map((section) => (
             <li key={section.label}>
@@ -36,28 +37,29 @@ const MainNavigation = () => {
                 to={section.url}
                 className={({ isActive }) =>
                   isActive ? styles.active : undefined
-                }
-              >
+                }>
                 {section.icon} {section.label}
               </NavLink>
             </li>
           ))}
         </ul>
-        <div>
+        <>
           {user ? (
-            <Button
-              onClick={handleSignOut}
-              shape='round'
-              icon={<LogoutOutlined />}
-            >
-              Sign out
-            </Button>
+            <div className={styles.user}>
+              <Button
+                onClick={handleSignOut}
+                shape='round'
+                icon={<LogoutOutlined />}>
+                Sign out
+              </Button>
+              {<UserIcon />}
+            </div>
           ) : (
             <Button shape='round' icon={<LoginOutlined />}>
               <Link to='/signin'>Sign in</Link>
             </Button>
           )}
-        </div>
+        </>
       </nav>
     </>
   );

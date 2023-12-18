@@ -42,8 +42,12 @@ export const AuthContextProvider = ({ children }) => {
           const docRef = doc(db, 'players', uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
-            setUserPlayerProfile({ ...docSnap.data(), id: docSnap.id });
-            const userPlayerProfile = { ...docSnap.data(), id: docSnap.id };
+            setUserPlayerProfile({
+              ...docSnap.data(),
+              id: docSnap.id,
+              image: docSnap.data().image || '/default-user.svg',
+            });
+            // const userPlayerProfile = { ...docSnap.data(), id: docSnap.id };
             // localStorage.setItem('userPlayerProfile', userPlayerProfile);
           } else {
             if (signInMethod === 'google.com') {
@@ -55,8 +59,12 @@ export const AuthContextProvider = ({ children }) => {
             }
             const docRef = doc(db, 'players', uid);
             const docSnap = await getDoc(docRef);
-            setUserPlayerProfile({ ...docSnap.data(), id: docSnap.id });
-            const userPlayerProfile = { ...docSnap.data(), id: docSnap.id };
+            setUserPlayerProfile({
+              ...docSnap.data(),
+              id: docSnap.id,
+              image: docSnap.data().image || '/default-user.svg',
+            });
+            // const userPlayerProfile = { ...docSnap.data(), id: docSnap.id };
             // localStorage.setItem('userPlayerProfile', userPlayerProfile);
           }
         } catch (error) {

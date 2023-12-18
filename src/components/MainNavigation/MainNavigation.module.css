@@ -48,3 +48,9 @@
 .mainNav ul li a:focus-visible {
   outline-color: rgb(145, 202, 255);
 }
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
