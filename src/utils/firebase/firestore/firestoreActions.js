@@ -19,6 +19,13 @@ export const createPlayerObjectFromFirestore = (playerDoc) => ({
   image: playerDoc.data().image ?? '/default-user.svg',
 });
 
+export const createTournamentObjectFromFirestore = (tournamentDoc) => ({
+  ...tournamentDoc.data(),
+  id: tournamentDoc.id,
+  creationDateTime: tournamentDoc.data().creationDateTime?.toDate(),
+  terminationDate: tournamentDoc.data().terminationDate?.toDate(),
+});
+
 export const createMatchObjectFromFirestore = (matchDoc) => ({
   ...matchDoc.data(),
   id: matchDoc.id,
@@ -27,21 +34,16 @@ export const createMatchObjectFromFirestore = (matchDoc) => ({
   dateTime: matchDoc.data().dateTime?.toDate(),
 });
 
-export const createTournamentObjectFromFirestore = (tournamentDoc) => ({
-  ...tournamentDoc.data(),
-  id: tournamentDoc.id,
-});
-
-const getTournamentDocumentRef = (tournamentId) =>
+const getTournamentDocRef = (tournamentId) =>
   doc(db, `tournaments/${tournamentId}`);
 
-const getMatchDocumentRef = (tournamentId, matchId) =>
+const getMatchDocRef = (tournamentId, matchId) =>
   doc(db, `tournaments/${tournamentId}/matches/${matchId}`);
 
-const getTournamentMatchesCollectionRef = (tournamentId) =>
-  collection(db, 'tournaments', tournamentId, 'matches');
+const getTournamentsColRef = () => collection(db, 'tournaments');
 
-const getTournamentsCollectionRef = () => collection(db, 'tournaments');
+const getTournamentMatchesColRef = (tournamentId) =>
+  collection(db, 'tournaments', tournamentId, 'matches');
 
 // get user active tournaments matches:
 export const getUserActiveTournamentsMatches = async (
@@ -52,7 +54,7 @@ export const getUserActiveTournamentsMatches = async (
     // userPlayerProfile.activeTournaments => userPlayerProfile.tournaments.active
     userPlayerProfile.activeTournaments.map(async (tournamentId) => {
       const querySnapshot = await getDocs(
-        getTournamentMatchesCollectionRef(tournamentId)
+        getTournamentMatchesColRef(tournamentId)
       );
       const matchesList = querySnapshot.docs.map((matchDoc) =>
         createMatchObjectFromFirestore(matchDoc)
@@ -72,7 +74,7 @@ export const subscribeToMatchChanges = (
 ) =>
   // add listener to matchDoc
   onSnapshot(
-    getMatchDocumentRef(tournamentId, matchId),
+    getMatchDocRef(tournamentId, matchId),
     { includeMetadataChanges: true },
     (matchDocSnapshot) => {
       setUpdatedMatch(createMatchObjectFromFirestore(matchDocSnapshot));
@@ -93,10 +95,10 @@ export const subscribeToMatchChanges = (
 
 // get tournament image:
 export const getTournamentImage = async (tournamentId, setTournamentImage) => {
-  const tournamentSnap = await getDoc(getTournamentDocumentRef(tournamentId));
-  tournamentSnap.exists()
-    ? setTournamentImage(tournamentSnap.data().image)
-    : console.log('Tournament not found!');
+  const tournamentDoc = await getDoc(getTournamentDocRef(tournamentId));
+  tournamentDoc.exists()
+    ? setTournamentImage(tournamentDoc.data().image)
+    : new Error('Tournament not found!');
 };
 
 // get match players:
@@ -114,14 +116,14 @@ export const getMatchPlayers = async (players, setSubscribedPlayers) => {
 
 // subscribe user to match:
 export const subscribeToMatch = async (tournamentId, matchId, userId) => {
-  await updateDoc(getMatchDocumentRef(tournamentId, matchId), {
+  await updateDoc(getMatchDocRef(tournamentId, matchId), {
     players: arrayUnion(userId),
   });
 };
 
 // unsubscribe user from match:
 export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
-  await updateDoc(getMatchDocumentRef(tournamentId, matchId), {
+  await updateDoc(getMatchDocRef(tournamentId, matchId), {
     players: arrayRemove(userId),
   });
 };
@@ -159,7 +161,7 @@ export const getUserTournaments = async (
   setUserTournaments
 ) => {
   const userTournamentsQuery = query(
-    collection(db, 'tournaments'),
+    getTournamentsColRef(),
     where(documentId(), 'in', userTournamentsRefsArray)
   );
   const querySnapshot = await getDocs(userTournamentsQuery);
@@ -167,4 +169,39 @@ export const getUserTournaments = async (
     createTournamentObjectFromFirestore(tournamentDoc)
   );
   setUserTournaments(userTournamentsList);
+};
+
+// get tournament:
+export const getTournament = async (tournamentId, setTournament) => {
+  const tournamentDoc = await getDoc(getTournamentDocRef(tournamentId));
+  tournamentDoc.exists()
+    ? setTournament(createTournamentObjectFromFirestore(tournamentDoc))
+    : new Error('Tournament not found!');
+};
+
+// get tournament matches:
+export const getTournamentMatches = async (
+  tournamentId,
+  setTournamentMatches
+) => {
+  const querySnapshot = await getDocs(getTournamentMatchesColRef(tournamentId));
+  const tournamentMatchesArray = [];
+  querySnapshot.forEach((matchDoc) => {
+    const match = createMatchObjectFromFirestore(matchDoc);
+    tournamentMatchesArray.push(match);
+  });
+  setTournamentMatches(tournamentMatchesArray);
+};
+
+// get tournament matches WITH MAP METHOD:
+export const getTournamentMatches_NOT_WORKING = async (
+  tournamentId,
+  setTournamentMatches
+) => {
+  const querySnapshot = await getDocs(getTournamentMatchesColRef(tournamentId));
+  const tournamentMatchesArray = querySnapshot.docs.map((matchDoc) => {
+    createMatchObjectFromFirestore(matchDoc);
+  });
+  console.log(tournamentMatchesArray);
+  setTournamentMatches(tournamentMatchesArray);
 };

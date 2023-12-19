@@ -1,19 +1,26 @@
-.tournamentDetailsSection {
+.tournamentDetailSection {
+  /* background-color: lightblue; */
+
+  align-items: stretch;
+}
+
+.main {
+  flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: stretch;
 }
 
 .matches {
   flex: 1;
 }
 
-.nextMatch {
+.matches .nextMatch {
   width: 200px;
   height: 200px;
   background-color: lightpink;
 }
 
-.lastMatch {
+.matches .lastMatch {
   width: 200px;
   height: 200px;
   background-color: pink;

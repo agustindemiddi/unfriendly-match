@@ -1,29 +1,41 @@
 import { Link } from 'react-router-dom';
 
+import Section from '../../UI/Section';
+import SoccerFieldContainer from '../../matches/SoccerField/SoccerFieldContainer';
 import StandingsTable from './StandingsTable/StandingsTable';
 
 import styles from './TournamentDetail.module.css';
 
+import separateMatches from '../../../utils/separateMatches';
+
 const TournamentDetail = ({ tournament, matches }) => {
-  // console.log(tournament)
-  // console.log(matches)
+  const {
+    nextMatch,
+    lastMatch,
+    sortedUpcomingMatches,
+    reverseSortedPreviousMatches,
+  } = separateMatches(matches);
+
   return (
-    <section className={styles.tournamentDetailsSection}>
-      <Link to='matches/new'>
-        <button>CREATE MATCH</button>
-      </Link>
-      <Link to='matches'>
-        <button>go to All Matches</button>
-      </Link>
-      <div className={styles.matches}>
-        <div className={styles.nextMatch}>nextMatch</div>
-        <div className={styles.lastMatch}>lastMatch</div>
+    <Section className={styles.tournamentDetailSection}>
+      <div>
+        <Link to='matches'>
+          <button>See All Matches</button>
+        </Link>
+        <Link to='matches/new'>
+          <button>Create Match</button>
+        </Link>
       </div>
-      <div className={styles.standings}>
-        <StandingsTable />
+      <div className={styles.main}>
+        <div className={styles.matches}>
+          {nextMatch && <SoccerFieldContainer match={nextMatch} />}
+          {lastMatch && <SoccerFieldContainer match={lastMatch} />}
+        </div>
+        <div className={styles.standings}>
+          <StandingsTable />
+        </div>
       </div>
-    </section>
-    // <div className={styles.test}>TournamentDetail</div>
+    </Section>
   );
 };
 
