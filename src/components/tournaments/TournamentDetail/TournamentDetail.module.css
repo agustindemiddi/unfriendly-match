@@ -1,35 +1,42 @@
 .tournamentDetailSection {
-  /* background-color: lightblue; */
-
-  align-items: stretch;
-}
-
-.main {
-  flex: 1;
   display: flex;
-  justify-content: stretch;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .matches {
   flex: 1;
-}
 
-.matches .nextMatch {
-  width: 200px;
-  height: 200px;
-  background-color: lightpink;
-}
-
-.matches .lastMatch {
-  width: 200px;
-  height: 200px;
-  background-color: pink;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .standings {
   flex: 1;
 
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.button {
+  display: flex;
   justify-content: center;
-  align-items: start;
+  align-self: stretch;
+  background-color: rgb(65, 65, 65);
+  /* border: 2px solid rgb(190, 190, 190); */
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.button:hover,
+.button:focus {
+  background-color: rgb(75, 75, 75);
+}
+
+.button:active {
+  color: rgb(190, 190, 190);
+  background-color: rgb(100, 100, 100);
 }
