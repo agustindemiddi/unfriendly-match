@@ -45,14 +45,11 @@ const getTournamentsColRef = () => collection(db, 'tournaments');
 const getTournamentMatchesColRef = (tournamentId) =>
   collection(db, 'tournaments', tournamentId, 'matches');
 
+// HOMEPAGE
 // get user active tournaments matches:
-export const getUserActiveTournamentsMatches = async (
-  userPlayerProfile,
-  setUserMatches
-) => {
+export const getUserActiveTournamentsMatches = async (userPlayerProfile) => {
   const userActiveTournamentsMatchesArray = await Promise.all(
-    // userPlayerProfile.activeTournaments => userPlayerProfile.tournaments.active
-    userPlayerProfile.activeTournaments.map(async (tournamentId) => {
+    userPlayerProfile.tournaments.active.map(async (tournamentId) => {
       const querySnapshot = await getDocs(
         getTournamentMatchesColRef(tournamentId)
       );
@@ -62,9 +59,10 @@ export const getUserActiveTournamentsMatches = async (
       return matchesList;
     })
   );
-  setUserMatches(userActiveTournamentsMatchesArray.flat());
+  return userActiveTournamentsMatchesArray.flat();
 };
 
+// SOCCERFIELD
 // add listener to matchDoc for players property changes:
 export const subscribeToMatchChanges = (
   tournamentId,
@@ -158,17 +156,23 @@ export const getMatchTeams = async (
 // get user tournaments:
 export const getUserTournaments = async (
   userTournamentsRefsArray,
-  setUserTournaments
 ) => {
   const userTournamentsQuery = query(
     getTournamentsColRef(),
     where(documentId(), 'in', userTournamentsRefsArray)
   );
-  const querySnapshot = await getDocs(userTournamentsQuery);
-  const userTournamentsList = querySnapshot.docs.map((tournamentDoc) =>
-    createTournamentObjectFromFirestore(tournamentDoc)
-  );
-  setUserTournaments(userTournamentsList);
+  try {
+    const querySnapshot = await getDocs(userTournamentsQuery);
+    const userTournamentsList = await Promise.all(
+      querySnapshot.docs.map(async (tournamentDoc) =>
+        createTournamentObjectFromFirestore(tournamentDoc)
+      )
+    );
+    return userTournamentsList;
+  } catch (error) {
+    console.error("Error fetching user tournaments:", error);
+    throw error;
+  }
 };
 
 // get tournament:

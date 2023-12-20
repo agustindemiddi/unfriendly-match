@@ -22,8 +22,8 @@ export const AuthContextProvider = ({ children }) => {
     try {
       const playerData = {
         username: username,
+        image: profilePicture || '',
       };
-      if (profilePicture) playerData.image = profilePicture;
       await setDoc(doc(db, 'players', id), playerData);
     } catch {
       console.log('Could not save player!');

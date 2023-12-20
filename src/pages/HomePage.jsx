@@ -12,8 +12,14 @@ const HomePage = () => {
 
   // get user active tournaments matches:
   useEffect(() => {
-    if (userPlayerProfile)
-      getUserActiveTournamentsMatches(userPlayerProfile, setUserMatches);
+    if (userPlayerProfile?.tournaments.active.length > 0) {
+      const fetch = async () => {
+        const response =
+          await getUserActiveTournamentsMatches(userPlayerProfile);
+        setUserMatches(response);
+      };
+      fetch();
+    }
   }, [userPlayerProfile]);
 
   return <Home userMatches={userMatches} />;

@@ -107,7 +107,7 @@ const MatchForm = () => {
     const matchData = {
       tournament: params.tournamentId,
       creator: userPlayerProfile.id,
-      admins: [userPlayerProfile.id],
+      admins: [...new Set([...tournament.admins, userPlayerProfile.id])],
       creationDateTime: Timestamp.now(),
       registryDateTime: matchRegistryDateTime, // custom or Timestamp.now() (default value)
       dateTime: matchDateTime,
