@@ -12,7 +12,7 @@ const HomePage = () => {
 
   // get user active tournaments matches:
   useEffect(() => {
-    if (userPlayerProfile?.tournaments.active.length > 0) {
+    if (userPlayerProfile?.tournaments?.active?.length > 0) {
       const fetch = async () => {
         const response =
           await getUserActiveTournamentsMatches(userPlayerProfile);

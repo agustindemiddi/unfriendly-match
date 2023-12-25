@@ -11,7 +11,7 @@ const TournamentsPage = () => {
 
   // get user tournaments:
   useEffect(() => {
-    if (userPlayerProfile?.tournaments.all.length > 0) {
+    if (userPlayerProfile?.tournaments?.all?.length > 0) {
       const fetch = async () => {
         const response = await getUserTournaments(
           userPlayerProfile.tournaments.all

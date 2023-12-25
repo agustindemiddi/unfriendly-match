@@ -1,5 +1,7 @@
 import {
   doc,
+  Timestamp,
+  setDoc,
   getDocs,
   onSnapshot,
   getDoc,
@@ -13,10 +15,45 @@ import {
 } from 'firebase/firestore';
 import db from '../firebaseConfig';
 
+const getPlayerDocRef = (playerId) => doc(db, `players/${playerId}`);
+
+const getTournamentDocRef = (tournamentId) =>
+  doc(db, `tournaments/${tournamentId}`);
+
+const getMatchDocRef = (tournamentId, matchId) =>
+  doc(db, `tournaments/${tournamentId}/matches/${matchId}`);
+
+const getTournamentsColRef = () => collection(db, 'tournaments');
+
+const getTournamentMatchesColRef = (tournamentId) =>
+  collection(db, 'tournaments', tournamentId, 'matches');
+
+export const setPlayerProfileFromUser = async (
+  id,
+  username,
+  profilePicture
+) => {
+  const playerData = {
+    isVerified: true,
+    username: username,
+    image: profilePicture || null,
+    isPublic: false,
+    displayName: username, // recode
+    description: '',
+    tournaments: {
+      all: [],
+      active: [],
+      finished: [],
+    },
+    creationDateTime: Timestamp.now(),
+  };
+  await setDoc(getPlayerDocRef(id), playerData);
+};
+
 export const createPlayerObjectFromFirestore = (playerDoc) => ({
   ...playerDoc.data(),
   id: playerDoc.id,
-  image: playerDoc.data().image ?? '/default-user.svg',
+  image: playerDoc.data()?.image || '/default-user.svg',
 });
 
 export const createTournamentObjectFromFirestore = (tournamentDoc) => ({
@@ -34,16 +71,22 @@ export const createMatchObjectFromFirestore = (matchDoc) => ({
   dateTime: matchDoc.data().dateTime?.toDate(),
 });
 
-const getTournamentDocRef = (tournamentId) =>
-  doc(db, `tournaments/${tournamentId}`);
-
-const getMatchDocRef = (tournamentId, matchId) =>
-  doc(db, `tournaments/${tournamentId}/matches/${matchId}`);
-
-const getTournamentsColRef = () => collection(db, 'tournaments');
-
-const getTournamentMatchesColRef = (tournamentId) =>
-  collection(db, 'tournaments', tournamentId, 'matches');
+//AUTHCONTEXT
+export const getPlayerProfileFromUser = async (currentUser) => {
+  const { uid } = currentUser;
+  const playerDoc = await getDoc(getPlayerDocRef(uid));
+  if (!playerDoc.exists()) {
+    const signInMethod = currentUser.providerData[0].providerId;
+    if (signInMethod === 'google.com') {
+      const { displayName, photoURL } = currentUser;
+      await setPlayerProfileFromUser(uid, displayName, photoURL);
+    } else if (signInMethod === 'password') {
+      const displayName = currentUser.email.split('@')[0];
+      await setPlayerProfileFromUser(uid, displayName);
+    }
+  }
+  return createPlayerObjectFromFirestore(playerDoc);
+};
 
 // HOMEPAGE
 // get user active tournaments matches:
@@ -154,9 +197,7 @@ export const getMatchTeams = async (
 };
 
 // get user tournaments:
-export const getUserTournaments = async (
-  userTournamentsRefsArray,
-) => {
+export const getUserTournaments = async (userTournamentsRefsArray) => {
   const userTournamentsQuery = query(
     getTournamentsColRef(),
     where(documentId(), 'in', userTournamentsRefsArray)
@@ -170,9 +211,17 @@ export const getUserTournaments = async (
     );
     return userTournamentsList;
   } catch (error) {
-    console.error("Error fetching user tournaments:", error);
+    console.error('Error fetching user tournaments:', error);
     throw error;
   }
+};
+
+// get player:
+const getPlayer = async (playerId) => {
+  const playerDoc = await getDoc(getPlayerDocRef(playerId));
+  playerDoc.exists()
+    ? createPlayerObjectFromFirestore(playerDoc)
+    : new Error('Player not found!');
 };
 
 // get tournament:

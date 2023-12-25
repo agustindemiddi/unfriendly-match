@@ -17,9 +17,9 @@ const SignInForm = ({ formModeIsSignIn }) => {
         return;
     }
     handleEmailSignIn(
+      formModeIsSignIn,
       emailInput.current.value,
       passwordInput.current.value,
-      formModeIsSignIn
     );
   };
 

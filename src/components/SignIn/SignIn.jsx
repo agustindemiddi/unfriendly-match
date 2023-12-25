@@ -23,7 +23,7 @@ const SignIn = () => {
         <div
           onClick={() => setFormModeIsSignIn(true)}
           className={`${styles['form-mode']} ${
-            formModeIsSignIn ? styles.selectedFormMode : undefined
+            formModeIsSignIn ? styles.selectedFormMode : ''
           }`}
         >
           SIGN IN
@@ -31,7 +31,7 @@ const SignIn = () => {
         <div
           onClick={() => setFormModeIsSignIn(false)}
           className={`${styles['form-mode']} ${
-            !formModeIsSignIn ? styles.selectedFormMode : undefined
+            !formModeIsSignIn ? styles.selectedFormMode : ''
           }`}
         >
           SIGN UP
