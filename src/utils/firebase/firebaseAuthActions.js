@@ -11,16 +11,16 @@ import { auth } from './firebaseConfig';
 import { getPlayerProfileFromUser } from './firestore/firestoreActions';
 
 export const authListener = (setUser, setUserPlayerProfile) => {
-  const listener = onAuthStateChanged(auth, async (currentUser) => {
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
     if (!currentUser) {
       //   return redirect('/signin'); // redirect not working
     } else {
       setUser(currentUser);
-      const playerProfileFromUser = await getPlayerProfileFromUser(currentUser);
-      setUserPlayerProfile(playerProfileFromUser);
+      const playerProfile = await getPlayerProfileFromUser(currentUser);
+      setUserPlayerProfile(playerProfile);
     }
   });
-  return () => listener();
+  return () => unsubscribe();
 };
 
 export const signInWithGoogle = async () => {

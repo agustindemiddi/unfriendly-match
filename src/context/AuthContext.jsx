@@ -20,7 +20,7 @@ export const AuthContextProvider = ({ children }) => {
   }, []);
 
   // auth.useDeviceLanguage(); // test how it works
-  
+
   const handleGoogleSignIn = async () => signInWithGoogle();
 
   const handleEmailSignIn = async (formModeIsSignIn, email, password) =>
@@ -29,9 +29,9 @@ export const AuthContextProvider = ({ children }) => {
       : signUpWithEmail(email, password);
 
   const handleSignOut = () => {
-    logout();
     setUser(null);
     // setUserPlayerProfile(null);
+    logout();
   };
 
   return (

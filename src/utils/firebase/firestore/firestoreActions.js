@@ -28,28 +28,6 @@ const getTournamentsColRef = () => collection(db, 'tournaments');
 const getTournamentMatchesColRef = (tournamentId) =>
   collection(db, 'tournaments', tournamentId, 'matches');
 
-export const setPlayerProfileFromUser = async (
-  id,
-  username,
-  profilePicture
-) => {
-  const playerData = {
-    isVerified: true,
-    username: username,
-    image: profilePicture || null,
-    isPublic: false,
-    displayName: username, // recode
-    description: '',
-    tournaments: {
-      all: [],
-      active: [],
-      finished: [],
-    },
-    creationDateTime: Timestamp.now(),
-  };
-  await setDoc(getPlayerDocRef(id), playerData);
-};
-
 export const createPlayerObjectFromFirestore = (playerDoc) => ({
   ...playerDoc.data(),
   id: playerDoc.id,
@@ -71,21 +49,47 @@ export const createMatchObjectFromFirestore = (matchDoc) => ({
   dateTime: matchDoc.data().dateTime?.toDate(),
 });
 
-//AUTHCONTEXT
+// AUTHCONTEXT
+// create player profile object from user (first time sign up)
+export const createPlayerObjectFromUser = (
+  id,
+  displayName,
+  profilePicture
+) => ({
+  creationDateTime: Timestamp.now(),
+  isVerified: true,
+  isPublic: false,
+  username: `${displayName}_${id}`,
+  displayName: displayName,
+  image: profilePicture || '',
+  description: '',
+  tournaments: {
+    all: [],
+    active: [],
+    finished: [],
+  },
+});
+
+// get player profile from user (when user signs in)
 export const getPlayerProfileFromUser = async (currentUser) => {
   const { uid } = currentUser;
   const playerDoc = await getDoc(getPlayerDocRef(uid));
-  if (!playerDoc.exists()) {
+  if (playerDoc.exists()) {
+    return createPlayerObjectFromFirestore(playerDoc);
+  } else {
     const signInMethod = currentUser.providerData[0].providerId;
     if (signInMethod === 'google.com') {
       const { displayName, photoURL } = currentUser;
-      await setPlayerProfileFromUser(uid, displayName, photoURL);
+      const playerData = createPlayerObjectFromUser(uid, displayName, photoURL);
+      await setDoc(getPlayerDocRef(uid), playerData);
+      return playerData; // check if necessary (maybe takes updated snap if re-renders)
     } else if (signInMethod === 'password') {
       const displayName = currentUser.email.split('@')[0];
-      await setPlayerProfileFromUser(uid, displayName);
+      const playerData = createPlayerObjectFromUser(uid, displayName);
+      await setDoc(getPlayerDocRef(uid), playerData);
+      return playerData; // check if necessary (maybe takes updated snap if re-renders)
     }
   }
-  return createPlayerObjectFromFirestore(playerDoc);
 };
 
 // HOMEPAGE
