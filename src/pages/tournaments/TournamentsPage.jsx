@@ -12,13 +12,13 @@ const TournamentsPage = () => {
   // get user tournaments:
   useEffect(() => {
     if (userPlayerProfile?.tournaments?.all?.length > 0) {
-      const fetch = async () => {
+      const fetchUserTournaments = async () => {
         const tournaments = await getUserTournaments(
           userPlayerProfile.tournaments.all
         );
         setUserTournaments(tournaments);
       };
-      fetch();
+      fetchUserTournaments();
     }
   }, [userPlayerProfile]);
 

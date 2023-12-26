@@ -3,25 +3,20 @@ import { useState, useEffect } from 'react';
 
 import TournamentDetail from '../../components/Tournaments/TournamentDetail/TournamentDetail';
 
-import {
-  getTournament,
-  getTournamentMatches,
-} from '../../utils/firebase/firestore/firestoreActions';
+import { getTournamentMatches } from '../../utils/firebase/firestore/firestoreActions';
 
 const TournamentDetailPage = () => {
   const { tournamentId } = useParams();
-  // const [tournament, setTournament] = useState({});
   const [tournamentMatches, setTournamentMatches] = useState([]);
-
-  // get tournament:
-  // useEffect(() => {
-  //   getTournament(tournamentId, setTournament);
-  // }, []);
 
   // get tournament matches:
   useEffect(() => {
-    getTournamentMatches(tournamentId, setTournamentMatches);
-  }, []);
+    const fetchTournamentMatches = async () => {
+      const matches = await getTournamentMatches(tournamentId);
+      setTournamentMatches(matches);
+    };
+    fetchTournamentMatches();
+  }, [tournamentId]);
 
   return <TournamentDetail matches={tournamentMatches} />;
 };

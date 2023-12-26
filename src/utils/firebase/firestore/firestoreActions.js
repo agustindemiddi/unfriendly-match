@@ -226,27 +226,13 @@ export const getUserTournaments = async (userTournamentsRefsArray) => {
 
 // get tournament matches:
 export const getTournamentMatches = async (
-  tournamentId,
-  setTournamentMatches
-) => {
-  const querySnapshot = await getDocs(getTournamentMatchesColRef(tournamentId));
-  const tournamentMatchesArray = [];
-  querySnapshot.forEach((matchDoc) => {
-    const match = createMatchObjectFromFirestore(matchDoc);
-    tournamentMatchesArray.push(match);
-  });
-  setTournamentMatches(tournamentMatchesArray);
-};
-
-// get tournament matches WITH MAP METHOD:
-export const getTournamentMatches_NOT_WORKING = async (
-  tournamentId,
-  setTournamentMatches
+  tournamentId
+  // setTournamentMatches
 ) => {
   const querySnapshot = await getDocs(getTournamentMatchesColRef(tournamentId));
   const tournamentMatchesArray = querySnapshot.docs.map((matchDoc) =>
     createMatchObjectFromFirestore(matchDoc)
   );
   console.log(tournamentMatchesArray);
-  setTournamentMatches(tournamentMatchesArray);
+  return tournamentMatchesArray;
 };
