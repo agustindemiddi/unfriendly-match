@@ -10,20 +10,20 @@ const SoccerField = ({
     // creator,
     // admins,
     // creationDateTime,
-    registryDateTime,
+    subscriptionDateTime,
     dateTime,
     address,
     playerQuota,
     result,
-    isRegistryStarted,
-    isRegistryEnded,
+    isSubscriptionStarted,
+    isSubscriptionEnded,
     remainingPlayersQuota,
-    isRegistryOpen,
+    isSubscriptionOpen,
     mvpsString,
     tournamentImage,
-    registeredPlayers,
+    subscribedPlayers,
     teams,
-    formattedRegistryDateTime,
+    formattedSubscriptionDateTime,
     formattedDateTime,
     matchSubscriptionCountdown,
     isUserSubscribed,
@@ -46,31 +46,31 @@ const SoccerField = ({
 
       <div
         className={`${styles.soccerField} ${
-          isRegistryOpen ? styles.soccerFieldIsRegistryOpen : ''
+          isSubscriptionOpen ? styles.soccerFieldIsSubscriptionOpen : ''
         }`}>
         {Object.keys(result).length === 0 && (
           <div className={styles.soccerFieldContent}>
             <div className={styles.matchSubscriptionStatus}>
-              {!isRegistryStarted && (
+              {!isSubscriptionStarted && (
                 <>
                   <p>Subscription to this match is not open yet</p>
                   <p>
                     Subscription starts:{' '}
-                    <time dateTime={registryDateTime.toISOString()}>
-                      {formattedRegistryDateTime}
+                    <time dateTime={subscriptionDateTime.toISOString()}>
+                      {formattedSubscriptionDateTime}
                     </time>
                   </p>
                   <p>Countdown: {matchSubscriptionCountdown}</p>
                 </>
               )}
-              {isRegistryOpen && (
+              {isSubscriptionOpen && (
                 <>
                   <p>Subscription to this match is open!</p>
                   <p>Remaining places: {remainingPlayersQuota}</p>
                   <p>You can join this match by clicking here</p>
                 </>
               )}
-              {isRegistryEnded && Object.keys(result).length === 0 && (
+              {isSubscriptionEnded && Object.keys(result).length === 0 && (
                 <>
                   <p>Subscription to this match is closed</p>
                   <p>Awaiting for admin to submit the result</p>
@@ -78,7 +78,7 @@ const SoccerField = ({
               )}
             </div>
             <div className={styles.matchPlayersContainer}>
-              {!isRegistryStarted && (
+              {!isSubscriptionStarted && (
                 <ul
                   className={`${styles.matchPlayers} ${
                     playerQuota >= 12 ? styles.matchPlayersAlternative : ''
@@ -104,14 +104,14 @@ const SoccerField = ({
                   ))}
                 </ul>
               )}
-              {isRegistryStarted && (
+              {isSubscriptionStarted && (
                 <ul
                   className={`${styles.matchPlayers} ${
                     playerQuota >= 12 ? styles.matchPlayersAlternative : ''
                   }`}>
-                  {registeredPlayers &&
-                    registeredPlayers.length > 0 &&
-                    registeredPlayers.map((player) => (
+                  {subscribedPlayers &&
+                    subscribedPlayers.length > 0 &&
+                    subscribedPlayers.map((player) => (
                       <li
                         className={
                           playerQuota === 12
@@ -127,13 +127,13 @@ const SoccerField = ({
                             : ''
                         }
                         key={player.id}>
-                        {isRegistryOpen ? (
+                        {isSubscriptionOpen ? (
                           <PlayerIconContainer
                             image={player.image}
                             isUserSubscribed={isUserSubscribed}
                             username={player.username}
                             playerId={player.id}
-                            isRegistryOpen={isRegistryOpen}
+                            isSubscriptionOpen={isSubscriptionOpen}
                             tournamentId={tournamentId}
                             matchId={matchId}
                           />
@@ -163,7 +163,7 @@ const SoccerField = ({
                         }
                         key={`empty-${index}`}>
                         <PlayerIconContainer
-                          isRegistryOpen={isRegistryOpen}
+                          isSubscriptionOpen={isSubscriptionOpen}
                           isUserSubscribed={isUserSubscribed}
                           tournamentId={tournamentId}
                           matchId={matchId}

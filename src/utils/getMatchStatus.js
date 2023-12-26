@@ -1,6 +1,6 @@
 const getMatchStatus = ({
   result,
-  registryDateTime,
+  subscriptionDateTime,
   dateTime,
   playerQuota,
   players,
@@ -11,18 +11,18 @@ const getMatchStatus = ({
   const currentTime = new Date();
 
   // match subscription started derived state:
-  let isRegistryStarted = currentTime >= registryDateTime;
+  let isSubscriptionStarted = currentTime >= subscriptionDateTime;
 
   // match subscription ended derived state:
-  let isRegistryEnded = currentTime >= dateTime;
+  let isSubscriptionEnded = currentTime >= dateTime;
 
   // remaining players quota derived state:
   let remainingPlayersQuota = playerQuota - players.length;
 
   // match subscription is open/closed derived state:
-  let isRegistryOpen =
-    isRegistryStarted &&
-    !isRegistryEnded &&
+  let isSubscriptionOpen =
+    isSubscriptionStarted &&
+    !isSubscriptionEnded &&
     remainingPlayersQuota >= 1 &&
     Object.keys(result).length === 0;
 
@@ -41,10 +41,10 @@ const getMatchStatus = ({
   let isUserSubscribed = players.some((playerId) => playerId === userId);
 
   return {
-    isRegistryStarted,
-    isRegistryEnded,
+    isSubscriptionStarted,
+    isSubscriptionEnded,
     remainingPlayersQuota,
-    isRegistryOpen,
+    isSubscriptionOpen,
     mvpsString,
     isUserSubscribed,
   };

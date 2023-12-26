@@ -4,7 +4,7 @@ import styles from './PlayerIcon.module.css';
 
 const PlayerIcon = ({
   image,
-  isRegistryOpen,
+  isSubscriptionOpen,
   isUserSubscribed,
   username,
   playerId,
@@ -18,14 +18,14 @@ const PlayerIcon = ({
     <>
       {image ? (
         <div className={styles.playerIconContainer}>
-          {isRegistryOpen && playerId === userId && (
+          {isSubscriptionOpen && playerId === userId && (
             <div
               className={`${styles.unsubscribe} ${
                 isUserSubscribed ? styles.unsubscribeIsUserSubscribed : ''
               }`}
               onClick={() =>
                 handleUnsubscribeFromMatch(
-                  isRegistryOpen,
+                  isSubscriptionOpen,
                   isUserSubscribed,
                   tournamentId,
                   matchId,
@@ -46,20 +46,20 @@ const PlayerIcon = ({
       ) : (
         <div
           className={`${styles.noPlayerContainer} ${
-            isRegistryOpen ? styles.noPlayerContainerIsRegistryOpen : ''
+            isSubscriptionOpen ? styles.noPlayerContainerIsSubscriptionOpen : ''
           } ${
             isUserSubscribed ? styles.noPlayerContainerIsUserSubscribed : ''
           }`}
           onClick={() =>
             handleSubscribeToMatch(
-              isRegistryOpen,
+              isSubscriptionOpen,
               isUserSubscribed,
               tournamentId,
               matchId,
               userId
             )
           }>
-          {isRegistryOpen && (
+          {isSubscriptionOpen && (
             <p className={isUserSubscribed ? styles.isUserSubscribed : ''}>
               in!
             </p>

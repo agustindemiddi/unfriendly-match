@@ -8,7 +8,7 @@ import {
 
 const PlayerIconContainer = ({
   image,
-  isRegistryOpen,
+  isSubscriptionOpen,
   isUserSubscribed,
   username,
   playerId,
@@ -20,26 +20,26 @@ const PlayerIconContainer = ({
   } = getUserAuthCtx();
 
   const handleSubscribeToMatch = (
-    isRegistryOpen,
+    isSubscriptionOpen,
     isUserSubscribed,
     tournamentId,
     matchId,
     userId
   ) => {
-    if (isRegistryOpen && !isUserSubscribed) {
+    if (isSubscriptionOpen && !isUserSubscribed) {
       subscribeToMatch(tournamentId, matchId, userId);
     }
   };
 
   const handleUnsubscribeFromMatch = (
-    isRegistryOpen,
+    isSubscriptionOpen,
     isUserSubscribed,
     tournamentId,
     matchId,
     userId,
     playerId
   ) => {
-    if (playerId === userId && isRegistryOpen && isUserSubscribed) {
+    if (playerId === userId && isSubscriptionOpen && isUserSubscribed) {
       unsubscribeFromMatch(tournamentId, matchId, userId);
     }
   };
@@ -47,7 +47,7 @@ const PlayerIconContainer = ({
   return (
     <PlayerIcon
       image={image}
-      isRegistryOpen={isRegistryOpen}
+      isSubscriptionOpen={isSubscriptionOpen}
       isUserSubscribed={isUserSubscribed}
       username={username}
       playerId={playerId}

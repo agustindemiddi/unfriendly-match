@@ -15,6 +15,7 @@ import {
 } from 'firebase/firestore';
 import db from '../firebaseConfig';
 
+// DOCUMENTS AND COLLECTIONS REFERENCES
 const getPlayerDocRef = (playerId) => doc(db, `players/${playerId}`);
 
 const getTournamentDocRef = (tournamentId) =>
@@ -23,11 +24,14 @@ const getTournamentDocRef = (tournamentId) =>
 const getMatchDocRef = (tournamentId, matchId) =>
   doc(db, `tournaments/${tournamentId}/matches/${matchId}`);
 
+const getPlayersColRef = () => collection(db, 'players');
+
 const getTournamentsColRef = () => collection(db, 'tournaments');
 
 const getTournamentMatchesColRef = (tournamentId) =>
-  collection(db, 'tournaments', tournamentId, 'matches');
+  collection(db, `tournaments/${tournamentId}/matches`);
 
+// OBJECT CREATION FROM FIRESTORE DOCUMENT
 export const createPlayerObjectFromFirestore = (playerDoc) => ({
   ...playerDoc.data(),
   id: playerDoc.id,
@@ -48,6 +52,26 @@ export const createMatchObjectFromFirestore = (matchDoc) => ({
   registryDateTime: matchDoc.data().registryDateTime?.toDate(),
   dateTime: matchDoc.data().dateTime?.toDate(),
 });
+
+// FIRESTORE GENERIC ACTIONS
+// get a document:
+export const getDocument = async (docRef) => {
+  const docSnap = await getDoc(docRef);
+  return docSnap.exists() ? docSnap : new Error('Document not found!');
+};
+
+// APP SPECIFIC ACTIONS
+// get player:
+export const getPlayer = async (playerId) => {
+  const playerDoc = await getDocument(getPlayerDocRef(playerId));
+  return createPlayerObjectFromFirestore(playerDoc);
+};
+
+// get tournament:
+export const getTournament = async (tournamentId) => {
+  const tournamentDoc = await getDocument(getTournamentDocRef(tournamentId));
+  return createTournamentObjectFromFirestore(tournamentDoc);
+};
 
 // AUTHCONTEXT
 // create player profile object from user (first time sign up)
@@ -70,7 +94,7 @@ export const createPlayerObjectFromUser = (
   },
 });
 
-// get player profile from user (when user signs in)
+// get player profile (when user signs in)
 export const getPlayerProfileFromUser = async (currentUser) => {
   const { uid } = currentUser;
   const playerDoc = await getDoc(getPlayerDocRef(uid));
@@ -110,44 +134,25 @@ export const getUserActiveTournamentsMatches = async (userPlayerProfile) => {
 };
 
 // SOCCERFIELD
-// add listener to matchDoc for players property changes:
+// add listener to matchDoc:
 export const subscribeToMatchChanges = (
   tournamentId,
   matchId,
-  // players,
   setUpdatedMatch
 ) =>
   // add listener to matchDoc
   onSnapshot(
     getMatchDocRef(tournamentId, matchId),
     { includeMetadataChanges: true },
-    (matchDocSnapshot) => {
-      setUpdatedMatch(createMatchObjectFromFirestore(matchDocSnapshot));
-      // // check for players property changes:
-      // const previousPlayers = players;
-      // const currentPlayers = matchDocSnapshot.data()?.players;
-      // if (previousPlayers !== currentPlayers) {
-      //   setUpdatedMatch((prevState) => ({
-      //     ...prevState,
-      //     players: currentPlayers,
-      //   }));
-      // }
-    },
+    (matchDoc) => setUpdatedMatch(createMatchObjectFromFirestore(matchDoc)),
     (error) => {
-      // error handling
+      // handle error
+      console.log(error);
     }
   );
 
-// get tournament image:
-export const getTournamentImage = async (tournamentId, setTournamentImage) => {
-  const tournamentDoc = await getDoc(getTournamentDocRef(tournamentId));
-  tournamentDoc.exists()
-    ? setTournamentImage(tournamentDoc.data().image)
-    : new Error('Tournament not found!');
-};
-
 // get match players:
-export const getMatchPlayers = async (players, setSubscribedPlayers) => {
+export const getMatchPlayers = async (players) => {
   const matchPlayersQuery = query(
     collection(db, 'players'),
     where(documentId(), 'in', players)
@@ -156,7 +161,7 @@ export const getMatchPlayers = async (players, setSubscribedPlayers) => {
   const matchPlayersList = querySnapshot.docs.map((playerDoc) =>
     createPlayerObjectFromFirestore(playerDoc)
   );
-  setSubscribedPlayers(matchPlayersList);
+  return matchPlayersList;
 };
 
 // subscribe user to match:
@@ -176,9 +181,10 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
 // get match teams:
 export const getMatchTeams = async (
   teamAPlayersRefs,
-  teamBPlayersRefs,
-  setTeams
+  teamBPlayersRefs
+  // setTeams
 ) => {
+  let teams = { teamA: [], teamB: [] };
   const teamsPlayersRefs = { teamAPlayersRefs, teamBPlayersRefs };
   Object.keys(teamsPlayersRefs).forEach(async (key) => {
     const teamPlayersRefsArray = teamsPlayersRefs[key];
@@ -192,12 +198,10 @@ export const getMatchTeams = async (
         createPlayerObjectFromFirestore(playerDoc)
       );
       const newKey = key === 'teamAPlayersRefs' ? 'teamA' : 'teamB';
-      setTeams((prevState) => ({
-        ...prevState,
-        [newKey]: teamPlayersList,
-      }));
+      teams[newKey] = teamPlayersList;
     }
   });
+  return teams;
 };
 
 // get user tournaments:
@@ -220,22 +224,6 @@ export const getUserTournaments = async (userTournamentsRefsArray) => {
   }
 };
 
-// get player:
-const getPlayer = async (playerId) => {
-  const playerDoc = await getDoc(getPlayerDocRef(playerId));
-  playerDoc.exists()
-    ? createPlayerObjectFromFirestore(playerDoc)
-    : new Error('Player not found!');
-};
-
-// get tournament:
-export const getTournament = async (tournamentId, setTournament) => {
-  const tournamentDoc = await getDoc(getTournamentDocRef(tournamentId));
-  tournamentDoc.exists()
-    ? setTournament(createTournamentObjectFromFirestore(tournamentDoc))
-    : new Error('Tournament not found!');
-};
-
 // get tournament matches:
 export const getTournamentMatches = async (
   tournamentId,
@@ -256,9 +244,9 @@ export const getTournamentMatches_NOT_WORKING = async (
   setTournamentMatches
 ) => {
   const querySnapshot = await getDocs(getTournamentMatchesColRef(tournamentId));
-  const tournamentMatchesArray = querySnapshot.docs.map((matchDoc) => {
-    createMatchObjectFromFirestore(matchDoc);
-  });
+  const tournamentMatchesArray = querySnapshot.docs.map((matchDoc) =>
+    createMatchObjectFromFirestore(matchDoc)
+  );
   console.log(tournamentMatchesArray);
   setTournamentMatches(tournamentMatchesArray);
 };

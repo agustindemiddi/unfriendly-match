@@ -28,11 +28,11 @@
 }
 
 /* to point out the action of suscribeToMatch() */
-.noPlayerContainerIsRegistryOpen:hover {
+.noPlayerContainerIsSubscriptionOpen:hover {
   cursor: pointer;
 }
 
-/* if user is subscribed, overwrites .noPlayerContainerIsRegistryOpen:hover */
+/* if user is subscribed, overwrites .noPlayerContainerIsSubscriptionOpen:hover */
 .noPlayerContainerIsUserSubscribed:hover {
   cursor: default;
 }
@@ -41,15 +41,15 @@
   visibility: hidden;
 }
 
-.noPlayerContainerIsRegistryOpen:hover p {
+.noPlayerContainerIsSubscriptionOpen:hover p {
   visibility: visible;
 }
 
-.noPlayerContainerIsRegistryOpen:active p {
+.noPlayerContainerIsSubscriptionOpen:active p {
   font-size: 1.2rem;
 }
 
-/* if user is subscribed, overwrites .noPlayerContainerIsRegistryOpen:hover p */
+/* if user is subscribed, overwrites .noPlayerContainerIsSubscriptionOpen:hover p */
 .noPlayerContainer:hover .isUserSubscribed {
   visibility: hidden;
 }

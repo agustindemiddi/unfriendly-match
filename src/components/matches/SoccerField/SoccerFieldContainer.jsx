@@ -6,19 +6,18 @@ import { getUserAuthCtx } from '../../../context/AuthContext';
 
 import {
   subscribeToMatchChanges,
-  getTournamentImage,
-  getMatchTeams,
+  getTournament,
   getMatchPlayers,
+  getMatchTeams,
 } from '../../../utils/firebase/firestore/firestoreActions';
 import getMatchStatus from '../../../utils/getMatchStatus';
 import formatDate from '../../../utils/formatDate';
-
 import calculateCountdown from '../../../utils/calculateCountdownToMatchSubscription';
 
 const SoccerFieldContainer = ({ match }) => {
   const [updatedMatch, setUpdatedMatch] = useState(match);
   const [tournamentImage, setTournamentImage] = useState('');
-  const [registeredPlayers, setRegisteredPlayers] = useState([]);
+  const [subscribedPlayers, setSubscribedPlayers] = useState([]);
   const [teams, setTeams] = useState({ teamA: [], teamB: [] });
   const [matchSubscriptionCountdown, setMatchSubscriptionCountdown] =
     useState('');
@@ -33,7 +32,7 @@ const SoccerFieldContainer = ({ match }) => {
     creator,
     admins,
     creationDateTime,
-    registryDateTime,
+    registryDateTime: subscriptionDateTime,
     dateTime,
     address,
     playerQuota,
@@ -45,15 +44,15 @@ const SoccerFieldContainer = ({ match }) => {
   } = updatedMatch;
 
   const {
-    isRegistryStarted,
-    isRegistryEnded,
+    isSubscriptionStarted,
+    isSubscriptionEnded,
     remainingPlayersQuota,
-    isRegistryOpen,
+    isSubscriptionOpen,
     mvpsString,
     isUserSubscribed,
   } = getMatchStatus({
     result,
-    registryDateTime,
+    subscriptionDateTime,
     dateTime,
     playerQuota,
     players,
@@ -67,7 +66,6 @@ const SoccerFieldContainer = ({ match }) => {
     const unsubscribe = subscribeToMatchChanges(
       tournamentId,
       matchId,
-      // players,
       setUpdatedMatch
     );
     return () => unsubscribe();
@@ -75,31 +73,46 @@ const SoccerFieldContainer = ({ match }) => {
 
   // get tournament image:
   useEffect(() => {
-    if (tournamentId) getTournamentImage(tournamentId, setTournamentImage);
+    if (tournamentId) {
+      const fetchTournament = async () => {
+        const tournament = await getTournament(tournamentId);
+        setTournamentImage(tournament.image);
+      };
+      fetchTournament();
+    }
   }, [tournamentId]);
 
   // get match players:
   useEffect(() => {
-    if (players && players.length > 0)
-      getMatchPlayers(players, setRegisteredPlayers);
+    if (players && players.length > 0) {
+      const fetchPlayers = async () => {
+        const subscribedPlayers = await getMatchPlayers(players);
+        setSubscribedPlayers(subscribedPlayers);
+      };
+      fetchPlayers();
+    }
   }, [players]);
 
   // get match teams:
   useEffect(() => {
-    getMatchTeams(teamA, teamB, setTeams);
+    const fetchTeams = async () => {
+      const updatedTeams = await getMatchTeams(teamA, teamB);
+      setTeams(updatedTeams);
+    };
+    fetchTeams();
   }, [teamA, teamB]);
-
-  const formattedRegistryDateTime = formatDate(registryDateTime);
-  const formattedDateTime = formatDate(dateTime);
 
   // set countdown to match date time subscription:
   useEffect(() => {
     const intervalId = setInterval(
-      () => setMatchSubscriptionCountdown(calculateCountdown(registryDateTime)),
+      () => setMatchSubscriptionCountdown(calculateCountdown(subscriptionDateTime)),
       1000
     );
     return () => clearInterval(intervalId);
-  }, [registryDateTime]);
+  }, [subscriptionDateTime]);
+
+  const formattedSubscriptionDateTime = formatDate(subscriptionDateTime);
+  const formattedDateTime = formatDate(dateTime);
 
   return (
     <SoccerField
@@ -108,20 +121,20 @@ const SoccerFieldContainer = ({ match }) => {
         // creator,
         // admins,
         // creationDateTime,
-        registryDateTime,
+        subscriptionDateTime,
         dateTime,
         address,
         playerQuota,
         result,
-        isRegistryStarted,
-        isRegistryEnded,
+        isSubscriptionStarted,
+        isSubscriptionEnded,
         remainingPlayersQuota,
-        isRegistryOpen,
+        isSubscriptionOpen,
         mvpsString,
         tournamentImage,
-        registeredPlayers,
+        subscribedPlayers,
         teams,
-        formattedRegistryDateTime,
+        formattedSubscriptionDateTime,
         formattedDateTime,
         matchSubscriptionCountdown,
         isUserSubscribed,
