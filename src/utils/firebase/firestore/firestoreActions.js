@@ -233,6 +233,5 @@ export const getTournamentMatches = async (
   const tournamentMatchesArray = querySnapshot.docs.map((matchDoc) =>
     createMatchObjectFromFirestore(matchDoc)
   );
-  console.log(tournamentMatchesArray);
   return tournamentMatchesArray;
 };

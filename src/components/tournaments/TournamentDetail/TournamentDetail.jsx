@@ -14,6 +14,10 @@ const TournamentDetail = ({ tournament, matches }) => {
   return (
     <Section className={styles.tournamentDetailSection}>
       <div className={styles.matches}>
+        <Link className={styles.button} to='matches/new'>
+          Create Match
+        </Link>
+        {/* <button className={styles.button}>Show All Matches</button> */}
         <Link className={styles.button} to='matches'>
           See All Matches
         </Link>
@@ -31,9 +35,8 @@ const TournamentDetail = ({ tournament, matches }) => {
         )}
       </div>
       <div className={styles.standings}>
-        <Link className={styles.button} to='matches/new'>
-          Create Match
-        </Link>
+        <button className={styles.button}>Share Tournament</button>
+        <button className={styles.button}>Join Tournament</button>
         <StandingsTable />
       </div>
     </Section>
