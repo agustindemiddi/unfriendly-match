@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import styles from './UserIcon.module.css';
 
-import { getUserAuthCtx } from '../../../context/AuthContext';
+import { getUserAuthCtx } from '../../../context/authContext';
 
 const UserIcon = () => {
   const { userPlayerProfile } = getUserAuthCtx();

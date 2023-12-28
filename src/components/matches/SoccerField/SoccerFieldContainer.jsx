@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import SoccerField from './SoccerField';
 
-import { getUserAuthCtx } from '../../../context/AuthContext';
+import { getUserAuthCtx } from '../../../context/authContext';
 import {
   subscribeToMatchChanges,
   getTournament,

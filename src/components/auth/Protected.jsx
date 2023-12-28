@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 
-import { getUserAuthCtx } from '../../context/AuthContext';
+import { getUserAuthCtx } from '../../context/authContext';
 
 const Protected = ({ children }) => {
   const { user } = getUserAuthCtx();

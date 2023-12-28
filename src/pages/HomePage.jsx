@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 
 import Home from '../components/Home/Home';
 
-import { getUserAuthCtx } from '../context/AuthContext';
-
+import { getUserAuthCtx } from '../context/authContext';
 import { getUserActiveTournamentsMatches } from '../utils/firebase/firestore/firestoreActions';
 
 const HomePage = () => {

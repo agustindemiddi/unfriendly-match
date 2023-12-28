@@ -8,7 +8,7 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 
-import { getUserAuthCtx } from '../../context/AuthContext';
+import { getUserAuthCtx } from '../../context/authContext';
 
 import logo from '/logo.svg';
 import UserIcon from '../user/UserIcon/UserIcon';

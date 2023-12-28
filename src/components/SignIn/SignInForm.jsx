@@ -2,7 +2,7 @@ import { useRef } from 'react';
 
 import styles from './SignInForm.module.css';
 
-import { getUserAuthCtx } from '../../context/AuthContext';
+import { getUserAuthCtx } from '../../context/authContext';
 
 const SignInForm = ({ formModeIsSignIn }) => {
   const emailInput = useRef();

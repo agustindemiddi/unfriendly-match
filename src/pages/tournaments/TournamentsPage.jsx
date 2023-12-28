@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import TournamentsSection from '../../components/Tournaments/TournamentsSection';
 
-import { getUserAuthCtx } from '../../context/AuthContext';
+import { getUserAuthCtx } from '../../context/authContext';
 import { getUserTournaments } from '../../utils/firebase/firestore/firestoreActions';
 
 const TournamentsPage = () => {

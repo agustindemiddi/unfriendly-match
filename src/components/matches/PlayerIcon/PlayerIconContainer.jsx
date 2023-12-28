@@ -1,6 +1,6 @@
 import PlayerIcon from './PlayerIcon';
 
-import { getUserAuthCtx } from '../../../context/AuthContext';
+import { getUserAuthCtx } from '../../../context/authContext';
 import {
   subscribeToMatch,
   unsubscribeFromMatch,

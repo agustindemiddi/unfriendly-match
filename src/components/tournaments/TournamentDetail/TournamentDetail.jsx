@@ -7,7 +7,7 @@ import StandingsTable from './StandingsTable/StandingsTable';
 
 import styles from './TournamentDetail.module.css';
 
-import { getUserAuthCtx } from '../../../context/AuthContext';
+import { getUserAuthCtx } from '../../../context/authContext';
 import separateMatches from '../../../utils/separateMatches';
 import copyUrlToClipboard from '../../../utils/copyUrlToClipboard';
 import { subscribeToTournament } from '../../../utils/firebase/firestore/firestoreActions';

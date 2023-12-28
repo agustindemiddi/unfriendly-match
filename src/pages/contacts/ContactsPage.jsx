@@ -9,10 +9,10 @@ import {
 } from 'firebase/firestore';
 
 import Section from '../../components/UI/Section';
-import PlayerIcon from '../../components/matches/PlayerIcon/PlayerIcon';
+import PlayerIconContainer from '../../components/Matches/PlayerIcon/PlayerIconContainer';
 
 import db from '../../utils/firebase/firebaseConfig';
-import { getUserAuthCtx } from '../../context/AuthContext';
+import { getUserAuthCtx } from '../../context/authContext';
 import { createPlayerObjectFromFirestore } from '../../utils/firebase/firestore/firestoreActions';
 
 const ContactsPage = () => {
@@ -21,9 +21,7 @@ const ContactsPage = () => {
 
   console.log(userPlayerProfile);
 
-  useEffect(() => {
-
-  }, []);
+  useEffect(() => {}, []);
 
   // useEffect(() => {
   //   if (userPlayerProfile) {
@@ -72,7 +70,7 @@ const ContactsPage = () => {
           {userContacts.map((contact) => (
             <li key={contact.id}>
               <Link to={`/${contact.id}`}>
-                <PlayerIcon image={contact.image} />
+                <PlayerIconContainer image={contact.image} />
               </Link>
               <p>{contact.username}</p>
             </li>

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from './TournamentForm.module.css';
 
 import db from '../../../utils/firebase/firebaseConfig';
-import { getUserAuthCtx } from '../../../context/AuthContext';
+import { getUserAuthCtx } from '../../../context/authContext';
 
 import trophy01 from '/trophies/trophy01.jpg';
 import trophy02 from '/trophies/trophy02.jpg';
