@@ -31,7 +31,11 @@ import './index.css';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <RootLayout />,
+    element: (
+      <AuthContextProvider>
+        <RootLayout />
+      </AuthContextProvider>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
@@ -83,8 +87,6 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AuthContextProvider>
-      <RouterProvider router={router} />
-    </AuthContextProvider>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );

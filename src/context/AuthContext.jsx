@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   authListener,
@@ -8,11 +9,12 @@ import {
   logout,
 } from '../utils/firebase/firebaseAuthActions';
 
-const AuthContext = createContext();
+const authContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userPlayerProfile, setUserPlayerProfile] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = authListener(setUser, setUserPlayerProfile);
@@ -21,21 +23,20 @@ export const AuthContextProvider = ({ children }) => {
 
   // auth.useDeviceLanguage(); // test how it works
 
-  const handleGoogleSignIn = async () => signInWithGoogle();
+  const handleGoogleSignIn = async () => await signInWithGoogle();
 
   const handleEmailSignIn = async (formModeIsSignIn, email, password) =>
     formModeIsSignIn
-      ? signInWithEmail(email, password)
-      : signUpWithEmail(email, password);
+      ? await signInWithEmail(email, password)
+      : await signUpWithEmail(email, password);
 
-  const handleSignOut = () => {
-    setUser(null);
-    // setUserPlayerProfile(null);
-    logout();
+  const handleSignOut = async () => {
+    await logout();
+    navigate('/signin');
   };
 
   return (
-    <AuthContext.Provider
+    <authContext.Provider
       value={{
         user,
         userPlayerProfile,
@@ -44,10 +45,10 @@ export const AuthContextProvider = ({ children }) => {
         handleSignOut,
       }}>
       {children}
-    </AuthContext.Provider>
+    </authContext.Provider>
   );
 };
 
 export const getUserAuthCtx = () => {
-  return useContext(AuthContext);
+  return useContext(authContext);
 };

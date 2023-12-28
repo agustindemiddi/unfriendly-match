@@ -20,10 +20,7 @@ const SoccerFieldContainer = ({ match }) => {
   const [teams, setTeams] = useState({ teamA: [], teamB: [] });
   const [matchSubscriptionCountdown, setMatchSubscriptionCountdown] =
     useState('');
-
-  const {
-    userPlayerProfile: { id: userId },
-  } = getUserAuthCtx();
+  const { user } = getUserAuthCtx();
 
   const {
     id: matchId,
@@ -41,24 +38,6 @@ const SoccerFieldContainer = ({ match }) => {
     result,
     mvps,
   } = updatedMatch;
-
-  const {
-    isSubscriptionStarted,
-    isSubscriptionEnded,
-    remainingPlayersQuota,
-    isSubscriptionOpen,
-    mvpsString,
-    isUserSubscribed,
-  } = getMatchStatus({
-    result,
-    subscriptionDateTime,
-    dateTime,
-    playerQuota,
-    players,
-    teams,
-    mvps,
-    userId,
-  });
 
   // add listener to matchDoc:
   useEffect(() => {
@@ -107,37 +86,59 @@ const SoccerFieldContainer = ({ match }) => {
     return () => clearInterval(intervalId);
   }, [subscriptionDateTime]);
 
-  const formattedSubscriptionDateTime = formatDate(subscriptionDateTime);
-  const formattedDateTime = formatDate(dateTime);
+  if (user) {
+    const userId = user.uid;
 
-  return (
-    <SoccerField
-      matchProps={{
-        tournamentId,
-        // creator,
-        // admins,
-        // creationDateTime,
-        subscriptionDateTime,
-        dateTime,
-        address,
-        playerQuota,
-        result,
-        isSubscriptionStarted,
-        isSubscriptionEnded,
-        remainingPlayersQuota,
-        isSubscriptionOpen,
-        mvpsString,
-        tournamentImage,
-        subscribedPlayers,
-        teams,
-        formattedSubscriptionDateTime,
-        formattedDateTime,
-        matchSubscriptionCountdown,
-        isUserSubscribed,
-        matchId,
-      }}
-    />
-  );
+    const {
+      isSubscriptionStarted,
+      isSubscriptionEnded,
+      remainingPlayersQuota,
+      isSubscriptionOpen,
+      mvpsString,
+      isUserSubscribed,
+    } = getMatchStatus({
+      result,
+      subscriptionDateTime,
+      dateTime,
+      playerQuota,
+      players,
+      teams,
+      mvps,
+      userId,
+    });
+
+    const formattedSubscriptionDateTime = formatDate(subscriptionDateTime);
+    const formattedDateTime = formatDate(dateTime);
+
+    return (
+      <SoccerField
+        matchProps={{
+          tournamentId,
+          // creator,
+          // admins,
+          // creationDateTime,
+          subscriptionDateTime,
+          dateTime,
+          address,
+          playerQuota,
+          result,
+          isSubscriptionStarted,
+          isSubscriptionEnded,
+          remainingPlayersQuota,
+          isSubscriptionOpen,
+          mvpsString,
+          tournamentImage,
+          subscribedPlayers,
+          teams,
+          formattedSubscriptionDateTime,
+          formattedDateTime,
+          matchSubscriptionCountdown,
+          isUserSubscribed,
+          matchId,
+        }}
+      />
+    );
+  }
 };
 
 export default SoccerFieldContainer;

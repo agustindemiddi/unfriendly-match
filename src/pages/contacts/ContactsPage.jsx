@@ -19,45 +19,51 @@ const ContactsPage = () => {
   const { userPlayerProfile } = getUserAuthCtx();
   const [userContacts, setUserContacts] = useState([]);
 
+  console.log(userPlayerProfile);
+
   useEffect(() => {
-    if (userPlayerProfile) {
-      const fetchData = async () => {
-        const qT = query(
-          collection(db, 'tournaments'),
-          where(documentId(), 'in', userPlayerProfile.tournaments)
-        );
-        const querySnapshotT = await getDocs(qT);
 
-        const userTournamentsArray = [];
-        querySnapshotT.forEach((doc) => {
-          const tournament = { ...doc.data(), id: doc.id };
-          userTournamentsArray.push(tournament);
-        });
+  }, []);
 
-        const allContactsIds = Array.from(
-          new Set(
-            userTournamentsArray.flatMap((tournament) => tournament.players)
-          )
-        ).filter((playerId) => playerId !== userPlayerProfile.id);
+  // useEffect(() => {
+  //   if (userPlayerProfile) {
+  //     const fetchData = async () => {
+  //       const qT = query(
+  //         collection(db, 'tournaments'),
+  //         where(documentId(), 'in', userPlayerProfile.tournaments)
+  //       );
+  //       const querySnapshotT = await getDocs(qT);
 
-        const qP = query(
-          collection(db, 'players'),
-          where(documentId(), 'in', allContactsIds)
-        );
-        const querySnapshotP = await getDocs(qP);
+  //       const userTournamentsArray = [];
+  //       querySnapshotT.forEach((doc) => {
+  //         const tournament = { ...doc.data(), id: doc.id };
+  //         userTournamentsArray.push(tournament);
+  //       });
 
-        const userContactsArray = [];
-        querySnapshotP.forEach((doc) => {
-          // const player = { ...doc.data(), id: doc.id };
-          const player = createPlayerObjectFromFirestore(doc);
-          userContactsArray.push(player);
-        });
-        setUserContacts(userContactsArray);
-      };
+  //       const allContactsIds = Array.from(
+  //         new Set(
+  //           userTournamentsArray.flatMap((tournament) => tournament.players)
+  //         )
+  //       ).filter((playerId) => playerId !== userPlayerProfile.id);
 
-      fetchData();
-    }
-  }, [userPlayerProfile]);
+  //       const qP = query(
+  //         collection(db, 'players'),
+  //         where(documentId(), 'in', allContactsIds)
+  //       );
+  //       const querySnapshotP = await getDocs(qP);
+
+  //       const userContactsArray = [];
+  //       querySnapshotP.forEach((doc) => {
+  //         // const player = { ...doc.data(), id: doc.id };
+  //         const player = createPlayerObjectFromFirestore(doc);
+  //         userContactsArray.push(player);
+  //       });
+  //       setUserContacts(userContactsArray);
+  //     };
+
+  //     fetchData();
+  //   }
+  // }, [userPlayerProfile]);
 
   return (
     <Section>

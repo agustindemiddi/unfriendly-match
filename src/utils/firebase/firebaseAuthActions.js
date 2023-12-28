@@ -12,12 +12,14 @@ import { getPlayerProfileFromUser } from './firestore/firestoreActions';
 
 export const authListener = (setUser, setUserPlayerProfile) => {
   const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-    if (!currentUser) {
-      //   return redirect('/signin'); // redirect not working
-    } else {
+    if (currentUser) {
       setUser(currentUser);
       const playerProfile = await getPlayerProfileFromUser(currentUser);
       setUserPlayerProfile(playerProfile);
+    } else {
+      setUser(null);
+      setUserPlayerProfile(null);
+      // redirect('/signin'); // redirect not working
     }
   });
   return () => unsubscribe();
@@ -38,4 +40,4 @@ export const signUpWithEmail = async (email, password) => {
   await createUserWithEmailAndPassword(auth, email, password);
 };
 
-export const logout = () => signOut(auth);
+export const logout = async () => await signOut(auth);
