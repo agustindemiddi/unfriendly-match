@@ -171,10 +171,26 @@ export const subscribeToTournament = async (tournamentId, userId) => {
     players: arrayUnion(userId),
   });
   await updateDoc(getPlayerDocRef(userId), {
-    "tournaments.all": arrayUnion(tournamentId),
-    "tournaments.active": arrayUnion(tournamentId),
+    'tournaments.all': arrayUnion(tournamentId),
+    'tournaments.active': arrayUnion(tournamentId),
   });
   alert('You have joined this tournament!');
+};
+
+// TOURNAMENT PLAYERS
+// get players:
+export const getPlayers = async (players) => {
+  if (players && players.length > 0) {
+    const playersQuery = query(
+      collection(db, 'players'),
+      where(documentId(), 'in', players)
+    );
+    const querySnapshot = await getDocs(playersQuery);
+    const playersList = querySnapshot.docs.map((playerDoc) =>
+      createPlayerObjectFromFirestore(playerDoc)
+    );
+    return playersList;
+  }
 };
 
 // SOCCERFIELD
@@ -184,7 +200,6 @@ export const subscribeToMatchChanges = (
   matchId,
   setUpdatedMatch
 ) =>
-  // add listener to matchDoc
   onSnapshot(
     getMatchDocRef(tournamentId, matchId),
     { includeMetadataChanges: true },
@@ -195,18 +210,9 @@ export const subscribeToMatchChanges = (
     }
   );
 
-// get match players:
-export const getMatchPlayers = async (players) => {
-  const matchPlayersQuery = query(
-    collection(db, 'players'),
-    where(documentId(), 'in', players)
-  );
-  const querySnapshot = await getDocs(matchPlayersQuery);
-  const matchPlayersList = querySnapshot.docs.map((playerDoc) =>
-    createPlayerObjectFromFirestore(playerDoc)
-  );
-  return matchPlayersList;
-};
+// get tournament (re-used)
+
+// get players (re-used)
 
 // subscribe user to match:
 export const subscribeToMatch = async (tournamentId, matchId, userId) => {

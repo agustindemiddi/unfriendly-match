@@ -1,5 +1,5 @@
-import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 import TournamentDetail from '../../components/Tournaments/TournamentDetail/TournamentDetail';
 

@@ -6,7 +6,7 @@ import { getUserAuthCtx } from '../../../context/AuthContext';
 import {
   subscribeToMatchChanges,
   getTournament,
-  getMatchPlayers,
+  getPlayers,
   getMatchTeams,
 } from '../../../utils/firebase/firestore/firestoreActions';
 import getMatchStatus from '../../../utils/getMatchStatus';
@@ -72,31 +72,27 @@ const SoccerFieldContainer = ({ match }) => {
 
   // get tournament image:
   useEffect(() => {
-    if (tournamentId) {
-      const fetchTournament = async () => {
-        const tournament = await getTournament(tournamentId);
-        setTournamentImage(tournament.image);
-      };
-      fetchTournament();
-    }
+    const fetchTournament = async () => {
+      const fetchedTournament = await getTournament(tournamentId);
+      setTournamentImage(fetchedTournament.image);
+    };
+    fetchTournament();
   }, [tournamentId]);
 
   // get match players:
   useEffect(() => {
-    if (players && players.length > 0) {
-      const fetchPlayers = async () => {
-        const subscribedPlayers = await getMatchPlayers(players);
-        setSubscribedPlayers(subscribedPlayers);
-      };
-      fetchPlayers();
-    }
+    const fetchPlayers = async () => {
+      const fetchedPlayers = await getPlayers(players);
+      setSubscribedPlayers(fetchedPlayers);
+    };
+    fetchPlayers();
   }, [players]);
 
   // get match teams:
   useEffect(() => {
     const fetchTeams = async () => {
-      const updatedTeams = await getMatchTeams(teamA, teamB);
-      setTeams(updatedTeams);
+      const fetchedTeams = await getMatchTeams(teamA, teamB);
+      setTeams(fetchedTeams);
     };
     fetchTeams();
   }, [teamA, teamB]);

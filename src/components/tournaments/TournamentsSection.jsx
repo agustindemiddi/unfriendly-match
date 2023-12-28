@@ -1,22 +1,24 @@
 import { Link } from 'react-router-dom';
 
 import Section from '../UI/Section';
-import TournamentList from './TournamentsList/TournamentsList';
+import TournamentsList from './TournamentsList/TournamentsList';
 
 import separateTournaments from '../../utils/separateTournaments';
 
 const TournamentsSection = ({ tournaments }) => {
   const { active, finished } = separateTournaments(tournaments);
-  const tournamentsLists = [active, finished];
+  const tournamentTypeLists = [active, finished];
 
   return (
     <Section>
       <Link to='new'>CREATE TOURNAMENT</Link>
-      {tournamentsLists.map((tournamentsList, index) => (
+      {tournamentTypeLists.map((tournamentsList, index) => (
         <div key={index}>
-          <h2>{index === 0 ? 'Active' : 'Finished'} Tournaments:</h2>
           {tournamentsList.length > 0 && (
-            <TournamentList tournaments={tournamentsList} />
+            <>
+              <h2>{index === 0 ? 'Active' : 'Finished'} Tournaments:</h2>
+              <TournamentsList tournaments={tournamentsList} />
+            </>
           )}
         </div>
       ))}
