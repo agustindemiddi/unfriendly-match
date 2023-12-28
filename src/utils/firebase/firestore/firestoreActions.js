@@ -100,12 +100,12 @@ export const getPlayerProfileFromUser = async (currentUser) => {
       const { displayName, photoURL } = currentUser;
       const playerData = createPlayerObjectFromUser(uid, displayName, photoURL);
       await setDoc(getPlayerDocRef(uid), playerData);
-      return playerData; // check if necessary (maybe takes updated snap if re-renders)
+      return playerData;
     } else if (signInMethod === 'password') {
       const displayName = currentUser.email.split('@')[0];
       const playerData = createPlayerObjectFromUser(uid, displayName);
       await setDoc(getPlayerDocRef(uid), playerData);
-      return playerData; // check if necessary (maybe takes updated snap if re-renders)
+      return playerData;
     }
   }
 };
@@ -127,7 +127,7 @@ export const getUserActiveTournamentsMatches = async (userPlayerProfile) => {
   return userActiveTournamentsMatchesArray.flat();
 };
 
-// TOURNAMENTS PAGE
+// TOURNAMENTS PAGE <<< REEMPLAZAR POR FUNCION NUEVA MAS ABAJO CON CHEQUEO IF PARA NO TENER ARRAY VACIO >>>
 // get user tournaments:
 export const getUserTournaments = async (userTournamentsRefsArray) => {
   const userTournamentsQuery = query(
@@ -179,11 +179,11 @@ export const subscribeToTournament = async (tournamentId, userId) => {
 
 // TOURNAMENT PLAYERS
 // get players:
-export const getPlayers = async (players) => {
-  if (players && players.length > 0) {
+export const getPlayers = async (playersIdsArray) => {
+  if (playersIdsArray.length > 0) {
     const playersQuery = query(
-      collection(db, 'players'),
-      where(documentId(), 'in', players)
+      getPlayersColRef(),
+      where(documentId(), 'in', playersIdsArray)
     );
     const querySnapshot = await getDocs(playersQuery);
     const playersList = querySnapshot.docs.map((playerDoc) =>
@@ -193,7 +193,7 @@ export const getPlayers = async (players) => {
   }
 };
 
-// SOCCERFIELD
+// SOCCERFIELD CONTAINER
 // add listener to matchDoc:
 export const subscribeToMatchChanges = (
   tournamentId,
@@ -230,18 +230,18 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
 
 // get match teams:
 export const getMatchTeams = async (
-  teamAPlayersRefs,
-  teamBPlayersRefs
+  teamAPlayersIds,
+  teamBPlayersIds
   // setTeams
 ) => {
   let teams = { teamA: [], teamB: [] };
-  const teamsPlayersRefs = { teamAPlayersRefs, teamBPlayersRefs };
-  Object.keys(teamsPlayersRefs).forEach(async (key) => {
-    const teamPlayersRefsArray = teamsPlayersRefs[key];
-    if (teamPlayersRefsArray.length > 0) {
+  const teamsPlayersIds = { teamAPlayersIds, teamBPlayersIds };
+  Object.keys(teamsPlayersIds).forEach(async (key) => {
+    const teamPlayersIdsArray = teamsPlayersIds[key];
+    if (teamPlayersIdsArray.length > 0) {
       const teamPlayersQuery = query(
-        collection(db, 'players'),
-        where(documentId(), 'in', teamPlayersRefsArray)
+        getPlayersColRef(),
+        where(documentId(), 'in', teamPlayersIdsArray)
       );
       const querySnapshot = await getDocs(teamPlayersQuery);
       const teamPlayersList = querySnapshot.docs.map((playerDoc) =>
@@ -253,3 +253,21 @@ export const getMatchTeams = async (
   });
   return teams;
 };
+
+// CONTACTS PAGE
+// get tournaments: (UNIFICAR CON FUNCION MAS ARRIBA)
+export const getTournaments = async (tournamentsIdsArray) => {
+  if (tournamentsIdsArray.length > 0) {
+    const tournamentsQuery = query(
+      getTournamentsColRef(),
+      where(documentId(), 'in', tournamentsIdsArray)
+    );
+    const querySnapshot = await getDocs(tournamentsQuery);
+    const tournamentsList = querySnapshot.docs.map((tournamentDoc) =>
+      createTournamentObjectFromFirestore(tournamentDoc)
+    );
+    return tournamentsList;
+  }
+};
+
+// get players (re-used)
