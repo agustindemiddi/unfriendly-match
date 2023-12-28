@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import Section from '../../UI/Section';
@@ -6,18 +7,33 @@ import StandingsTable from './StandingsTable/StandingsTable';
 
 import styles from './TournamentDetail.module.css';
 
+import { getUserAuthCtx } from '../../../context/AuthContext';
 import separateMatches from '../../../utils/separateMatches';
+import copyUrlToClipboard from '../../../utils/copyUrlToClipboard';
+import { subscribeToTournament } from '../../../utils/firebase/firestore/firestoreActions';
 
 const TournamentDetail = ({ tournament, matches }) => {
+  const { userPlayerProfile } = getUserAuthCtx();
+  const [user, setUser] = useState(null);
+
+  const showCreateMatchButton = tournament?.admins?.includes(user?.id);
+  const hideJoinTournamentButton = tournament?.players?.includes(user?.id);
+
+  // in SoccerFieldContainer.jsx I obtain the userPlayerProfile data immediately. Why?
+  useEffect(() => {
+    if (userPlayerProfile) setUser(userPlayerProfile);
+  }, [userPlayerProfile]);
+
   const { nextMatch, lastMatch } = separateMatches(matches);
 
   return (
     <Section className={styles.tournamentDetailSection}>
       <div className={styles.matches}>
-        <Link className={styles.button} to='matches/new'>
-          Create Match
-        </Link>
-        {/* <button className={styles.button}>Show All Matches</button> */}
+        {showCreateMatchButton && (
+          <Link className={styles.button} to='matches/new'>
+            Create Match
+          </Link>
+        )}
         <Link className={styles.button} to='matches'>
           See All Matches
         </Link>
@@ -35,8 +51,19 @@ const TournamentDetail = ({ tournament, matches }) => {
         )}
       </div>
       <div className={styles.standings}>
-        <button className={styles.button}>Share Tournament</button>
-        <button className={styles.button}>Join Tournament</button>
+        <button className={styles.button} onClick={copyUrlToClipboard}>
+          Share Tournament
+        </button>
+        {user && !hideJoinTournamentButton && (
+          <button
+            className={styles.button}
+            onClick={() => subscribeToTournament(tournament.id, user.id)}>
+            Join Tournament
+          </button>
+        )}
+        <Link className={styles.button} to='players'>
+          See All Players
+        </Link>
         <StandingsTable />
       </div>
     </Section>

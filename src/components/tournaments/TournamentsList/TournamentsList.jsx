@@ -1,8 +1,8 @@
 import TournamentItem from './TournamentItem/TournamentItem';
 
-import styles from './TournamentList.module.css';
+import styles from './TournamentsList.module.css';
 
-const TournamentList = ({ tournaments }) => {
+const TournamentsList = ({ tournaments }) => {
   return (
     <ul className={styles.tournamentsList}>
       {tournaments.map((tournament) => (
@@ -14,4 +14,4 @@ const TournamentList = ({ tournaments }) => {
   );
 };
 
-export default TournamentList;
+export default TournamentsList;

@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import SoccerField from './SoccerField';
 
 import { getUserAuthCtx } from '../../../context/AuthContext';
-
 import {
   subscribeToMatchChanges,
   getTournament,
@@ -105,7 +104,8 @@ const SoccerFieldContainer = ({ match }) => {
   // set countdown to match date time subscription:
   useEffect(() => {
     const intervalId = setInterval(
-      () => setMatchSubscriptionCountdown(calculateCountdown(subscriptionDateTime)),
+      () =>
+        setMatchSubscriptionCountdown(calculateCountdown(subscriptionDateTime)),
       1000
     );
     return () => clearInterval(intervalId);

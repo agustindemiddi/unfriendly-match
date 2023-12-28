@@ -4,7 +4,6 @@ import Section from '../UI/Section';
 import MatchesList from './MatchesList/MatchesList';
 
 import separateMatches from '../../utils/separateMatches';
-import formatDate from '../../utils/formatDate';
 
 const MatchesSection = ({ matches }) => {
   const {

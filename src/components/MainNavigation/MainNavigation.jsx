@@ -52,7 +52,7 @@ const MainNavigation = () => {
                 icon={<LogoutOutlined />}>
                 Sign out
               </Button>
-              {<UserIcon />}
+              <UserIcon />
             </div>
           ) : (
             <Button shape='round' icon={<LoginOutlined />}>

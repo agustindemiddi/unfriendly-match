@@ -67,12 +67,6 @@ export const getPlayer = async (playerId) => {
   return createPlayerObjectFromFirestore(playerDoc);
 };
 
-// get tournament:
-export const getTournament = async (tournamentId) => {
-  const tournamentDoc = await getDocument(getTournamentDocRef(tournamentId));
-  return createTournamentObjectFromFirestore(tournamentDoc);
-};
-
 // AUTHCONTEXT
 // create player profile object from user (first time sign up)
 export const createPlayerObjectFromUser = (
@@ -131,6 +125,56 @@ export const getUserActiveTournamentsMatches = async (userPlayerProfile) => {
     })
   );
   return userActiveTournamentsMatchesArray.flat();
+};
+
+// TOURNAMENTS PAGE
+// get user tournaments:
+export const getUserTournaments = async (userTournamentsRefsArray) => {
+  const userTournamentsQuery = query(
+    getTournamentsColRef(),
+    where(documentId(), 'in', userTournamentsRefsArray)
+  );
+  try {
+    const querySnapshot = await getDocs(userTournamentsQuery);
+    const userTournamentsList = await Promise.all(
+      querySnapshot.docs.map(async (tournamentDoc) =>
+        createTournamentObjectFromFirestore(tournamentDoc)
+      )
+    );
+    return userTournamentsList;
+  } catch (error) {
+    console.error('Error fetching user tournaments:', error);
+    throw error;
+  }
+};
+
+// TOURNAMENT DETAIL PAGE
+// get tournament:
+export const getTournament = async (tournamentId) => {
+  const tournamentDoc = await getDocument(getTournamentDocRef(tournamentId));
+  return createTournamentObjectFromFirestore(tournamentDoc);
+};
+
+// get tournament matches:
+export const getTournamentMatches = async (tournamentId) => {
+  const querySnapshot = await getDocs(getTournamentMatchesColRef(tournamentId));
+  const tournamentMatchesArray = querySnapshot.docs.map((matchDoc) =>
+    createMatchObjectFromFirestore(matchDoc)
+  );
+  return tournamentMatchesArray;
+};
+
+// TOURNAMENT DETAIL
+// subscribe user to tournament:
+export const subscribeToTournament = async (tournamentId, userId) => {
+  await updateDoc(getTournamentDocRef(tournamentId), {
+    players: arrayUnion(userId),
+  });
+  await updateDoc(getPlayerDocRef(userId), {
+    "tournaments.all": arrayUnion(tournamentId),
+    "tournaments.active": arrayUnion(tournamentId),
+  });
+  alert('You have joined this tournament!');
 };
 
 // SOCCERFIELD
@@ -202,36 +246,4 @@ export const getMatchTeams = async (
     }
   });
   return teams;
-};
-
-// get user tournaments:
-export const getUserTournaments = async (userTournamentsRefsArray) => {
-  const userTournamentsQuery = query(
-    getTournamentsColRef(),
-    where(documentId(), 'in', userTournamentsRefsArray)
-  );
-  try {
-    const querySnapshot = await getDocs(userTournamentsQuery);
-    const userTournamentsList = await Promise.all(
-      querySnapshot.docs.map(async (tournamentDoc) =>
-        createTournamentObjectFromFirestore(tournamentDoc)
-      )
-    );
-    return userTournamentsList;
-  } catch (error) {
-    console.error('Error fetching user tournaments:', error);
-    throw error;
-  }
-};
-
-// get tournament matches:
-export const getTournamentMatches = async (
-  tournamentId
-  // setTournamentMatches
-) => {
-  const querySnapshot = await getDocs(getTournamentMatchesColRef(tournamentId));
-  const tournamentMatchesArray = querySnapshot.docs.map((matchDoc) =>
-    createMatchObjectFromFirestore(matchDoc)
-  );
-  return tournamentMatchesArray;
 };

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import Section from '../UI/Section';
-import TournamentList from './TournamentList/TournamentList';
+import TournamentList from './TournamentsList/TournamentsList';
 
 import separateTournaments from '../../utils/separateTournaments';
 
