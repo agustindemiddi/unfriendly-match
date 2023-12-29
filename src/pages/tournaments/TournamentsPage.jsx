@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import TournamentsSection from '../../components/Tournaments/TournamentsSection';
+import TournamentsSection from '../../components/tournaments/TournamentsSection/TournamentsSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
 import { getUserTournaments } from '../../utils/firebase/firestore/firestoreActions';

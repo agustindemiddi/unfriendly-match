@@ -42,12 +42,12 @@ const SoccerFieldContainer = ({ match }) => {
   // add listener to matchDoc:
   useEffect(() => {
     const unsubscribe = subscribeToMatchChanges(
-      tournamentId,
-      matchId,
+      match.tournament,
+      match.id,
       setUpdatedMatch
     );
     return () => unsubscribe();
-  }, [tournamentId, matchId]);
+  }, [match.tournament, match.id]);
 
   // get tournament image:
   useEffect(() => {

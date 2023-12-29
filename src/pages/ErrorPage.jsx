@@ -1,5 +1,5 @@
-import MainNavigation from '../components/MainNavigation/MainNavigation';
-import Section from '../components/UI/Section';
+import MainNavigation from '../components/UI/MainNavigation/MainNavigation';
+import Section from '../components/UI/Section/Section';
 
 const ErrorPage = () => {
   return (

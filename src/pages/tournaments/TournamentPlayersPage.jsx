@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import TournamentPlayersSection from '../../components/Tournaments/TournamentPlayers/TournamentPlayersSection';
+import TournamentPlayersSection from '../../components/tournaments/TournamentPlayersSection/TournamentPlayersSection';
 
 import {
   getTournament,

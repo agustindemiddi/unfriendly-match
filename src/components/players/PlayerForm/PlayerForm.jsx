@@ -2,6 +2,8 @@ import { useRef, useEffect } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
+import styles from './PlayerForm.module.css';
+
 import db from '../../../utils/firebaseConfig';
 
 const PlayerForm = () => {

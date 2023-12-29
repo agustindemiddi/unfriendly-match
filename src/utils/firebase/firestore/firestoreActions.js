@@ -67,6 +67,11 @@ export const getPlayer = async (playerId) => {
   return createPlayerObjectFromFirestore(playerDoc);
 };
 
+export const getMatch = async (tournamentId, matchId) => {
+  const matchDoc = await getDocument(getMatchDocRef(tournamentId, matchId));
+  return createMatchObjectFromFirestore(matchDoc);
+};
+
 // AUTHCONTEXT
 // create player profile object from user (first time sign up)
 export const createPlayerObjectFromUser = (
@@ -112,19 +117,21 @@ export const getPlayerProfileFromUser = async (currentUser) => {
 
 // HOMEPAGE
 // get user active tournaments matches:
-export const getUserActiveTournamentsMatches = async (userPlayerProfile) => {
-  const userActiveTournamentsMatchesArray = await Promise.all(
-    userPlayerProfile.tournaments.active.map(async (tournamentId) => {
-      const querySnapshot = await getDocs(
-        getTournamentMatchesColRef(tournamentId)
-      );
-      const matchesList = querySnapshot.docs.map((matchDoc) =>
-        createMatchObjectFromFirestore(matchDoc)
-      );
-      return matchesList;
-    })
-  );
-  return userActiveTournamentsMatchesArray.flat();
+export const getUserActiveTournamentsMatches = async (tournamentsIdsArray) => {
+  if (tournamentsIdsArray.length > 0) {
+    const userActiveTournamentsMatchesArray = await Promise.all(
+      tournamentsIdsArray.map(async (tournamentId) => {
+        const querySnapshot = await getDocs(
+          getTournamentMatchesColRef(tournamentId)
+        );
+        const matchesList = querySnapshot.docs.map((matchDoc) =>
+          createMatchObjectFromFirestore(matchDoc)
+        );
+        return matchesList;
+      })
+    );
+    return userActiveTournamentsMatchesArray.flat();
+  }
 };
 
 // TOURNAMENTS PAGE <<< REEMPLAZAR POR FUNCION NUEVA MAS ABAJO CON CHEQUEO IF PARA NO TENER ARRAY VACIO >>>
@@ -255,7 +262,7 @@ export const getMatchTeams = async (
 };
 
 // CONTACTS PAGE
-// get tournaments: (UNIFICAR CON FUNCION MAS ARRIBA)
+// get tournaments: (UNIFICAR CON FUNCION MAS ARRIBA) + // HOMEPAGE
 export const getTournaments = async (tournamentsIdsArray) => {
   if (tournamentsIdsArray.length > 0) {
     const tournamentsQuery = query(

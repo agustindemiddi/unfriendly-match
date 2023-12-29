@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
 
-import Section from '../../components/UI/Section';
-import ContactDetail from '../../components/Contacts/ContactDetail/ContactDetail';
+import ContactDetailSection from '../../components/contacts/ContactDetailSection/ContactDetailSection';
 
 import db from '../../utils/firebase/firebaseConfig';
 
@@ -24,12 +23,7 @@ const ContactDetailPage = () => {
     []
   );
 
-  return (
-    <Section>
-      <button onClick={() =>   console.log(params)}>click</button>
-      <ContactDetail item={player} />
-    </Section>
-  );
+  return <ContactDetailSection item={player} />;
 };
 
 export default ContactDetailPage;

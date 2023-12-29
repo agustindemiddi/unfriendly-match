@@ -1,7 +1,5 @@
-import Section from '../../components/UI/Section';
-
 const EditMatchPage = () => {
-  return <Section>EditMatchPage</Section>;
+  return <div>EditMatchPage</div>;
 };
 
 export default EditMatchPage;

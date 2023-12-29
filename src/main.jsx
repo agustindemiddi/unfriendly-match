@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { AuthContextProvider } from './context/authContext';
 
-import RootLayout from './components/UI/RootLayout';
+import RootLayout from './components/UI/RootLayout/RootLayout';
 import ErrorPage from './pages/ErrorPage';
 
 import SignInPage from './pages/SignInPage';

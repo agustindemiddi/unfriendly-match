@@ -1,6 +1,4 @@
-import Section from '../../components/UI/Section';
-
 const EditTournamentPage = () => {
-  return <Section>EditTournamentPage</Section>;
+  return <div>EditTournamentPage</div>;
 };
 export default EditTournamentPage;

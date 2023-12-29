@@ -1,5 +1,5 @@
-import SignIn from '../components/SignIn/SignIn';
+import SignInSection from '../components/auth/SignInSection/SignInSection';
 
-const SignInPage = () => <SignIn />;
+const SignInPage = () => <SignInSection />;
 
 export default SignInPage;

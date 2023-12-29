@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import Home from '../components/Home/Home';
+import HomeSection from '../components/home/HomeSection/HomeSection';
 
 import { getUserAuthCtx } from '../context/authContext';
 import { getUserActiveTournamentsMatches } from '../utils/firebase/firestore/firestoreActions';
@@ -11,17 +11,18 @@ const HomePage = () => {
 
   // get user active tournaments matches:
   useEffect(() => {
-    if (userPlayerProfile?.tournaments?.active?.length > 0) {
-      const fetch = async () => {
-        const response =
-          await getUserActiveTournamentsMatches(userPlayerProfile);
-        setUserMatches(response);
+    if (userPlayerProfile) {
+      const fetchUserActiveTournamentsMatches = async () => {
+        const fetchedMatches = await getUserActiveTournamentsMatches(
+          userPlayerProfile.tournaments.active
+        );
+        setUserMatches(fetchedMatches);
       };
-      fetch();
+      fetchUserActiveTournamentsMatches();
     }
   }, [userPlayerProfile]);
 
-  return <Home userMatches={userMatches} />;
+  return <HomeSection matches={userMatches} />;
 };
 
 export default HomePage;

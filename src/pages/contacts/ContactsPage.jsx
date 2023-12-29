@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import ContactsSection from '../../components/Contacts/ContactsSection';
+import ContactsSection from '../../components/contacts/ContactsSection/ContactsSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
 import {
@@ -16,12 +16,12 @@ const ContactsPage = () => {
   useEffect(() => {
     if (userPlayerProfile) {
       const fetchContacts = async () => {
-        const userTournaments = await getTournaments(
+        const userTournamentsIds = await getTournaments(
           userPlayerProfile.tournaments.all
         );
         // setUserTournaments(userTournaments);
 
-        const tournamentPlayersIds = userTournaments.map(
+        const tournamentPlayersIds = userTournamentsIds.map(
           (tournament) => tournament.players
         );
         const allContactsIds = Array.from(

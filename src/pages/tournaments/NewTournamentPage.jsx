@@ -1,12 +1,7 @@
-import Section from '../../components/UI/Section';
-import TournamentForm from '../../components/Tournaments/TournamentForm/TournamentForm';
+import TournamentForm from '../../components/tournaments/TournamentForm/TournamentForm';
 
 const NewTournamentPage = () => {
-  return (
-    <Section>
-      <TournamentForm />
-    </Section>
-  );
+  return <TournamentForm />;
 };
 
 export default NewTournamentPage;
