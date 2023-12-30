@@ -5,36 +5,3 @@
   flex-direction: column;
   padding: 2rem;
 }
-
-.asideNav ul li {
-  margin-bottom: 1rem;
-}
-
-.asideNav ul li a:hover {
-  color: rgb(64, 150, 255);
-  transition: 0.2s;
-}
-
-.asideNav ul li a.activeLink {
-  color: rgb(145, 202, 255);
-}
-
-.asideNav ul li a:active {
-  color: rgb(9, 88, 217);
-  transition: 0.2s;
-}
-
-.asideNav ul li a.activeLink:hover {
-  cursor: default;
-}
-
-.asideNav ul li a.activeLink:active {
-  color: rgb(145, 202, 255);
-}
-
-/* .asideNav ul li a:focus, */
-.asideNav ul li a:focus-visible {
-  outline-color: rgb(145, 202, 255);
-  padding: 5px 12px 7px 12px;
-  border-radius: 25px;
-}

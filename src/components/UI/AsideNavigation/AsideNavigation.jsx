@@ -1,28 +1,55 @@
-import { NavLink, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
+
+import AsideNavigationGroup from './AsideNavigationGroup/AsideNavigationGroup';
 
 import styles from './AsideNavigation.module.css';
 
-const sections = [
-  { label: 'Main', url: '/' },
-  { label: 'Tournaments', url: '/tournaments' },
-  { label: 'Contacts', url: '/contacts' },
-];
+import { getUserAuthCtx } from '../../../context/authContext';
+import { getTournaments } from '../../../utils/firebase/firestore/firestoreActions';
 
 const AsideNavigation = () => {
-  const { tournamentId, matchId } = useParams();
+  const { userPlayerProfile } = getUserAuthCtx();
+  const location = useLocation();
+  const initialNavTree = [
+    { name: 'MAIN', url: '/' },
+    { name: 'TOURNAMENTS', url: '/tournaments', collection: [] },
+    { name: 'CONTACTS', url: '/contacts' },
+  ];
+  const [navTree, setNavTree] = useState(initialNavTree);
 
-  console.log(tournamentId);
+  useEffect(() => {
+    // get all user tournaments:
+    if (userPlayerProfile && location.pathname.startsWith('/tournaments')) {
+      const fetchAllUserTournaments = async () => {
+        const fetchedTournaments = await getTournaments(
+          userPlayerProfile.tournaments.all
+        );
+        setNavTree((prevState) => {
+          const newNavTree = [...prevState];
+          newNavTree[1].collection = fetchedTournaments;
+          return newNavTree;
+        });
+      };
+      fetchAllUserTournaments();
+    }
+    if (userPlayerProfile && location.pathname !== '/tournaments') {
+      setNavTree(initialNavTree);
+    }
+  }, [userPlayerProfile, location.pathname]);
+
+  // useEffect(() => {
+  //   if (tournamentId) {
+  //     // get tournament matches:
+  //   }
+  // }, [tournamentId]);
 
   return (
     <nav className={styles.asideNav}>
       <ul>
-        {sections.map((section) => (
-          <li key={section.label}>
-            <NavLink
-              className={({ isActive }) => (isActive ? styles.activeLink : '')}
-              to={section.url}>
-              {section.label}
-            </NavLink>
+        {navTree.map((navGroup) => (
+          <li key={navGroup.name}>
+            <AsideNavigationGroup navGroup={navGroup} />
           </li>
         ))}
       </ul>

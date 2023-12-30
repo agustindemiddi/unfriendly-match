@@ -1,0 +1,32 @@
+.navGroup {
+  margin-bottom: 1.2rem;
+}
+
+.navGroup a:hover {
+  color: rgb(64, 150, 255);
+  transition: 0.2s;
+}
+
+.navGroup a:active {
+  color: rgb(9, 88, 217);
+  transition: 0.2s;
+}
+
+.navGroup a.activeLink {
+  color: rgb(145, 202, 255);
+}
+
+.navGroup a.activeLink:hover {
+  cursor: default;
+}
+
+.navGroup a.activeLink:active {
+  color: rgb(145, 202, 255);
+}
+
+/* .navGroup a:focus, */
+.navGroup a:focus-visible {
+  outline-color: rgb(145, 202, 255);
+  padding: 5px 12px 7px 12px;
+  border-radius: 25px;
+}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Lottie from 'lottie-react';
 
 import ContactsSection from '../../components/contacts/ContactsSection/ContactsSection';
 
@@ -7,9 +8,11 @@ import {
   getTournaments,
   getPlayers,
 } from '../../utils/firebase/firestore/firestoreActions';
+import bouncingBall from '../../assets/bouncing-ball.json';
 
 const ContactsPage = () => {
   const { userPlayerProfile } = getUserAuthCtx();
+  const [isLoading, setIsLoading] = useState(true);
   const [userContacts, setUserContacts] = useState([]);
   // const [userTournaments, setUserTournaments] = useState([]);
 
@@ -30,12 +33,19 @@ const ContactsPage = () => {
 
         const allContacts = await getPlayers(allContactsIds);
         setUserContacts(allContacts);
+        setIsLoading(false);
       };
       fetchContacts();
     }
   }, [userPlayerProfile]);
 
-  return <ContactsSection contacts={userContacts} />;
+  const content = isLoading ? (
+    <Lottie animationData={bouncingBall} loop={true} />
+  ) : (
+    <ContactsSection contacts={userContacts} />
+  );
+
+  return content;
 };
 
 export default ContactsPage;
