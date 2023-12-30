@@ -17,28 +17,29 @@ import {
 
 const TournamentDetailSection = ({ tournament, matches }) => {
   const { userPlayerProfile } = getUserAuthCtx();
-  const [isUserTournamentPlayer, setIsUserTournamentPlayer] = useState(false);
+  const [isTournamentPlayer, setIsTournamentPlayer] = useState(false);
 
   useEffect(() => {
-    if (userPlayerProfile) {
-      if (tournament?.players?.includes(userPlayerProfile?.id)) {
-        setIsUserTournamentPlayer(true);
-      } else {
-        setIsUserTournamentPlayer(false);
-      }
+    if (
+      userPlayerProfile &&
+      tournament?.players?.includes(userPlayerProfile.id)
+    ) {
+      setIsTournamentPlayer(true);
+    } else {
+      setIsTournamentPlayer(false);
     }
   }, [userPlayerProfile, tournament.players]);
 
-  const isUserAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
+  const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
 
   const handleSubscribeToTournament = () => {
     subscribeToTournament(tournament.id, userPlayerProfile.id);
-    setIsUserTournamentPlayer(true);
+    setIsTournamentPlayer(true);
   };
 
   const handleUnsubscribeFromTournament = () => {
     unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
-    setIsUserTournamentPlayer(false);
+    setIsTournamentPlayer(false);
   };
 
   const { nextMatch, lastMatch } = separateMatches(matches);
@@ -46,7 +47,7 @@ const TournamentDetailSection = ({ tournament, matches }) => {
   return (
     <Section className={styles.tournamentDetailSection}>
       <div className={styles.matches}>
-        {userPlayerProfile && isUserAdmin && (
+        {userPlayerProfile && isAdmin && (
           <Link className={styles.button} to='matches/new'>
             Create Match
           </Link>
@@ -67,8 +68,17 @@ const TournamentDetailSection = ({ tournament, matches }) => {
           </>
         )}
       </div>
+
       <div className={styles.standings}>
-        {userPlayerProfile && isUserTournamentPlayer && (
+        {userPlayerProfile && !isTournamentPlayer && (
+          <button
+            className={styles.button}
+            onClick={handleSubscribeToTournament}
+            style={{ backgroundColor: 'green' }}>
+            Join Tournament
+          </button>
+        )}
+        {userPlayerProfile && isTournamentPlayer && (
           <button
             className={styles.button}
             onClick={handleUnsubscribeFromTournament}
@@ -76,16 +86,14 @@ const TournamentDetailSection = ({ tournament, matches }) => {
             Leave Tournament
           </button>
         )}
-        {userPlayerProfile && isUserTournamentPlayer && (
+        {userPlayerProfile && isAdmin && (
+          <Link className={styles.button} to='edit'>
+            Edit Tournament
+          </Link>
+        )}
+        {userPlayerProfile && isTournamentPlayer && (
           <button className={styles.button} onClick={copyUrlToClipboard}>
             Share Tournament
-          </button>
-        )}
-        {userPlayerProfile && !isUserTournamentPlayer && (
-          <button
-            className={styles.button}
-            onClick={handleSubscribeToTournament}>
-            Join Tournament
           </button>
         )}
         <Link className={styles.button} to='players'>

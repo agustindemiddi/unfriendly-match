@@ -8,6 +8,7 @@ import {
   getTournament,
   getPlayers,
   getTeams,
+  addTournamentListener,
 } from '../../utils/firebase/firestore/firestoreActions';
 import getMatchStatus from '../../utils/getMatchStatus';
 import formatDate from '../../utils/formatDate';
@@ -16,13 +17,15 @@ import calculateCountdown from '../../utils/calculateCountdownToMatchSubscriptio
 const SoccerFieldContainer = ({ match }) => {
   const { user } = getUserAuthCtx();
   const [updatedMatch, setUpdatedMatch] = useState(match);
-  const [tournamentImage, setTournamentImage] = useState('');
+  const [updatedTournament, setUpdatedTournament] = useState({});
   const [subscribedPlayers, setSubscribedPlayers] = useState([]);
   const [teams, setTeams] = useState({ teamA: [], teamB: [] });
   const [matchSubscriptionCountdown, setMatchSubscriptionCountdown] =
     useState('');
 
   const { uid: userId } = user;
+
+  const isTournamentPlayer = updatedTournament?.players?.includes(userId);
 
   const {
     id: matchId,
@@ -41,6 +44,8 @@ const SoccerFieldContainer = ({ match }) => {
     mvps,
   } = updatedMatch;
 
+  const { image: tournamentImage } = updatedTournament;
+
   useEffect(() => {
     // add listener to matchDoc:
     const unsubscribe = addMatchListener(
@@ -52,13 +57,13 @@ const SoccerFieldContainer = ({ match }) => {
   }, [match.tournament, match.id]);
 
   useEffect(() => {
-    // get tournament image:
-    const fetchTournament = async () => {
-      const fetchedTournament = await getTournament(tournamentId);
-      setTournamentImage(fetchedTournament.image);
-    };
-    fetchTournament();
-  }, [tournamentId]);
+    // add listener to tournamentDoc:
+    const unsubscribe = addTournamentListener(
+      match.tournament,
+      setUpdatedTournament
+    );
+    return () => unsubscribe();
+  }, [match.tournament]);
 
   useEffect(() => {
     // get match players:
@@ -134,6 +139,7 @@ const SoccerFieldContainer = ({ match }) => {
         matchSubscriptionCountdown,
         isUserSubscribed,
         matchId,
+        isTournamentPlayer,
       }}
     />
   );

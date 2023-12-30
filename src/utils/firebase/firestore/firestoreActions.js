@@ -209,6 +209,17 @@ export const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
     (error) => console.log(error)
   );
 
+export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
+  onSnapshot(
+    getTournamentDocRef(tournamentId),
+    { includeMetadataChanges: true },
+    (tournamentDoc) => {
+      const tournament = createTournamentObjectFromFirestore(tournamentDoc);
+      setUpdatedTournament(tournament);
+    },
+    (error) => console.log(error)
+  );
+
 // SUBSCRIBERS
 // subscribe user to tournament:
 export const subscribeToTournament = async (tournamentId, userId) => {

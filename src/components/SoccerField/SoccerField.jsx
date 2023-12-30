@@ -28,6 +28,7 @@ const SoccerField = ({
     matchSubscriptionCountdown,
     isUserSubscribed,
     matchId,
+    isTournamentPlayer,
   },
 }) => {
   const { teamA, teamB } = teams;
@@ -130,12 +131,13 @@ const SoccerField = ({
                         {isSubscriptionOpen ? (
                           <PlayerIconContainer
                             image={player.image}
+                            isSubscriptionOpen={isSubscriptionOpen}
                             isUserSubscribed={isUserSubscribed}
                             username={player.username}
                             playerId={player.id}
-                            isSubscriptionOpen={isSubscriptionOpen}
                             tournamentId={tournamentId}
                             matchId={matchId}
+                            isTournamentPlayer={isTournamentPlayer}
                           />
                         ) : (
                           <PlayerIconContainer
@@ -167,6 +169,7 @@ const SoccerField = ({
                           isUserSubscribed={isUserSubscribed}
                           tournamentId={tournamentId}
                           matchId={matchId}
+                          isTournamentPlayer={isTournamentPlayer}
                         />
                       </li>
                     ))}

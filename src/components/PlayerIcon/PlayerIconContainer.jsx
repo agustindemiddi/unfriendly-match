@@ -14,34 +14,21 @@ const PlayerIconContainer = ({
   playerId,
   tournamentId,
   matchId,
+  isTournamentPlayer,
 }) => {
   const {
     userPlayerProfile: { id: userId },
   } = getUserAuthCtx();
 
-  const handleSubscribeToMatch = (
-    isSubscriptionOpen,
-    isUserSubscribed,
-    tournamentId,
-    matchId,
-    userId
-  ) => {
-    if (isSubscriptionOpen && !isUserSubscribed) {
+  const handleSubscribeToMatch = (tournamentId, matchId, userId) => {
+    if (!isTournamentPlayer) alert('You must join the tournament first!');
+    if (isTournamentPlayer && isSubscriptionOpen && !isUserSubscribed)
       subscribeToMatch(tournamentId, matchId, userId);
-    }
   };
 
-  const handleUnsubscribeFromMatch = (
-    isSubscriptionOpen,
-    isUserSubscribed,
-    tournamentId,
-    matchId,
-    userId,
-    playerId
-  ) => {
-    if (playerId === userId && isSubscriptionOpen && isUserSubscribed) {
+  const handleUnsubscribeFromMatch = (tournamentId, matchId, userId) => {
+    if (playerId === userId && isSubscriptionOpen && isUserSubscribed)
       unsubscribeFromMatch(tournamentId, matchId, userId);
-    }
   };
 
   return (
