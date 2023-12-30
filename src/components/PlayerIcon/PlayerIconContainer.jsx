@@ -1,10 +1,10 @@
 import PlayerIcon from './PlayerIcon';
 
-import { getUserAuthCtx } from '../../../context/authContext';
+import { getUserAuthCtx } from '../../context/authContext';
 import {
   subscribeToMatch,
   unsubscribeFromMatch,
-} from '../../../utils/firebase/firestore/firestoreActions';
+} from '../../utils/firebase/firestore/firestoreActions';
 
 const PlayerIconContainer = ({
   image,

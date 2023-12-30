@@ -1,5 +1,5 @@
 import Section from '../../UI/Section/Section';
-import SoccerFieldContainer from '../../matches/SoccerField/SoccerFieldContainer';
+import SoccerFieldContainer from '../../SoccerField/SoccerFieldContainer';
 
 import styles from './HomeSection.module.css';
 

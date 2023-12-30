@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
-import SoccerFieldContainer from '../../matches/SoccerField/SoccerFieldContainer';
+import SoccerFieldContainer from '../../SoccerField/SoccerFieldContainer';
 import StandingsTable from './StandingsTable/StandingsTable';
 
 import styles from './TournamentDetailSection.module.css';

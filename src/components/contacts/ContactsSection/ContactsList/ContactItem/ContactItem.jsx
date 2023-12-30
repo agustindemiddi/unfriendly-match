@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import PlayerIconContainer from '../../../../matches/PlayerIcon/PlayerIconContainer';
+import PlayerIconContainer from '../../../../PlayerIcon/PlayerIconContainer';
 
 import styles from './ContactItem.module.css';
 

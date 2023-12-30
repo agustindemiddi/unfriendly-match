@@ -2,16 +2,16 @@ import { useState, useEffect } from 'react';
 
 import SoccerField from './SoccerField';
 
-import { getUserAuthCtx } from '../../../context/authContext';
+import { getUserAuthCtx } from '../../context/authContext';
 import {
   addMatchListener,
   getTournament,
   getPlayers,
   getTeams,
-} from '../../../utils/firebase/firestore/firestoreActions';
-import getMatchStatus from '../../../utils/getMatchStatus';
-import formatDate from '../../../utils/formatDate';
-import calculateCountdown from '../../../utils/calculateCountdownToMatchSubscription';
+} from '../../utils/firebase/firestore/firestoreActions';
+import getMatchStatus from '../../utils/getMatchStatus';
+import formatDate from '../../utils/formatDate';
+import calculateCountdown from '../../utils/calculateCountdownToMatchSubscription';
 
 const SoccerFieldContainer = ({ match }) => {
   const { user } = getUserAuthCtx();
