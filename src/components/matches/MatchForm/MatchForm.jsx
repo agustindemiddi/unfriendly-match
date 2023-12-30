@@ -26,8 +26,8 @@ const MatchForm = () => {
   const matchDateInputRef = useRef();
   const matchTimeInputRef = useRef();
   const matchAddressInputRef = useRef();
-  const matchRegistryStartDateInputRef = useRef();
-  const matchRegistryStartTimeInputRef = useRef();
+  const matchSubscriptionStartDateInputRef = useRef();
+  const matchSubscriptionStartTimeInputRef = useRef();
   const playerQuotaInputRef = useRef();
   const params = useParams();
   const { userPlayerProfile } = getUserAuthCtx();
@@ -94,12 +94,14 @@ const MatchForm = () => {
     // Timestamp.fromDate() doesn't seem to be needed. Try to add from other part of the world and compare.
     const matchDateTime = Timestamp.fromDate(new Date(matchCombinedDateTime));
 
-    const matchRegistryDate = matchRegistryStartDateInputRef.current.value;
-    const matchRegistryTime = matchRegistryStartTimeInputRef.current.value;
-    const matchRegistryCombinedDateTime = `${matchRegistryDate}T${matchRegistryTime}`;
+    const matchSubscriptionDate =
+      matchSubscriptionStartDateInputRef.current.value;
+    const matchSubscriptionTime =
+      matchSubscriptionStartTimeInputRef.current.value;
+    const matchSubscriptionCombinedDateTime = `${matchSubscriptionDate}T${matchSubscriptionTime}`;
     // Timestamp.fromDate() doesn't seem to be needed. Try to add from other part of the world and compare.
-    const matchRegistryDateTime = Timestamp.fromDate(
-      new Date(matchRegistryCombinedDateTime)
+    const matchSubscriptionDateTime = Timestamp.fromDate(
+      new Date(matchSubscriptionCombinedDateTime)
     );
 
     const playersRefs = matchPlayers.map((player) => player.id);
@@ -109,7 +111,7 @@ const MatchForm = () => {
       creator: userPlayerProfile.id,
       admins: [...new Set([...tournament.admins, userPlayerProfile.id])],
       creationDateTime: Timestamp.now(),
-      registryDateTime: matchRegistryDateTime, // custom or Timestamp.now() (default value)
+      subscriptionDateTime: matchSubscriptionDateTime, // custom or Timestamp.now() (default value)
       dateTime: matchDateTime,
       address: matchAddressInputRef.current.value,
       playerQuota: playerQuotaInputRef.current.value * 2,
@@ -167,8 +169,8 @@ const MatchForm = () => {
         Día de comienzo del registro al partido:
         <input
           type='date'
-          name='match-registry-date'
-          ref={matchRegistryStartDateInputRef}
+          name='match-subscription-date'
+          ref={matchSubscriptionStartDateInputRef}
           required
         />
       </label>
@@ -176,8 +178,8 @@ const MatchForm = () => {
         Hora de comienzo del registro al partido:
         <input
           type='time'
-          name='match-registry-time'
-          ref={matchRegistryStartTimeInputRef}
+          name='match-subscription-time'
+          ref={matchSubscriptionStartTimeInputRef}
           required
         />
       </label>

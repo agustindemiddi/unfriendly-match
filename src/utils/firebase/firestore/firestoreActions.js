@@ -49,7 +49,7 @@ export const createMatchObjectFromFirestore = (matchDoc) => ({
   ...matchDoc.data(),
   id: matchDoc.id,
   creationDateTime: matchDoc.data().creationDateTime?.toDate(),
-  registryDateTime: matchDoc.data().registryDateTime?.toDate(),
+  subscriptionDateTime: matchDoc.data().subscriptionDateTime?.toDate(),
   dateTime: matchDoc.data().dateTime?.toDate(),
 });
 

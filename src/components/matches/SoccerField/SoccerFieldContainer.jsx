@@ -30,7 +30,7 @@ const SoccerFieldContainer = ({ match }) => {
     creator,
     admins,
     creationDateTime,
-    registryDateTime: subscriptionDateTime,
+    subscriptionDateTime,
     dateTime,
     address,
     playerQuota,
