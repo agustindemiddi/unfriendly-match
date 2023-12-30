@@ -15,7 +15,7 @@ const TournamentsSection = ({ tournaments }) => {
     <Section>
       <Link to='new'>CREATE TOURNAMENT</Link>
       {tournamentTypeLists.map((tournamentsList, index) => (
-        <div key={index}>
+        <div className={styles.tournamentType} key={index}>
           {tournamentsList.length > 0 && (
             <>
               <h2>{index === 0 ? 'Active' : 'Finished'} Tournaments:</h2>
