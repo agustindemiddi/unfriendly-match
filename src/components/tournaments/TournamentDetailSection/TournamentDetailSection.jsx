@@ -10,26 +10,43 @@ import styles from './TournamentDetailSection.module.css';
 import { getUserAuthCtx } from '../../../context/authContext';
 import separateMatches from '../../../utils/separateMatches';
 import copyUrlToClipboard from '../../../utils/copyUrlToClipboard';
-import { subscribeToTournament } from '../../../utils/firebase/firestore/firestoreActions';
+import {
+  subscribeToTournament,
+  unsubscribeFromTournament,
+} from '../../../utils/firebase/firestore/firestoreActions';
 
 const TournamentDetailSection = ({ tournament, matches }) => {
   const { userPlayerProfile } = getUserAuthCtx();
-  const [user, setUser] = useState(null);
+  const [isUserTournamentPlayer, setIsUserTournamentPlayer] = useState(false);
 
-  const showCreateMatchButton = tournament?.admins?.includes(user?.id);
-  const hideJoinTournamentButton = tournament?.players?.includes(user?.id);
-
-  // in SoccerFieldContainer.jsx I obtain the userPlayerProfile data immediately. Why?
   useEffect(() => {
-    if (userPlayerProfile) setUser(userPlayerProfile);
-  }, [userPlayerProfile]);
+    if (userPlayerProfile) {
+      if (tournament?.players?.includes(userPlayerProfile?.id)) {
+        setIsUserTournamentPlayer(true);
+      } else {
+        setIsUserTournamentPlayer(false);
+      }
+    }
+  }, [userPlayerProfile, tournament.players]);
+
+  const isUserAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
+
+  const handleSubscribeToTournament = () => {
+    subscribeToTournament(tournament.id, userPlayerProfile.id);
+    setIsUserTournamentPlayer(true);
+  };
+
+  const handleUnsubscribeFromTournament = () => {
+    unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
+    setIsUserTournamentPlayer(false);
+  };
 
   const { nextMatch, lastMatch } = separateMatches(matches);
 
   return (
     <Section className={styles.tournamentDetailSection}>
       <div className={styles.matches}>
-        {showCreateMatchButton && (
+        {userPlayerProfile && isUserAdmin && (
           <Link className={styles.button} to='matches/new'>
             Create Match
           </Link>
@@ -51,13 +68,23 @@ const TournamentDetailSection = ({ tournament, matches }) => {
         )}
       </div>
       <div className={styles.standings}>
-        <button className={styles.button} onClick={copyUrlToClipboard}>
-          Share Tournament
-        </button>
-        {user && !hideJoinTournamentButton && (
+        {userPlayerProfile && isUserTournamentPlayer && (
           <button
             className={styles.button}
-            onClick={() => subscribeToTournament(tournament.id, user.id)}>
+            onClick={handleUnsubscribeFromTournament}
+            style={{ backgroundColor: 'red' }}>
+            Leave Tournament
+          </button>
+        )}
+        {userPlayerProfile && isUserTournamentPlayer && (
+          <button className={styles.button} onClick={copyUrlToClipboard}>
+            Share Tournament
+          </button>
+        )}
+        {userPlayerProfile && !isUserTournamentPlayer && (
+          <button
+            className={styles.button}
+            onClick={handleSubscribeToTournament}>
             Join Tournament
           </button>
         )}

@@ -41,8 +41,8 @@ const SoccerFieldContainer = ({ match }) => {
     mvps,
   } = updatedMatch;
 
-  // add listener to matchDoc:
   useEffect(() => {
+    // add listener to matchDoc:
     const unsubscribe = addMatchListener(
       match.tournament,
       match.id,
@@ -51,8 +51,8 @@ const SoccerFieldContainer = ({ match }) => {
     return () => unsubscribe();
   }, [match.tournament, match.id]);
 
-  // get tournament image:
   useEffect(() => {
+    // get tournament image:
     const fetchTournament = async () => {
       const fetchedTournament = await getTournament(tournamentId);
       setTournamentImage(fetchedTournament.image);
@@ -60,8 +60,8 @@ const SoccerFieldContainer = ({ match }) => {
     fetchTournament();
   }, [tournamentId]);
 
-  // get match players:
   useEffect(() => {
+    // get match players:
     const fetchPlayers = async () => {
       const fetchedPlayers = await getPlayers(players);
       setSubscribedPlayers(fetchedPlayers);
@@ -69,8 +69,8 @@ const SoccerFieldContainer = ({ match }) => {
     fetchPlayers();
   }, [players]);
 
-  // get match teams:
   useEffect(() => {
+    // get match teams:
     const fetchTeams = async () => {
       const fetchedTeams = await getTeams(teamA, teamB);
       setTeams(fetchedTeams);
@@ -78,8 +78,8 @@ const SoccerFieldContainer = ({ match }) => {
     fetchTeams();
   }, [teamA, teamB]);
 
-  // set countdown to match date time subscription:
   useEffect(() => {
+    // set countdown to match date time subscription:
     const intervalId = setInterval(
       () =>
         setMatchSubscriptionCountdown(calculateCountdown(subscriptionDateTime)),

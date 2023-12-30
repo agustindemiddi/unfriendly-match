@@ -223,7 +223,7 @@ export const subscribeToTournament = async (tournamentId, userId) => {
 };
 
 // unsubscribe user from tournament (NOT YET IMPLEMENTED):
-const unsubscribeFromTournament = async (tournamentId, userId) => {
+export const unsubscribeFromTournament = async (tournamentId, userId) => {
   await updateDoc(getTournamentDocRef(tournamentId), {
     players: arrayRemove(userId),
   });
