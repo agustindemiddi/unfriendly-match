@@ -4,23 +4,25 @@ import SoccerField from './SoccerField';
 
 import { getUserAuthCtx } from '../../../context/authContext';
 import {
-  subscribeToMatchChanges,
+  addMatchListener,
   getTournament,
   getPlayers,
-  getMatchTeams,
+  getTeams,
 } from '../../../utils/firebase/firestore/firestoreActions';
 import getMatchStatus from '../../../utils/getMatchStatus';
 import formatDate from '../../../utils/formatDate';
 import calculateCountdown from '../../../utils/calculateCountdownToMatchSubscription';
 
 const SoccerFieldContainer = ({ match }) => {
+  const { user } = getUserAuthCtx();
   const [updatedMatch, setUpdatedMatch] = useState(match);
   const [tournamentImage, setTournamentImage] = useState('');
   const [subscribedPlayers, setSubscribedPlayers] = useState([]);
   const [teams, setTeams] = useState({ teamA: [], teamB: [] });
   const [matchSubscriptionCountdown, setMatchSubscriptionCountdown] =
     useState('');
-  const { user } = getUserAuthCtx();
+
+  const { uid: userId } = user;
 
   const {
     id: matchId,
@@ -41,7 +43,7 @@ const SoccerFieldContainer = ({ match }) => {
 
   // add listener to matchDoc:
   useEffect(() => {
-    const unsubscribe = subscribeToMatchChanges(
+    const unsubscribe = addMatchListener(
       match.tournament,
       match.id,
       setUpdatedMatch
@@ -70,7 +72,7 @@ const SoccerFieldContainer = ({ match }) => {
   // get match teams:
   useEffect(() => {
     const fetchTeams = async () => {
-      const fetchedTeams = await getMatchTeams(teamA, teamB);
+      const fetchedTeams = await getTeams(teamA, teamB);
       setTeams(fetchedTeams);
     };
     fetchTeams();
@@ -86,59 +88,55 @@ const SoccerFieldContainer = ({ match }) => {
     return () => clearInterval(intervalId);
   }, [subscriptionDateTime]);
 
-  if (user) {
-    const userId = user.uid;
+  const {
+    isSubscriptionStarted,
+    isSubscriptionEnded,
+    remainingPlayersQuota,
+    isSubscriptionOpen,
+    mvpsString,
+    isUserSubscribed,
+  } = getMatchStatus({
+    result,
+    subscriptionDateTime,
+    dateTime,
+    playerQuota,
+    players,
+    teams,
+    mvps,
+    userId,
+  });
 
-    const {
-      isSubscriptionStarted,
-      isSubscriptionEnded,
-      remainingPlayersQuota,
-      isSubscriptionOpen,
-      mvpsString,
-      isUserSubscribed,
-    } = getMatchStatus({
-      result,
-      subscriptionDateTime,
-      dateTime,
-      playerQuota,
-      players,
-      teams,
-      mvps,
-      userId,
-    });
+  const formattedSubscriptionDateTime = formatDate(subscriptionDateTime);
+  const formattedDateTime = formatDate(dateTime);
 
-    const formattedSubscriptionDateTime = formatDate(subscriptionDateTime);
-    const formattedDateTime = formatDate(dateTime);
-
-    return (
-      <SoccerField
-        matchProps={{
-          tournamentId,
-          // creator,
-          // admins,
-          // creationDateTime,
-          subscriptionDateTime,
-          dateTime,
-          address,
-          playerQuota,
-          result,
-          isSubscriptionStarted,
-          isSubscriptionEnded,
-          remainingPlayersQuota,
-          isSubscriptionOpen,
-          mvpsString,
-          tournamentImage,
-          subscribedPlayers,
-          teams,
-          formattedSubscriptionDateTime,
-          formattedDateTime,
-          matchSubscriptionCountdown,
-          isUserSubscribed,
-          matchId,
-        }}
-      />
-    );
-  }
+  return (
+    <SoccerField
+      matchProps={{
+        tournamentId,
+        // creator,
+        // admins,
+        // creationDateTime,
+        subscriptionDateTime,
+        dateTime,
+        address,
+        playerQuota,
+        result,
+        isSubscriptionStarted,
+        isSubscriptionEnded,
+        remainingPlayersQuota,
+        isSubscriptionOpen,
+        mvpsString,
+        tournamentImage,
+        subscribedPlayers,
+        teams,
+        formattedSubscriptionDateTime,
+        formattedDateTime,
+        matchSubscriptionCountdown,
+        isUserSubscribed,
+        matchId,
+      }}
+    />
+  );
 };
 
 export default SoccerFieldContainer;

@@ -3,22 +3,24 @@ import { useState, useEffect } from 'react';
 import TournamentsSection from '../../components/tournaments/TournamentsSection/TournamentsSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
-import { getUserTournaments } from '../../utils/firebase/firestore/firestoreActions';
+import {
+  getTournaments,
+} from '../../utils/firebase/firestore/firestoreActions';
 
 const TournamentsPage = () => {
   const { userPlayerProfile } = getUserAuthCtx();
   const [userTournaments, setUserTournaments] = useState([]);
 
-  // get user tournaments:
+  // get all user tournaments:
   useEffect(() => {
-    if (userPlayerProfile?.tournaments?.all?.length > 0) {
-      const fetchUserTournaments = async () => {
-        const tournaments = await getUserTournaments(
+    if (userPlayerProfile) {
+      const fetchAllUserTournaments = async () => {
+        const fetchedTournaments = await getTournaments(
           userPlayerProfile.tournaments.all
         );
-        setUserTournaments(tournaments);
+        setUserTournaments(fetchedTournaments);
       };
-      fetchUserTournaments();
+      fetchAllUserTournaments();
     }
   }, [userPlayerProfile]);
 

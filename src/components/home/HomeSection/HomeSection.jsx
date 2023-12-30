@@ -1,5 +1,5 @@
 import Section from '../../UI/Section/Section';
-import SoccerFieldContainer from '../../Matches/SoccerField/SoccerFieldContainer';
+import SoccerFieldContainer from '../../matches/SoccerField/SoccerFieldContainer';
 
 import styles from './HomeSection.module.css';
 
@@ -28,8 +28,8 @@ const HomeSection = ({ matches }) => {
 
       {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES >>> */}
       {/* <h2>Test Match:</h2>
-      {sortedUpcomingMatches && sortedUpcomingMatches[1] && (
-        <SoccerFieldContainer match={sortedUpcomingMatches[1]} />
+      {reverseSortedPreviousMatches && reverseSortedPreviousMatches[0] && (
+        <SoccerFieldContainer match={reverseSortedPreviousMatches[0]} />
       )} */}
       {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES <<< */}
 
