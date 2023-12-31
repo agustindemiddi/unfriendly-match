@@ -17,3 +17,17 @@ const formatDate = (dateObject) => {
 };
 
 export default formatDate;
+
+export const asideNavFormatDate = (dateObject) => {
+  if (dateObject && dateObject instanceof Date) {
+    const options = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    };
+
+    return dateObject.toLocaleString('en-GB', options);
+  } else {
+    return 'Error fetching date and time!';
+  }
+};

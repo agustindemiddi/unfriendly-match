@@ -1,34 +1,30 @@
-import { NavLink, useParams } from 'react-router-dom';
+// import { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 
 import AsideNavigationTournamentItem from './AsideNavigationTournamentItem/AsideNavigationTournamentItem';
 
 import styles from './AsideNavigationGroup.module.css';
 
-const AsideNavigationGroup = ({ navGroup }) => {
-  const { tournamentId } = useParams();
-  // console.log(navGroup.collection);
-
-  const selectedTournament = navGroup.collection?.filter(
-    (tournament) => tournament.id === tournamentId
-  )[0];
-
+const AsideNavigationGroup = ({ navItem }) => {
   return (
-    <div className={styles.navGroup}>
+    <>
       <NavLink
-        className={({ isActive }) => (isActive ? styles.activeLink : '')}
-        to={navGroup.url}>
-        {navGroup.name}
+        className={({ isActive }) =>
+          isActive ? `${styles.navItem} ${styles.activeLink}` : styles.navItem
+        }
+        to={navItem.url}>
+        {navItem.name}
       </NavLink>
-      {navGroup.collection?.length > 0 && (
+      {navItem.collection?.length > 0 && (
         <ul>
-          {navGroup.collection.map((tournamentNavItem) => (
-            <li key={tournamentNavItem.id}>
-              <AsideNavigationTournamentItem navItem={tournamentNavItem} />
+          {navItem.collection.map((tournament) => (
+            <li key={tournament.id}>
+              <AsideNavigationTournamentItem navItem={tournament} />
             </li>
           ))}
         </ul>
       )}
-    </div>
+    </>
   );
 };
 

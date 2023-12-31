@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import AsideNavigationGroup from './AsideNavigationGroup/AsideNavigationGroup';
 
@@ -13,8 +13,8 @@ const AsideNavigation = () => {
   const location = useLocation();
   const initialNavTree = [
     { name: 'MAIN', url: '/' },
-    { name: 'TOURNAMENTS', url: '/tournaments', collection: [] },
     { name: 'CONTACTS', url: '/contacts' },
+    { name: 'TOURNAMENTS', url: '/tournaments', collection: [] },
   ];
   const [navTree, setNavTree] = useState(initialNavTree);
 
@@ -27,7 +27,7 @@ const AsideNavigation = () => {
         );
         setNavTree((prevState) => {
           const newNavTree = [...prevState];
-          newNavTree[1].collection = fetchedTournaments;
+          newNavTree[2].collection = fetchedTournaments;
           return newNavTree;
         });
       };
@@ -38,18 +38,12 @@ const AsideNavigation = () => {
     }
   }, [userPlayerProfile, location.pathname]);
 
-  // useEffect(() => {
-  //   if (tournamentId) {
-  //     // get tournament matches:
-  //   }
-  // }, [tournamentId]);
-
   return (
     <nav className={styles.asideNav}>
       <ul>
-        {navTree.map((navGroup) => (
-          <li key={navGroup.name}>
-            <AsideNavigationGroup navGroup={navGroup} />
+        {navTree.map((navItem) => (
+          <li key={navItem.name}>
+            <AsideNavigationGroup navItem={navItem} />
           </li>
         ))}
       </ul>

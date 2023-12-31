@@ -1,40 +1,28 @@
-.navItem {
-  margin-top: 0.5rem;
-}
-
-.navItem a {
-  font-style: italic;
-}
-
-.selectedTournament {
-  color: rgb(145, 202, 255);
-}
-
-/* .navItem a:hover {
+a.navItem:hover {
   color: rgb(64, 150, 255);
   transition: 0.2s;
 }
 
-.navItem a:active {
+a.navItem:active {
   color: rgb(9, 88, 217);
   transition: 0.2s;
 }
 
-.navItem a.activeLink {
-  color: rgb(145, 202, 255);
-}
-
-.navItem a.activeLink:hover {
-  cursor: default;
-}
-
-.navItem a.activeLink:active {
-  color: rgb(145, 202, 255);
-} */
-
-/* .navItem a:focus, */
-/* .navItem a:focus-visible {
+/* a.navItem:focus, */
+a.navItem:focus-visible {
   outline-color: rgb(145, 202, 255);
   padding: 5px 12px 7px 12px;
   border-radius: 25px;
-} */
+}
+
+a.navItem.activeLink {
+  color: rgb(145, 202, 255);
+}
+
+a.navItem.activeLink:hover {
+  color: rgb(9, 88, 217);
+}
+
+a.navItem.activeLink:active {
+  color: rgb(64, 150, 255);
+}

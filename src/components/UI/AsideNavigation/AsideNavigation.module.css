@@ -5,3 +5,32 @@
   flex-direction: column;
   padding: 2rem;
 }
+
+.asideNav > ul > li {
+  margin-bottom: 1.5rem;
+}
+
+.asideNav > ul > li > ul > li {
+  margin-top: 1rem;
+}
+
+.asideNav > ul > li > ul > li > div > ul > li {
+  margin-top: 0.25rem;
+}
+
+.asideNav a {
+  display: block;
+}
+
+.asideNav > ul > li > ul > li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.asideNav > ul > li > ul > li > div {
+  margin-top: 1rem;
+  border: 1px solid white;
+  border-radius: 5px;
+  padding: 15px 20px;
+}

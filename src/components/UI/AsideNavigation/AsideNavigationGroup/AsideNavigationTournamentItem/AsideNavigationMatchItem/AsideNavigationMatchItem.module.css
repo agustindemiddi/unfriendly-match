@@ -1,3 +1,7 @@
+a.navItem {
+  font-size: small;
+}
+
 a.navItem:hover {
   color: rgb(64, 150, 255);
   transition: 0.2s;
@@ -20,9 +24,9 @@ a.navItem.activeLink {
 }
 
 a.navItem.activeLink:hover {
-  color: rgb(9, 88, 217);
+  cursor: default;
 }
 
 a.navItem.activeLink:active {
-  color: rgb(64, 150, 255);
+  color: rgb(145, 202, 255);
 }
