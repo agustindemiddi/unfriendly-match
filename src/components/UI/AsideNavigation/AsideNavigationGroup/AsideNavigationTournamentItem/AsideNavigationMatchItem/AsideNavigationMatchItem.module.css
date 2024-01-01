@@ -30,3 +30,7 @@ a.navItem.activeLink:hover {
 a.navItem.activeLink:active {
   color: rgb(145, 202, 255);
 }
+
+.previousMatch {
+  color: rgb(190, 190, 190);
+}

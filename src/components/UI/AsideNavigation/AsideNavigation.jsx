@@ -19,11 +19,11 @@ const AsideNavigation = () => {
   const [navTree, setNavTree] = useState(initialNavTree);
 
   useEffect(() => {
-    // get all user tournaments:
+    // get user active tournaments:
     if (userPlayerProfile && location.pathname.startsWith('/tournaments')) {
       const fetchAllUserTournaments = async () => {
         const fetchedTournaments = await getTournaments(
-          userPlayerProfile.tournaments.all
+          userPlayerProfile.tournaments.active
         );
         setNavTree((prevState) => {
           const newNavTree = [...prevState];
