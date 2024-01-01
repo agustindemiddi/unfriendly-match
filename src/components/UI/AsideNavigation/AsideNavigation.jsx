@@ -32,8 +32,10 @@ const AsideNavigation = () => {
         });
       };
       fetchAllUserTournaments();
-    }
-    if (userPlayerProfile && location.pathname !== '/tournaments') {
+    } else if (
+      userPlayerProfile &&
+      !location.pathname.startsWith('/tournaments')
+    ) {
       setNavTree(initialNavTree);
     }
   }, [userPlayerProfile, location.pathname]);
