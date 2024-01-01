@@ -23,8 +23,11 @@ const AsideNavigationTournamentItem = ({ navItem }) => {
     }
   }, [location.pathname, tournamentId]);
 
-  const { reverseSortedListedAllMatches, reverseSortedPreviousMatches } =
-    separateMatches(tournamentMatches);
+  const {
+    reverseSortedListedAllMatches,
+    reverseSortedPreviousMatches,
+    nextMatch,
+  } = separateMatches(tournamentMatches);
 
   const isSelectedTournament = navItem.id === tournamentId;
 
@@ -56,6 +59,7 @@ const AsideNavigationTournamentItem = ({ navItem }) => {
                   navItem={match.data}
                   index={match.number}
                   previousMatches={reverseSortedPreviousMatches}
+                  nextMatch={nextMatch}
                 />
               </li>
             ))}
