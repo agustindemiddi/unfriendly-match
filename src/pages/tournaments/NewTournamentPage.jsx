@@ -1,7 +1,7 @@
-import TournamentForm from '../../components/tournaments/TournamentForm/TournamentForm';
+import NewTournamentSection from '../../components/tournaments/NewTournamentSection/NewTournamentSection';
 
 const NewTournamentPage = () => {
-  return <TournamentForm />;
+  return <NewTournamentSection />;
 };
 
 export default NewTournamentPage;

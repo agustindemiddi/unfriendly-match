@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
+import ActionsBar from '../../UI/ActionsBar/ActionsBar';
 import SoccerFieldContainer from '../../SoccerField/SoccerFieldContainer';
 import StandingsTable from './StandingsTable/StandingsTable';
 
@@ -45,61 +46,64 @@ const TournamentDetailSection = ({ tournament, matches }) => {
   const { nextMatch, lastMatch } = separateMatches(matches);
 
   return (
-    <Section className={styles.tournamentDetailSection}>
-      <div className={styles.matches}>
-        {userPlayerProfile && isAdmin && (
-          <Link className={styles.button} to='matches/new'>
-            Create Match
+    <Section>
+      <ActionsBar />
+      <div className={styles.sectionContent}>
+        <div className={styles.matches}>
+          {userPlayerProfile && isAdmin && (
+            <Link className={styles.button} to='matches/new'>
+              Create Match
+            </Link>
+          )}
+          <Link className={styles.button} to='matches'>
+            See All Matches
           </Link>
-        )}
-        <Link className={styles.button} to='matches'>
-          See All Matches
-        </Link>
-        {nextMatch && (
-          <>
-            <h2>Next Match:</h2>
-            <SoccerFieldContainer match={nextMatch} />
-          </>
-        )}
-        {lastMatch && (
-          <>
-            <h2>Last Match:</h2>
-            <SoccerFieldContainer match={lastMatch} />
-          </>
-        )}
-      </div>
+          {nextMatch && (
+            <>
+              <h2>Next Match:</h2>
+              <SoccerFieldContainer match={nextMatch} />
+            </>
+          )}
+          {lastMatch && (
+            <>
+              <h2>Last Match:</h2>
+              <SoccerFieldContainer match={lastMatch} />
+            </>
+          )}
+        </div>
 
-      <div className={styles.standings}>
-        {userPlayerProfile && !isTournamentPlayer && (
-          <button
-            className={styles.button}
-            onClick={handleSubscribeToTournament}
-            style={{ backgroundColor: 'green' }}>
-            Join Tournament
-          </button>
-        )}
-        {userPlayerProfile && isTournamentPlayer && (
-          <button
-            className={styles.button}
-            onClick={handleUnsubscribeFromTournament}
-            style={{ backgroundColor: 'red' }}>
-            Leave Tournament
-          </button>
-        )}
-        {userPlayerProfile && isAdmin && (
-          <Link className={styles.button} to='edit'>
-            Edit Tournament
+        <div className={styles.standings}>
+          {userPlayerProfile && !isTournamentPlayer && (
+            <button
+              className={styles.button}
+              onClick={handleSubscribeToTournament}
+              style={{ backgroundColor: 'green' }}>
+              Join Tournament
+            </button>
+          )}
+          {userPlayerProfile && isTournamentPlayer && (
+            <button
+              className={styles.button}
+              onClick={handleUnsubscribeFromTournament}
+              style={{ backgroundColor: 'red' }}>
+              Leave Tournament
+            </button>
+          )}
+          {userPlayerProfile && isAdmin && (
+            <Link className={styles.button} to='edit'>
+              Edit Tournament
+            </Link>
+          )}
+          {userPlayerProfile && isTournamentPlayer && (
+            <button className={styles.button} onClick={copyUrlToClipboard}>
+              Share Tournament
+            </button>
+          )}
+          <Link className={styles.button} to='players'>
+            See All Players
           </Link>
-        )}
-        {userPlayerProfile && isTournamentPlayer && (
-          <button className={styles.button} onClick={copyUrlToClipboard}>
-            Share Tournament
-          </button>
-        )}
-        <Link className={styles.button} to='players'>
-          See All Players
-        </Link>
-        <StandingsTable />
+          <StandingsTable />
+        </div>
       </div>
     </Section>
   );

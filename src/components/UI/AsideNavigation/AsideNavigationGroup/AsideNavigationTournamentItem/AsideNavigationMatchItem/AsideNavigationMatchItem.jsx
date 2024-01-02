@@ -5,31 +5,20 @@ import styles from './AsideNavigationMatchItem.module.css';
 
 import { asideNavFormatDate } from '../../../../../../utils/formatDate';
 
-const AsideNavigationMatchItem = ({
-  navItem,
-  index,
-  previousMatches,
-  nextMatch,
-}) => {
+const AsideNavigationMatchItem = ({ navItem, index, previousMatches }) => {
   const { tournamentId } = useParams();
 
   const isPreviousMatch = previousMatches.some(
     (match) => match.id === navItem.id
   );
 
-  const isNextMatch = nextMatch.id === navItem.id;
-
   return (
     <>
       <NavLink
         className={({ isActive }) =>
           isActive
-            ? `${styles.navItem} ${styles.activeLink} ${
-                isNextMatch ? styles.nextMatch : ''
-              }`
-            : `${styles.navItem} ${
-                isPreviousMatch ? styles.previousMatch : ''
-              } ${isNextMatch ? styles.nextMatch : ''}`
+            ? `${styles.navItem} ${styles.activeLink}`
+            : `${styles.navItem} ${isPreviousMatch ? styles.previousMatch : ''}`
         }
         to={`/tournaments/${tournamentId}/matches/${navItem.id}`}>
         Match {index} · {asideNavFormatDate(navItem.dateTime)}

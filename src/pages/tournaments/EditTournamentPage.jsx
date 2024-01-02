@@ -1,4 +1,6 @@
+import EditTournamentSection from '../../components/tournaments/EditTournamentSection/EditTournamentSection';
+
 const EditTournamentPage = () => {
-  return <div>EditTournamentPage</div>;
+  return <EditTournamentSection />;
 };
 export default EditTournamentPage;

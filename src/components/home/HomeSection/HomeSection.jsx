@@ -1,4 +1,5 @@
 import Section from '../../UI/Section/Section';
+import ActionsBar from '../../UI/ActionsBar/ActionsBar';
 import SoccerFieldContainer from '../../SoccerField/SoccerFieldContainer';
 
 import styles from './HomeSection.module.css';
@@ -15,6 +16,7 @@ const HomeSection = ({ matches }) => {
 
   return (
     <Section>
+      <ActionsBar />
       {/* <h2>Upcoming Matches:</h2>
       {sortedUpcomingMatches && sortedUpcomingMatches.length > 0 && (
         <ul>

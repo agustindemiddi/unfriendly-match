@@ -1,7 +1,7 @@
-import MatchForm from '../../components/matches/MatchForm/MatchForm';
+import NewMatchSection from '../../components/matches/NewMatchSection/NewMatchSection';
 
 const NewMatchPage = () => {
-  return <MatchForm />;
+  return <NewMatchSection />;
 };
 
 export default NewMatchPage;

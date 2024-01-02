@@ -34,11 +34,3 @@ a.navItem.activeLink:active {
 a.navItem.previousMatch {
   color: rgb(190, 190, 190);
 }
-
-a.navItem.nextMatch::before {
-  content: '> ';
-}
-
-a.navItem.nextMatch::after {
-  content: ' < ';
-}

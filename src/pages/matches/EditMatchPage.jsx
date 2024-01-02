@@ -1,5 +1,7 @@
+import EditMatchSection from '../../components/matches/MatchesSection/EditMatchSection/EditMatchSection';
+
 const EditMatchPage = () => {
-  return <div>EditMatchPage</div>;
+  return <EditMatchSection />;
 };
 
 export default EditMatchPage;

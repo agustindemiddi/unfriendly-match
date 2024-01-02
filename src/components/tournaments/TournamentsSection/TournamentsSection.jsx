@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
+import ActionsBar from '../../UI/ActionsBar/ActionsBar';
 import TournamentsList from './TournamentsList/TournamentsList';
 
 import styles from './TournamentsSection.module.css';
@@ -10,10 +11,20 @@ import separateTournaments from '../../../utils/separateTournaments';
 const TournamentsSection = ({ tournaments }) => {
   const { active, finished } = separateTournaments(tournaments);
   const tournamentTypeLists = [active, finished];
+  const navigate = useNavigate();
+
+  const actions = [
+    {
+      label: 'Create New Tournament',
+      onAction: () => {
+        navigate('/tournaments/new');
+      },
+    },
+  ];
 
   return (
     <Section>
-      <Link to='new'>CREATE TOURNAMENT</Link>
+      <ActionsBar actions={actions} />
       {tournamentTypeLists.map((tournamentsList, index) => (
         <div className={styles.tournamentType} key={index}>
           {tournamentsList.length > 0 && (
