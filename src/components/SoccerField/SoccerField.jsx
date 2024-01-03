@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import PlayerIconContainer from '../PlayerIcon/PlayerIconContainer';
+import PlayerIconContainer from './PlayerIcon/PlayerIconContainer';
 
 import styles from './SoccerField.module.css';
 

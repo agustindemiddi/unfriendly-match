@@ -1,13 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 
-import Section from '../../UI/Section/Section';
-import PlayersList from '../../players/PlayersList/PlayersList';
+import Section from '../../../UI/Section/Section';
+import PlayersList from './PlayersList/PlayersList';
 
-import styles from './TournamentPlayersSection.module.css';
+import styles from './PlayersSection.module.css';
 
-import { getUserAuthCtx } from '../../../context/authContext';
+import { getUserAuthCtx } from '../../../../context/authContext';
 
-const TournamentPlayersSection = ({ tournament, players }) => {
+const PlayersSection = ({ tournament, players }) => {
   const { userPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
 
@@ -36,4 +36,4 @@ const TournamentPlayersSection = ({ tournament, players }) => {
   );
 };
 
-export default TournamentPlayersSection;
+export default PlayersSection;

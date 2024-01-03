@@ -10,8 +10,10 @@ const Breadcrumbs = () => {
 
   return (
     <div className={styles.breadcrumbs}>
-      <Link to='/'>Main</Link>
-      {pathSegments.length > 0 && ' / '}
+      <span>
+        <Link to='/'>Main</Link>
+        {pathSegments.length > 0 && ' / '}
+      </span>
       {pathSegments.map((segment, index) => (
         <span key={segment}>
           {index < pathSegments.length - 1 ? (

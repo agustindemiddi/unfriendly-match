@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import TournamentPlayersSection from '../../components/tournaments/TournamentPlayersSection/TournamentPlayersSection';
+import PlayersSection from '../../components/tournaments/players/PlayersSection/PlayersSection';
 
 import {
   getTournament,
@@ -25,7 +25,7 @@ const TournamentPlayersPage = () => {
   }, [tournamentId]);
 
   return (
-    <TournamentPlayersSection
+    <PlayersSection
       tournament={tournament}
       players={tournamentPlayers}
     />
