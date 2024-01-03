@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import styles from './PlayerForm.module.css';
 
-import db from '../../../utils/firebaseConfig';
+import db from '../../../../utils/firebase/firebaseConfig';
 
 const PlayerForm = () => {
   const nameInput = useRef();

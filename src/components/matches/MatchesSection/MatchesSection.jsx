@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
-import ActionsBar from '../../UI/ActionsBar/ActionsBar';
 import MatchesList from './MatchesList/MatchesList';
 
 import styles from './MatchesSection.module.css';
@@ -18,7 +17,6 @@ const MatchesSection = ({ matches }) => {
 
   return (
     <Section>
-      <ActionsBar />
       <Link to='new'>
         <button>CREAR PARTIDO</button>
       </Link>

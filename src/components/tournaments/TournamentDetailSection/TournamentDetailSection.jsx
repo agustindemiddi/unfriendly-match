@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
-import ActionsBar from '../../UI/ActionsBar/ActionsBar';
 import SoccerFieldContainer from '../../SoccerField/SoccerFieldContainer';
 import StandingsTable from './StandingsTable/StandingsTable';
 
@@ -99,12 +98,14 @@ const TournamentDetailSection = ({ tournament, matches }) => {
     );
 
   return (
-    <Section>
-      <ActionsBar
+    <Section actions={actions}
+    adminActions={adminActions}
+    initialAction={initialAction}>
+      {/* <ActionsBar
         actions={actions}
         adminActions={adminActions}
         initialAction={initialAction}
-      />
+      /> */}
       <div className={styles.sectionContent}>
         <div className={styles.matches}>
           {/* {userPlayerProfile && isAdmin && (

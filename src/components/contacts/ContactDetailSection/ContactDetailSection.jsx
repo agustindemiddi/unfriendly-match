@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { Button } from 'antd';
 
 import Section from '../../UI/Section/Section';
-import ActionsBar from '../../UI/ActionsBar/ActionsBar';
 
 import styles from './ContactDetailSection.module.css';
 
@@ -10,7 +9,6 @@ const ContactDetail = ({ item }) => {
   // armar el fallback de otra manera. este codigo es espantoso
   return (
     <Section>
-      <ActionsBar />
       {item.username && (
         <>
           <h2>{item.name}</h2>

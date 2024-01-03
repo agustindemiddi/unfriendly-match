@@ -18,6 +18,7 @@ import TournamentDetailPage from './pages/tournaments/TournamentDetailPage';
 import NewTournamentPage from './pages/tournaments/NewTournamentPage';
 import EditTournamentPage from './pages/tournaments/EditTournamentPage';
 import TournamentPlayersPage from './pages/tournaments/TournamentPlayersPage';
+import NewTournamentPlayerPage from './pages/tournaments/NewTournamentPlayerPage';
 
 import MatchesPage from './pages/matches/MatchesPage';
 import NewMatchPage from './pages/matches/NewMatchPage';
@@ -62,7 +63,14 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <TournamentDetailPage /> },
               { path: 'edit', element: <EditTournamentPage /> },
-              { path: 'players', element: <TournamentPlayersPage /> },
+              {
+                path: 'players',
+                children: [
+                  { index: true, element: <TournamentPlayersPage /> },
+                  { path: 'new', element: <NewTournamentPlayerPage /> },
+                ],
+              },
+
               {
                 path: 'matches',
                 children: [

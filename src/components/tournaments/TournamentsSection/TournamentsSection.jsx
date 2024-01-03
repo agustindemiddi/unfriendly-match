@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
-import ActionsBar from '../../UI/ActionsBar/ActionsBar';
 import TournamentsList from './TournamentsList/TournamentsList';
 
 import styles from './TournamentsSection.module.css';
@@ -56,8 +55,7 @@ const TournamentsSection = ({ tournaments }) => {
     );
 
   return (
-    <Section>
-      <ActionsBar actions={actions} />
+    <Section actions={actions}>
       {activeTournamentsContent}
       {isFinishedTournamentsShown && finishedTournamentsContent}
     </Section>
