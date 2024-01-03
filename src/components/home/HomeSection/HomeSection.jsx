@@ -14,7 +14,7 @@ const HomeSection = ({ matches }) => {
   } = separateMatches(matches);
 
   return (
-    <Section>
+    <Section noActionsBar>
       {/* <h2>Upcoming Matches:</h2>
       {sortedUpcomingMatches && sortedUpcomingMatches.length > 0 && (
         <ul>

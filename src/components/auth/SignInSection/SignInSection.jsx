@@ -18,7 +18,7 @@ const SignInSection = () => {
   }
 
   return (
-    <Section noActionBar>
+    <Section noActionsBar>
       <div className={styles.signInContent}>
         <EmailForm
           formModeIsSignIn={formModeIsSignIn}

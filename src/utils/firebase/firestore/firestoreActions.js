@@ -12,6 +12,7 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  addDoc,
 } from 'firebase/firestore';
 import db from '../firebaseConfig';
 
@@ -58,6 +59,14 @@ export const createMatchObjectFromFirestore = (matchDoc) => ({
 export const getDocument = async (docRef) => {
   const docSnap = await getDoc(docRef);
   return docSnap.exists() ? docSnap : new Error('Document not found!');
+};
+
+// Add a document:
+export const addDocument = async (colRef) => {
+  const docRef = await addDoc(colRef, {
+    name: 'Tokyo',
+    country: 'Japan',
+  });
 };
 
 // APP SPECIFIC ACTIONS
@@ -233,7 +242,7 @@ export const subscribeToTournament = async (tournamentId, userId) => {
   alert('You have joined this tournament!');
 };
 
-// unsubscribe user from tournament (NOT YET IMPLEMENTED):
+// unsubscribe user from tournament:
 export const unsubscribeFromTournament = async (tournamentId, userId) => {
   await updateDoc(getTournamentDocRef(tournamentId), {
     players: arrayRemove(userId),
@@ -257,6 +266,19 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
   await updateDoc(getMatchDocRef(tournamentId, matchId), {
     players: arrayRemove(userId),
   });
+};
+
+// add non-verified player to tournament:
+export const addNonVerifiedPlayerToTournament = async (
+  tournamentId,
+  playerData
+) => {
+  await updateDoc(getTournamentDocRef(tournamentId), {
+    nonVerifiedPlayers: arrayUnion(playerData),
+  });
+  alert(
+    'You have successfully added a non-verified player to this tournament!'
+  );
 };
 
 // COMPONENTS AND USED ACTIONS:
@@ -296,3 +318,6 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
 // CONTACTS PAGE
 // get tournaments
 // get players
+
+// PLAYER FORM
+// add non-verified player to tournament

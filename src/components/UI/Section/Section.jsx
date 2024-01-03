@@ -8,12 +8,12 @@ const Section = ({
   actions,
   adminActions,
   initialAction,
-  noActionBar,
+  noActionsBar,
 }) => {
   const classes = `${styles.section} ${className || ''}`;
   return (
     <section className={classes}>
-      {!noActionBar && (
+      {!noActionsBar && (
         <ActionsBar
           actions={actions}
           adminActions={adminActions}

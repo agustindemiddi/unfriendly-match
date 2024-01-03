@@ -1,11 +1,12 @@
 import Section from '../../../UI/Section/Section';
+import MatchForm from '../../MatchForm/MatchForm';
 
 import styles from './EditMatchSection.module.css';
 
-const EditMatchSection = ({ match }) => {
+const EditMatchSection = () => {
   return (
     <Section>
-      EDIT MATCHES SECTION
+      <MatchForm />
     </Section>
   );
 };

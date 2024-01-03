@@ -1,5 +1,4 @@
 import Section from '../../../UI/Section/Section';
-
 import PlayerForm from '../PlayerForm/PlayerForm';
 
 import styles from './NewPlayerSection.module.css';
