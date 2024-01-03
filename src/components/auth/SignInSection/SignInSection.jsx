@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { GoogleButton } from 'react-google-button';
 
 import Section from '../../UI/Section/Section';
-import SignInForm from './SignInForm/SignInForm';
+import EmailForm from './EmailForm/EmailForm';
 
 import styles from './SignInSection.module.css';
 
@@ -18,26 +18,13 @@ const SignInSection = () => {
   }
 
   return (
-    <Section>
-      <div className={styles['sign-in']}>
-        <div className={styles['form-modes']}>
-          <div
-            onClick={() => setFormModeIsSignIn(true)}
-            className={`${styles['form-mode']} ${
-              formModeIsSignIn ? styles.selectedFormMode : ''
-            }`}>
-            SIGN IN
-          </div>
-          <div
-            onClick={() => setFormModeIsSignIn(false)}
-            className={`${styles['form-mode']} ${
-              !formModeIsSignIn ? styles.selectedFormMode : ''
-            }`}>
-            SIGN UP
-          </div>
-        </div>
-        <SignInForm formModeIsSignIn={formModeIsSignIn} />
-        <p className={styles.or}>or</p>
+    <Section noActionBar>
+      <div className={styles.signInContent}>
+        <EmailForm
+          formModeIsSignIn={formModeIsSignIn}
+          setFormModeIsSignIn={setFormModeIsSignIn}
+        />
+        <p>or</p>
         <GoogleButton onClick={handleGoogleSignIn} />
       </div>
     </Section>

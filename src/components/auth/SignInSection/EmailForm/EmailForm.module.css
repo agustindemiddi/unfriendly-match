@@ -1,0 +1,37 @@
+.EmailForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.EmailForm header {
+  display: flex;
+}
+
+.EmailForm header .formMode {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.EmailForm header .formMode:hover {
+  cursor: pointer;
+}
+
+.EmailForm header .selectedFormMode {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.EmailForm header .selectedFormMode:hover {
+  cursor: default;
+}
+
+.EmailForm .formContent {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 30px;
+}

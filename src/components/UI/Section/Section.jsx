@@ -8,15 +8,18 @@ const Section = ({
   actions,
   adminActions,
   initialAction,
+  noActionBar,
 }) => {
   const classes = `${styles.section} ${className || ''}`;
   return (
     <section className={classes}>
-      <ActionsBar
-        actions={actions}
-        adminActions={adminActions}
-        initialAction={initialAction}
-      />
+      {!noActionBar && (
+        <ActionsBar
+          actions={actions}
+          adminActions={adminActions}
+          initialAction={initialAction}
+        />
+      )}
       {children}
     </section>
   );
