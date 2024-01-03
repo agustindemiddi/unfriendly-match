@@ -41,7 +41,7 @@ const AsideNavigationTournamentItem = ({ navItem }) => {
         {navItem.name}
       </NavLink>
       {isSelectedTournament && reverseSortedListedAllMatches?.length > 0 && (
-        <div>
+        <div className={styles.matchesList}>
           <NavLink
             className={({ isActive }) =>
               isActive

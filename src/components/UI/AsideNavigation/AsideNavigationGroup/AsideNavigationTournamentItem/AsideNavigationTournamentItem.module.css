@@ -26,3 +26,9 @@ a.navItem.activeLink:hover {
 a.navItem.activeLink:active {
   color: rgb(64, 150, 255);
 }
+
+.matchesList {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.1);
+}

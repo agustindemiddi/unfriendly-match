@@ -23,13 +23,12 @@
   gap: 10px;
 }
 
-.button {
+/* .button {
   display: flex;
   justify-content: center;
   align-self: stretch;
   color: white;
   background-color: rgb(65, 65, 65);
-  /* border: 2px solid rgb(190, 190, 190); */
   border: none;
   border-radius: 8px;
   padding: 5px;
@@ -48,4 +47,4 @@
 .button:hover,
 .button:active {
   cursor: pointer;
-}
+} */
