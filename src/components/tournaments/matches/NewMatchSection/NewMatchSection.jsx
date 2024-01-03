@@ -1,4 +1,4 @@
-import Section from '../../UI/Section/Section';
+import Section from '../../../UI/Section/Section';
 import MatchForm from '../MatchForm/MatchForm';
 
 import styles from './NewMatchSection.module.css';

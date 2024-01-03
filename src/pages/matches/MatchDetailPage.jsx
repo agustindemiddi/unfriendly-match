@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import MatchDetailSection from '../../components/matches/MatchDetailSection/MatchDetailSection';
+import MatchDetailSection from '../../components/tournaments/matches/MatchDetailSection/MatchDetailSection';
 
 import { getMatch } from '../../utils/firebase/firestore/firestoreActions';
 

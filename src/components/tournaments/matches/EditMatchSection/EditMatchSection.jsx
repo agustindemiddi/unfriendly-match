@@ -1,5 +1,5 @@
 import Section from '../../../UI/Section/Section';
-import MatchForm from '../../MatchForm/MatchForm';
+import MatchForm from '../MatchForm/MatchForm';
 
 import styles from './EditMatchSection.module.css';
 

@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 
-import Section from '../../UI/Section/Section';
+import Section from '../../../UI/Section/Section';
 import MatchesList from './MatchesList/MatchesList';
 
 import styles from './MatchesSection.module.css';
 
-import separateMatches from '../../../utils/separateMatches';
+import separateMatches from '../../../../utils/separateMatches';
 
 const MatchesSection = ({ matches }) => {
   const {

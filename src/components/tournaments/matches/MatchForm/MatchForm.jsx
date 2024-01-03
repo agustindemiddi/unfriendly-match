@@ -14,8 +14,8 @@ import {
 
 import styles from './MatchForm.module.css';
 
-import db from '../../../utils/firebase/firebaseConfig';
-import { getUserAuthCtx } from '../../../context/authContext';
+import db from '../../../../utils/firebase/firebaseConfig';
+import { getUserAuthCtx } from '../../../../context/authContext';
 
 const MatchForm = () => {
   const [tournament, setTournament] = useState();

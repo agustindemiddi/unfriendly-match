@@ -1,4 +1,4 @@
-import EditMatchSection from '../../components/matches/MatchesSection/EditMatchSection/EditMatchSection';
+import EditMatchSection from '../../components/tournaments/matches/EditMatchSection/EditMatchSection';
 
 const EditMatchPage = () => {
   return <EditMatchSection />;

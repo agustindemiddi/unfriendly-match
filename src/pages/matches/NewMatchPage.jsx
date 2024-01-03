@@ -1,4 +1,4 @@
-import NewMatchSection from '../../components/matches/NewMatchSection/NewMatchSection';
+import NewMatchSection from '../../components/tournaments/matches/NewMatchSection/NewMatchSection';
 
 const NewMatchPage = () => {
   return <NewMatchSection />;
