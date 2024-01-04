@@ -5,7 +5,7 @@ import styles from './ContactsSection.module.css';
 
 const ContactsSection = ({ contacts }) => {
   return (
-    <Section>
+    <Section noActionsBar>
       {contacts.length > 0 && <ContactsList contacts={contacts} />}
     </Section>
   );

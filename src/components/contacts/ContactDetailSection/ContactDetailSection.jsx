@@ -8,7 +8,7 @@ import styles from './ContactDetailSection.module.css';
 const ContactDetail = ({ item }) => {
   // armar el fallback de otra manera. este codigo es espantoso
   return (
-    <Section>
+    <Section noActionsBar>
       {item.username && (
         <>
           <h2>{item.name}</h2>

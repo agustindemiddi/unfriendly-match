@@ -62,11 +62,8 @@ export const getDocument = async (docRef) => {
 };
 
 // Add a document:
-export const addDocument = async (colRef) => {
-  const docRef = await addDoc(colRef, {
-    name: 'Tokyo',
-    country: 'Japan',
-  });
+export const addDocument = async (colRef, data) => {
+  const docRef = await addDoc(colRef, data);
 };
 
 // APP SPECIFIC ACTIONS
