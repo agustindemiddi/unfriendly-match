@@ -38,23 +38,7 @@ main {
   flex: 1;
 
   display: flex;
-}
-
-aside {
-  /* flex: 1; */
-  min-width: 275px;
-  max-width: 275px;
-
-  display: flex;
-  background-color: rgba(255, 255, 255, 0.1);
-  margin: 16px;
-  border-radius: 8px;
-}
-
-section {
-  flex: 4;
-
-  margin: 16px 16px 16px 0;
+  align-items: flex-start;
 }
 
 footer {

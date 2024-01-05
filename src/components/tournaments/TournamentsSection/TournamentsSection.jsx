@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
+import AsideActionsPanel from '../../UI/AsideActionsPanel/AsideActionsPanel';
 import TournamentsList from './TournamentsList/TournamentsList';
 
 import styles from './TournamentsSection.module.css';
@@ -55,10 +56,13 @@ const TournamentsSection = ({ tournaments }) => {
     );
 
   return (
-    <Section actions={actions}>
-      {activeTournamentsContent}
-      {isFinishedTournamentsShown && finishedTournamentsContent}
-    </Section>
+    <>
+      <Section actions={actions}>
+        {activeTournamentsContent}
+        {isFinishedTournamentsShown && finishedTournamentsContent}
+      </Section>
+      <AsideActionsPanel />
+    </>
   );
 };
 

@@ -41,15 +41,17 @@ const AsideNavigation = () => {
   }, [userPlayerProfile, location.pathname]);
 
   return (
-    <nav className={styles.asideNav}>
-      <ul>
-        {navTree.map((navItem) => (
-          <li key={navItem.name}>
-            <AsideNavigationGroup navItem={navItem} />
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <aside className={styles.asidePanel}>
+      <nav>
+        <ul>
+          {navTree.map((navItem) => (
+            <li key={navItem.name}>
+              <AsideNavigationGroup navItem={navItem} />
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
   );
 };
 
