@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 import Section from '../../../UI/Section/Section';
+import AsideActionsPanel from '../../../UI/AsideActionsPanel/AsideActionsPanel';
 import PlayersList from './PlayersList/PlayersList';
 
 import styles from './PlayersSection.module.css';
@@ -22,17 +23,25 @@ const PlayersSection = ({ tournament, players }) => {
     isAdmin &&
     adminActions.push({
       label: 'Create provisory player',
-      onAction: () => {
-        navigate(`/tournaments/${tournament.id}/players/new`);
-      },
-      color: 'green',
+      onAction: () => navigate(`/tournaments/${tournament.id}/players/new`),
+      color: 'greenish',
     });
 
+  const actions = [
+    {
+      label: 'Back',
+      onAction: () => navigate('..'),
+    },
+  ];
+
   return (
-    <Section adminActions={adminActions}>
-      <h2>{tournament.name} players:</h2>
-      {players.length > 0 && <PlayersList players={players} />}
-    </Section>
+    <>
+      <Section>
+        <h2>{tournament.name} players:</h2>
+        {players.length > 0 && <PlayersList players={players} />}
+      </Section>
+      <AsideActionsPanel adminActions={adminActions} actions={actions} />
+    </>
   );
 };
 

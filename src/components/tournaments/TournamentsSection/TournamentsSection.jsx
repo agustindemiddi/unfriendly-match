@@ -10,26 +10,24 @@ import styles from './TournamentsSection.module.css';
 import separateTournaments from '../../../utils/separateTournaments';
 
 const TournamentsSection = ({ tournaments }) => {
-  const { active: activeTournaments, finished: finishedTournaments } =
-    separateTournaments(tournaments);
-  const navigate = useNavigate();
   const [isFinishedTournamentsShown, setIsFinishedTournamentsShown] =
     useState(false);
+  const navigate = useNavigate();
+
+  const { active: activeTournaments, finished: finishedTournaments } =
+    separateTournaments(tournaments);
 
   const actions = [
     {
       label: 'Create new tournament',
-      onAction: () => {
-        navigate('/tournaments/new');
-      },
+      onAction: () => navigate('new'),
+      color: 'greenish',
     },
     {
       label: `${
         isFinishedTournamentsShown ? 'Hide' : 'Show'
       } finished tournaments`,
-      onAction: () => {
-        setIsFinishedTournamentsShown((prevState) => !prevState);
-      },
+      onAction: () => setIsFinishedTournamentsShown((prevState) => !prevState),
     },
   ];
 
@@ -57,11 +55,11 @@ const TournamentsSection = ({ tournaments }) => {
 
   return (
     <>
-      <Section actions={actions}>
+      <Section>
         {activeTournamentsContent}
         {isFinishedTournamentsShown && finishedTournamentsContent}
       </Section>
-      <AsideActionsPanel />
+      <AsideActionsPanel actions={actions} />
     </>
   );
 };

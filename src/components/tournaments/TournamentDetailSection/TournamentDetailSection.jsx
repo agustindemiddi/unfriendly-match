@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
+import AsideActionsPanel from '../../UI/AsideActionsPanel/AsideActionsPanel';
 import SoccerFieldContainer from '../../SoccerField/SoccerFieldContainer';
 import StandingsTable from './StandingsTable/StandingsTable';
 
@@ -47,75 +48,52 @@ const TournamentDetailSection = ({ tournament, matches }) => {
 
   const initialAction = {};
   if (!isTournamentPlayer) {
-    initialAction.label = 'Join tournament';
+    initialAction.label = 'Join!';
     initialAction.onAction = handleSubscribeToTournament;
-    initialAction.color = 'green';
+    initialAction.color = 'greenish';
   }
-
-  const actions = [];
-  isTournamentPlayer &&
-    actions.push(
-      {
-        label: 'See all matches',
-        onAction: () => {
-          navigate(`/tournaments/${tournament.id}/matches`);
-        },
-      },
-      {
-        label: 'Share tournament',
-        onAction: copyUrlToClipboard,
-      },
-      {
-        label: 'See all players',
-        onAction: () => {
-          navigate(`/tournaments/${tournament.id}/players`);
-        },
-      },
-      {
-        label: 'Leave tournament',
-        onAction: handleUnsubscribeFromTournament,
-        color: 'red',
-      }
-    );
 
   const adminActions = [];
   isTournamentPlayer &&
     isAdmin &&
     adminActions.push(
       {
-        label: 'Create new match',
-        onAction: () => {
-          navigate(`/tournaments/${tournament.id}/matches/new`);
-        },
-        color: 'green',
+        label: 'Create match',
+        onAction: () => navigate(`/tournaments/${tournament.id}/matches/new`),
+        color: 'greenish',
       },
       {
         label: 'Edit tournament',
-        onAction: () => {
-          navigate(`/tournaments/${tournament.id}/edit`);
-        },
+        onAction: () => navigate(`/tournaments/${tournament.id}/edit`),
+      }
+    );
+
+  const actions = [];
+  isTournamentPlayer &&
+    actions.push(
+      {
+        label: 'Matches',
+        onAction: () => navigate(`/tournaments/${tournament.id}/matches`),
+      },
+      {
+        label: 'Players',
+        onAction: () => navigate(`/tournaments/${tournament.id}/players`),
+      },
+      {
+        label: 'Share tournament',
+        onAction: copyUrlToClipboard,
+      },
+      {
+        label: 'Leave tournament',
+        onAction: handleUnsubscribeFromTournament,
+        color: 'redish',
       }
     );
 
   return (
-    <Section actions={actions}
-    adminActions={adminActions}
-    initialAction={initialAction}>
-      {/* <ActionsBar
-        actions={actions}
-        adminActions={adminActions}
-        initialAction={initialAction}
-      /> */}
-      <div className={styles.sectionContent}>
+    <>
+      <Section row>
         <div className={styles.matches}>
-          {/* {userPlayerProfile && isAdmin && (
-            <Link className={styles.button} to='matches/new'>
-              Create Match
-            </Link>
-          )}
-          <Link className={styles.button} to='matches'>
-            See All Matches
-          </Link> */}
           {nextMatch && (
             <>
               <h2>Next Match:</h2>
@@ -131,39 +109,15 @@ const TournamentDetailSection = ({ tournament, matches }) => {
         </div>
 
         <div className={styles.standings}>
-          {/* {userPlayerProfile && !isTournamentPlayer && (
-            <button
-              className={styles.button}
-              onClick={handleSubscribeToTournament}
-              style={{ backgroundColor: 'green' }}>
-              Join Tournament
-            </button>
-          )}
-          {userPlayerProfile && isTournamentPlayer && (
-            <button
-              className={styles.button}
-              onClick={handleUnsubscribeFromTournament}
-              style={{ backgroundColor: 'red' }}>
-              Leave Tournament
-            </button>
-          )}
-          {userPlayerProfile && isAdmin && (
-            <Link className={styles.button} to='edit'>
-              Edit Tournament
-            </Link>
-          )}
-          {userPlayerProfile && isTournamentPlayer && (
-            <button className={styles.button} onClick={copyUrlToClipboard}>
-              Share Tournament
-            </button>
-          )}
-          <Link className={styles.button} to='players'>
-            See All Players
-          </Link> */}
           <StandingsTable />
         </div>
-      </div>
-    </Section>
+      </Section>
+      <AsideActionsPanel
+        initialAction={initialAction}
+        adminActions={adminActions}
+        actions={actions}
+      />
+    </>
   );
 };
 

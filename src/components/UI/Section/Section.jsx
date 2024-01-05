@@ -1,28 +1,9 @@
-import ActionsBar from './ActionsBar/ActionsBar';
-
 import styles from './Section.module.css';
 
-const Section = ({
-  children,
-  className,
-  actions,
-  adminActions,
-  initialAction,
-  noActionsBar,
-}) => {
-  const classes = `${styles.section} ${className || ''}`;
-  return (
-    <section className={classes}>
-      {!noActionsBar && (
-        <ActionsBar
-          actions={actions}
-          adminActions={adminActions}
-          initialAction={initialAction}
-        />
-      )}
-      {children}
-    </section>
-  );
-};
+const Section = ({ children, row }) => (
+  <section className={`${styles.section} ${row ? styles.row : ''}`}>
+    {children}
+  </section>
+);
 
 export default Section;

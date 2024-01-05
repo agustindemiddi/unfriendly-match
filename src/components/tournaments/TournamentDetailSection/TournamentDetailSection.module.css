@@ -1,10 +1,3 @@
-.sectionContent {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 16px;
-}
-
 .matches {
   flex: 1;
 
@@ -22,29 +15,3 @@
   align-items: center;
   gap: 10px;
 }
-
-/* .button {
-  display: flex;
-  justify-content: center;
-  align-self: stretch;
-  color: white;
-  background-color: rgb(65, 65, 65);
-  border: none;
-  border-radius: 8px;
-  padding: 5px;
-}
-
-.button:hover,
-.button:focus {
-  background-color: rgb(75, 75, 75);
-}
-
-.button:active {
-  color: rgb(190, 190, 190);
-  background-color: rgb(100, 100, 100);
-}
-
-.button:hover,
-.button:active {
-  cursor: pointer;
-} */

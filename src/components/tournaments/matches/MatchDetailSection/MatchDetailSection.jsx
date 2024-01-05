@@ -1,18 +1,33 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+import Section from '../../../UI/Section/Section';
+import AsideActionsPanel from '../../../UI/AsideActionsPanel/AsideActionsPanel';
+import SoccerFieldContainer from '../../../SoccerField/SoccerFieldContainer';
 
 import styles from './MatchDetailSection.module.css';
 
-import Section from '../../../UI/Section/Section';
-import SoccerFieldContainer from '../../../SoccerField/SoccerFieldContainer';
-
 const MatchDetailSection = ({ match }) => {
+  const navigate = useNavigate();
+
+  const adminActions = [
+    {
+      label: 'Edit match',
+      onAction: () => navigate('edit'),
+    },
+  ];
+
+  const actions = [
+    {
+      label: 'Back',
+      onAction: () => navigate('..'),
+    },
+  ];
+
   return (
-    <Section>
-      {match && <SoccerFieldContainer match={match} />}
-      <Link to='edit'>
-        <button>editar PARTIDO</button>
-      </Link>
-    </Section>
+    <>
+      <Section>{match && <SoccerFieldContainer match={match} />}</Section>
+      <AsideActionsPanel adminActions={adminActions} actions={actions} />
+    </>
   );
 };
 
