@@ -33,6 +33,13 @@ const getTournamentMatchesColRef = (tournamentId) =>
   collection(db, `tournaments/${tournamentId}/matches`);
 
 // OBJECT CREATION FROM FIRESTORE DOCUMENT
+export const createNonVerifiedPlayerObjectFromFirestore = (playerDoc) => ({
+  ...playerDoc,
+  creationDateTime: playerDoc.creationDateTime?.toDate(),
+  image: '/default-user.svg',
+  isVerified: false, // not sure if necessary yet
+});
+
 export const createPlayerObjectFromFirestore = (playerDoc) => ({
   ...playerDoc.data(),
   id: playerDoc.id,

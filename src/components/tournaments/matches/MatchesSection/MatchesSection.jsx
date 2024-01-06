@@ -6,10 +6,14 @@ import MatchesList from './MatchesList/MatchesList';
 
 import styles from './MatchesSection.module.css';
 
+import { getUserAuthCtx } from '../../../../context/authContext';
 import separateMatches from '../../../../utils/separateMatches';
 
-const MatchesSection = ({ matches }) => {
+const MatchesSection = ({ matches, tournament }) => {
+  const { userPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
+
+  const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
 
   const {
     sortedUpcomingMatches,
@@ -18,15 +22,15 @@ const MatchesSection = ({ matches }) => {
     lastMatch,
   } = separateMatches(matches);
 
-  const adminActions = [
-    {
+  const adminActions = [];
+  isAdmin &&
+    adminActions.push({
       label: 'Create match',
       onAction: () => {
         navigate('new');
       },
       color: 'greenish',
-    },
-  ];
+    });
 
   const actions = [
     {

@@ -6,6 +6,7 @@ import PlayersSection from '../../components/tournaments/players/PlayersSection/
 import {
   getTournament,
   getPlayers,
+  createNonVerifiedPlayerObjectFromFirestore,
 } from '../../utils/firebase/firestore/firestoreActions';
 
 const TournamentPlayersPage = () => {
@@ -18,18 +19,17 @@ const TournamentPlayersPage = () => {
       const fetchedTournament = await getTournament(tournamentId);
       setTournament(fetchedTournament);
 
-      const players = await getPlayers(fetchedTournament.players);
+      const verifiedPlayers = await getPlayers(fetchedTournament.players);
+      const nonVerifiedPlayers = fetchedTournament.nonVerifiedPlayers.map(
+        (player) => createNonVerifiedPlayerObjectFromFirestore(player)
+      );
+      const players = [...verifiedPlayers, ...nonVerifiedPlayers];
       setTournamentPlayers(players);
     };
     fetchTournamentPlayers();
   }, [tournamentId]);
 
-  return (
-    <PlayersSection
-      tournament={tournament}
-      players={tournamentPlayers}
-    />
-  );
+  return <PlayersSection tournament={tournament} players={tournamentPlayers} />;
 };
 
 export default TournamentPlayersPage;

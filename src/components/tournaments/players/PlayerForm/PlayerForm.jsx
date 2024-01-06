@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 import styles from './PlayerForm.module.css';
 
@@ -18,13 +19,14 @@ const PlayerForm = () => {
     e.preventDefault();
 
     const playerData = {
+      id: uuidv4(),
       displayName: nameInput.current.value,
       creationDateTime: new Date(),
     };
 
     addNonVerifiedPlayerToTournament(tournamentId, playerData);
 
-    navigate(`/tournaments/${tournamentId}`);
+    navigate(`/tournaments/${tournamentId}/players`);
   };
 
   return (

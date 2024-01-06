@@ -6,15 +6,19 @@ import SoccerFieldContainer from '../../../SoccerField/SoccerFieldContainer';
 
 import styles from './MatchDetailSection.module.css';
 
+import { getUserAuthCtx } from '../../../../context/authContext';
+
 const MatchDetailSection = ({ match }) => {
+  const { userPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
 
-  const adminActions = [
-    {
-      label: 'Edit match',
-      onAction: () => navigate('edit'),
-    },
-  ];
+  const isAdmin = match?.admins?.includes(userPlayerProfile?.id);
+
+  const adminActions = [];
+  isAdmin && adminActions.push({
+    label: 'Edit match',
+    onAction: () => navigate('edit'),
+  });
 
   const actions = [
     {
