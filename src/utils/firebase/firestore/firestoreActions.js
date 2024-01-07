@@ -69,9 +69,10 @@ export const getDocument = async (docRef) => {
 };
 
 // Add a document:
-export const addDocument = async (colRef, data) => {
+const addDocument = async (colRef, data) => {
   const docRef = await addDoc(colRef, data);
 };
+
 
 // APP SPECIFIC ACTIONS
 // create player profile object from user (first time sign up):
@@ -129,6 +130,25 @@ export const getTournament = async (tournamentId) => {
   const tournamentDoc = await getDocument(getTournamentDocRef(tournamentId));
   const tournament = createTournamentObjectFromFirestore(tournamentDoc);
   return tournament;
+};
+
+// add tournament:
+export const addTournament = async (tournamentData) => {
+  const docRef = await addDoc(getTournamentsColRef(), tournamentData);
+  console.log(`Tournament ${docRef.id} created!`);
+};
+
+// add non-verified player to tournament:
+export const addNonVerifiedPlayerToTournament = async (
+  tournamentId,
+  playerData
+) => {
+  await updateDoc(getTournamentDocRef(tournamentId), {
+    nonVerifiedPlayers: arrayUnion(playerData),
+  });
+  alert(
+    'You have successfully added a non-verified player to this tournament!'
+  );
 };
 
 // get match:
@@ -270,19 +290,6 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
   await updateDoc(getMatchDocRef(tournamentId, matchId), {
     players: arrayRemove(userId),
   });
-};
-
-// add non-verified player to tournament:
-export const addNonVerifiedPlayerToTournament = async (
-  tournamentId,
-  playerData
-) => {
-  await updateDoc(getTournamentDocRef(tournamentId), {
-    nonVerifiedPlayers: arrayUnion(playerData),
-  });
-  alert(
-    'You have successfully added a non-verified player to this tournament!'
-  );
 };
 
 // COMPONENTS AND USED ACTIONS:
