@@ -19,7 +19,6 @@ export const authListener = (setUser, setUserPlayerProfile) => {
     } else {
       setUser(null);
       setUserPlayerProfile(null);
-      // redirect('/signin'); // redirect not working
     }
   });
   return () => unsubscribe();

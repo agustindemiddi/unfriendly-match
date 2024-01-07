@@ -246,6 +246,7 @@ export const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
     (error) => console.log(error)
   );
 
+// add listener to tournamentDoc:
 export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
   onSnapshot(
     getTournamentDocRef(tournamentId),
@@ -253,6 +254,21 @@ export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
     (tournamentDoc) => {
       const tournament = createTournamentObjectFromFirestore(tournamentDoc);
       setUpdatedTournament(tournament);
+    },
+    (error) => console.log(error)
+  );
+
+// add listener to user player profile:
+export const addUserPlayerListener = (
+  userId,
+  setUpdatedUserPlayerProfile
+) =>
+  onSnapshot(
+    getPlayerDocRef(userId),
+    { includeMetadataChanges: true },
+    (playerDoc) => {
+      const player = createTournamentObjectFromFirestore(playerDoc);
+      setUpdatedUserPlayerProfile(player);
     },
     (error) => console.log(error)
   );
