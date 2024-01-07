@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import styles from './TournamentForm.module.css';
 
@@ -21,6 +22,7 @@ const TournamentForm = ({ isCustomMode }) => {
   const [pointsPerGameWon, setPointsPerGameWon] = useState(3);
   const hasMvpEnabledInput = useRef();
   const isPublicInput = useRef();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userPlayerProfile)
@@ -68,10 +70,8 @@ const TournamentForm = ({ isCustomMode }) => {
       players: [userPlayerProfile?.id],
     };
 
-    // addTournament(tournamentData);
-    // navigate('..');
-    console.log(tournamentData);
-    alert('Tournament successfully created!');
+    addTournament(tournamentData, userPlayerProfile.id);
+    navigate('..');
   };
 
   return (
@@ -108,6 +108,11 @@ const TournamentForm = ({ isCustomMode }) => {
             {typeOptions.map((number) => (
               <button
                 type='button'
+                className={
+                  number === defaultTeamPlayerQuota
+                    ? styles.selectedPlayerQuota
+                    : ''
+                }
                 key={number}
                 onClick={() => handleSelectType(number)}>
                 {`F${number}`}
@@ -124,6 +129,11 @@ const TournamentForm = ({ isCustomMode }) => {
                 <button
                   type='button'
                   key={image}
+                  className={
+                    image === tournamentImage
+                      ? styles.selectedTournamentImage
+                      : ''
+                  }
                   onClick={() => handleSelectImage(image)}>
                   <img src={image} alt={`${image} image`} />
                 </button>
@@ -141,15 +151,21 @@ const TournamentForm = ({ isCustomMode }) => {
           <legend>Tournament ends on {'XX/XX/XXXX'}</legend>
         </fieldset>
         {isCustomMode && (
-          <fieldset>
+          <fieldset className={styles.pointsPerGameWon}>
             <legend>Points per match won:</legend>
             <button
               type='button'
+              className={
+                pointsPerGameWon === 2 ? styles.selectedPointsPerGameWon : ''
+              }
               onClick={() => handleSelectPointsPerGameWon(2)}>
               2 points
             </button>
             <button
               type='button'
+              className={
+                pointsPerGameWon === 3 ? styles.selectedPointsPerGameWon : ''
+              }
               onClick={() => handleSelectPointsPerGameWon(3)}>
               3 points
             </button>

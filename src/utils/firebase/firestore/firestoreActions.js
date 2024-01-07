@@ -73,7 +73,6 @@ const addDocument = async (colRef, data) => {
   const docRef = await addDoc(colRef, data);
 };
 
-
 // APP SPECIFIC ACTIONS
 // create player profile object from user (first time sign up):
 export const createPlayerObjectFromUser = (
@@ -133,9 +132,14 @@ export const getTournament = async (tournamentId) => {
 };
 
 // add tournament:
-export const addTournament = async (tournamentData) => {
-  const docRef = await addDoc(getTournamentsColRef(), tournamentData);
-  console.log(`Tournament ${docRef.id} created!`);
+export const addTournament = async (tournamentData, userId) => {
+  const tournamentDoc = await addDoc(getTournamentsColRef(), tournamentData);
+
+  await updateDoc(getPlayerDocRef(userId), {
+    'tournaments.all': arrayUnion(tournamentDoc.id),
+    'tournaments.active': arrayUnion(tournamentDoc.id),
+  });
+  alert(`${tournamentData.name} successfully created!`);
 };
 
 // add non-verified player to tournament:
