@@ -30,7 +30,7 @@ export const AuthContextProvider = ({ children }) => {
       );
       return () => unsubscribe();
     }
-  }, [userPlayerProfile]);
+  }, []);
 
   // auth.useDeviceLanguage(); // test how it works
 

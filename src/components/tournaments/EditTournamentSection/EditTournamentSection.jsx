@@ -6,7 +6,7 @@ import TournamentForm from '../TournamentForm/TournamentForm';
 
 import styles from './EditTournamentSection.module.css';
 
-const EditTournamentSection = () => {
+const EditTournamentSection = ({ tournament }) => {
   const navigate = useNavigate();
 
   const actions = [
@@ -19,7 +19,11 @@ const EditTournamentSection = () => {
   return (
     <>
       <Section>
-        <TournamentForm />
+        <TournamentForm
+          isCustomMode={true}
+          isEditMode
+          tournament={tournament}
+        />
       </Section>
       <AsideActionsPanel actions={actions} />
     </>

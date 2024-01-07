@@ -1,15 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import styles from './TournamentForm.module.css';
 
 import { getUserAuthCtx } from '../../../context/authContext';
-import { addTournament } from '../../../utils//firebase/firestore/firestoreActions';
+import {
+  addTournament,
+  editTournament,
+} from '../../../utils//firebase/firestore/firestoreActions';
 import { formattedTerminationDateTime } from '../../../utils/calculateTerminationDate';
 
 import trophiesImages from '../../../utils/trophiesImages';
 
-const TournamentForm = ({ isCustomMode }) => {
+const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   const { userPlayerProfile } = getUserAuthCtx();
   const nameInput = useRef();
   const defaultAddressInput = useRef();
@@ -22,12 +25,30 @@ const TournamentForm = ({ isCustomMode }) => {
   const [pointsPerGameWon, setPointsPerGameWon] = useState(3);
   const hasMvpEnabledInput = useRef();
   const isPublicInput = useRef();
+  const { tournamentId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (userPlayerProfile)
-      nameInput.current.value = `${userPlayerProfile?.username}'s Tournament`;
-  }, [userPlayerProfile]);
+      nameInput.current.value =
+        tournament?.name ?? `${userPlayerProfile?.username}'s Tournament`;
+  }, [userPlayerProfile, tournament?.name]);
+
+  useEffect(() => {
+    tournament?.defaultPlayerQuota &&
+      setDefaultTeamPlayerQuota(tournament.defaultPlayerQuota / 2);
+
+    tournament?.image && setTournamentImage(tournament.image);
+
+    const updatedTerminationDate = tournament?.terminationDate
+      ? formattedTerminationDateTime(tournament.terminationDate)
+      : formattedTerminationDateTime();
+    terminationDateInput.current.value = updatedTerminationDate;
+  }, [
+    tournament?.defaultPlayerQuota,
+    tournament?.image,
+    tournament?.terminationDate,
+  ]);
 
   const typeOptions = Array.from({ length: 11 }, (_, index) => index + 1);
 
@@ -70,7 +91,8 @@ const TournamentForm = ({ isCustomMode }) => {
       players: [userPlayerProfile?.id],
     };
 
-    addTournament(tournamentData, userPlayerProfile.id);
+    !isEditMode && addTournament(tournamentData, userPlayerProfile.id);
+    isEditMode && editTournament(tournamentId, tournamentData);
     navigate('..');
   };
 
@@ -90,6 +112,7 @@ const TournamentForm = ({ isCustomMode }) => {
             <input
               type='text'
               placeholder='Tournament default address'
+              defaultValue={tournament?.defaultAddress}
               ref={defaultAddressInput}
             />
           </fieldset>
@@ -99,6 +122,7 @@ const TournamentForm = ({ isCustomMode }) => {
             <textarea
               rows='3'
               placeholder='Description (optional)'
+              defaultValue={tournament?.description}
               ref={descriptionInput}></textarea>
           </fieldset>
         )}
@@ -150,7 +174,7 @@ const TournamentForm = ({ isCustomMode }) => {
           />
           <legend>Tournament ends on {'XX/XX/XXXX'}</legend>
         </fieldset>
-        {isCustomMode && (
+        {!isEditMode && isCustomMode && (
           <fieldset className={styles.pointsPerGameWon}>
             <legend>Points per match won:</legend>
             <button
@@ -171,7 +195,7 @@ const TournamentForm = ({ isCustomMode }) => {
             </button>
           </fieldset>
         )}
-        {isCustomMode && (
+        {!isEditMode && isCustomMode && (
           <fieldset>
             <label>
               <input type='checkbox' ref={hasMvpEnabledInput} />
@@ -181,7 +205,11 @@ const TournamentForm = ({ isCustomMode }) => {
         )}
         <fieldset>
           <label>
-            <input type='checkbox' ref={isPublicInput} />
+            <input
+              type='checkbox'
+              ref={isPublicInput}
+              defaultChecked={tournament?.isPublic}
+            />
             <span>This is a public tournament.</span>
           </label>
         </fieldset>

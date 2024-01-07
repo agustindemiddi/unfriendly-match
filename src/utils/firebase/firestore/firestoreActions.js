@@ -142,6 +142,14 @@ export const addTournament = async (tournamentData, userId) => {
   alert(`${tournamentData.name} successfully created!`);
 };
 
+// edit tournament:
+export const editTournament = async (tournamentId, tournamentData) => {
+  await updateDoc(getTournamentDocRef(tournamentId), {
+    ...tournamentData,
+  });
+  alert(`${tournamentData.name} successfully edited!`);
+};
+
 // add non-verified player to tournament:
 export const addNonVerifiedPlayerToTournament = async (
   tournamentId,
@@ -259,10 +267,7 @@ export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
   );
 
 // add listener to user player profile:
-export const addUserPlayerListener = (
-  userId,
-  setUpdatedUserPlayerProfile
-) =>
+export const addUserPlayerListener = (userId, setUpdatedUserPlayerProfile) =>
   onSnapshot(
     getPlayerDocRef(userId),
     { includeMetadataChanges: true },
@@ -330,7 +335,11 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
 
 // TOURNAMENT DETAIL SECTION
 // subscribe user to tournament
-// unsubscribe user from tournament (NOT YET IMPLEMENTED)
+// unsubscribe user from tournament
+
+// TOURNAMENT FORM
+// add tournament
+// edit tournament
 
 // TOURNAMENT PLAYERS PAGE
 // get tournament

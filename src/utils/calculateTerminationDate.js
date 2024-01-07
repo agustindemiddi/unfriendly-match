@@ -33,8 +33,10 @@ export const calculateTerminationDateTime = () => {
   }
 };
 
-export const formattedTerminationDateTime = () => {
-  const date = calculateTerminationDateTime();
+export const formattedTerminationDateTime = (
+  date = calculateTerminationDateTime()
+) => {
+  // const date = calculateTerminationDateTime();
 
   const year = date.getFullYear();
   let month = date.getMonth() + 1;
