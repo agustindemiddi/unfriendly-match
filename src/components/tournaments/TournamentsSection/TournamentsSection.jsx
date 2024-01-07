@@ -21,7 +21,6 @@ const TournamentsSection = ({ tournaments }) => {
     {
       label: 'Create new tournament',
       onAction: () => navigate('new'),
-      color: 'greenish',
     },
     {
       label: `${

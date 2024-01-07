@@ -4,6 +4,7 @@ import styles from './TournamentForm.module.css';
 
 import { getUserAuthCtx } from '../../../context/authContext';
 import { addTournament } from '../../../utils//firebase/firestore/firestoreActions';
+import { formattedTerminationDateTime } from '../../../utils/calculateTerminationDate';
 
 import trophiesImages from '../../../utils/trophiesImages';
 
@@ -132,7 +133,11 @@ const TournamentForm = ({ isCustomMode }) => {
         )}
         <fieldset className={styles.terminationDate}>
           <legend>Select approximate termination date:</legend>
-          <input type='date' ref={terminationDateInput} />
+          <input
+            type='date'
+            defaultValue={formattedTerminationDateTime()}
+            ref={terminationDateInput}
+          />
           <legend>Tournament ends on {'XX/XX/XXXX'}</legend>
         </fieldset>
         {isCustomMode && (
