@@ -8,9 +8,12 @@ import {
   documentId,
   getDocs,
   addDoc,
+  updateDoc,
+  arrayUnion,
   collection,
   Timestamp,
 } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
 
 import styles from './MatchForm.module.css';
 
@@ -77,11 +80,19 @@ const MatchForm = () => {
     }
   }, [tournament]);
 
-  const addMatch = async (matchData) => {
-    const docRef = await addDoc(
-      collection(db, 'tournaments', params.tournamentId, 'matches'),
-      matchData
-    );
+  // const addMatch = async (matchData) => {
+  //   const docRef = await addDoc(
+  //     collection(db, 'tournaments', params.tournamentId, 'matches'),
+  //     matchData
+  //   );
+  // };
+
+  const newMatchId = uuidv4();
+
+  const addMatch = async (tournamentId, matchData) => {
+    await updateDoc( doc(db, `tournaments/${tournamentId}`), {
+      matches: arrayUnion(matchData),
+    });
   };
 
   const handleSubmit = (e) => {
@@ -106,6 +117,7 @@ const MatchForm = () => {
     const playersRefs = matchPlayers.map((player) => player.id);
 
     const matchData = {
+      id: newMatchId,
       tournament: params.tournamentId,
       creator: userPlayerProfile.id,
       admins: [...new Set([...tournament.admins, userPlayerProfile.id])],
@@ -121,7 +133,7 @@ const MatchForm = () => {
       mvps: [],
     };
 
-    addMatch(matchData);
+    addMatch(params.tournamentId, matchData);
     console.log('match added!');
   };
 
