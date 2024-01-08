@@ -52,6 +52,8 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
 
   const typeOptions = Array.from({ length: 11 }, (_, index) => index + 1);
 
+  const pointsPerGameWonOptions = [2, 3];
+
   const handleSelectType = (number) => {
     setDefaultTeamPlayerQuota(number);
   };
@@ -132,12 +134,12 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             {typeOptions.map((number) => (
               <button
                 type='button'
+                key={number}
                 className={
                   number === defaultTeamPlayerQuota
                     ? styles.selectedPlayerQuota
                     : ''
                 }
-                key={number}
                 onClick={() => handleSelectType(number)}>
                 {`F${number}`}
               </button>
@@ -177,22 +179,19 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
         {!isEditMode && isCustomMode && (
           <fieldset className={styles.pointsPerGameWon}>
             <legend>Points per match won:</legend>
-            <button
-              type='button'
-              className={
-                pointsPerGameWon === 2 ? styles.selectedPointsPerGameWon : ''
-              }
-              onClick={() => handleSelectPointsPerGameWon(2)}>
-              2 points
-            </button>
-            <button
-              type='button'
-              className={
-                pointsPerGameWon === 3 ? styles.selectedPointsPerGameWon : ''
-              }
-              onClick={() => handleSelectPointsPerGameWon(3)}>
-              3 points
-            </button>
+            {pointsPerGameWonOptions.map((points) => (
+              <button
+                type='button'
+                key={points}
+                className={
+                  pointsPerGameWon === points
+                    ? styles.selectedPointsPerGameWon
+                    : ''
+                }
+                onClick={() => handleSelectPointsPerGameWon(points)}>
+                {points} points
+              </button>
+            ))}
           </fieldset>
         )}
         {!isEditMode && isCustomMode && (
