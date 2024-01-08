@@ -26,7 +26,7 @@ const TournamentDetailSection = ({ tournament, matches, setTournament }) => {
   const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
 
   const handleSubscribeToTournament = () => {
-    subscribeToTournament(tournament.id, userPlayerProfile.id, tournament.name);
+    subscribeToTournament(tournament.id, userPlayerProfile.id);
     setUserPlayerProfile((prevState) => ({
       ...prevState,
       tournaments: {
@@ -42,14 +42,11 @@ const TournamentDetailSection = ({ tournament, matches, setTournament }) => {
         new Set([...prevState.players, userPlayerProfile.id])
       ),
     }));
+    alert(`You have successfully joined ${tournament.name}`);
   };
 
   const handleUnsubscribeFromTournament = () => {
-    unsubscribeFromTournament(
-      tournament.id,
-      userPlayerProfile.id,
-      tournament.name
-    );
+    unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
     setUserPlayerProfile((prevState) => ({
       ...prevState,
       tournaments: {
@@ -61,12 +58,21 @@ const TournamentDetailSection = ({ tournament, matches, setTournament }) => {
         ),
       },
     }));
-    // setTournament((prevState) => ({
-    //   ...prevState,
-    //   players: prevState.players.filter(
-    //     (playerId) => playerId !== userPlayerProfile.id
-    //   ),
-    // }));
+    setTournament((prevState) => ({
+      ...prevState,
+      players: prevState.players.filter(
+        (playerId) => playerId !== userPlayerProfile.id
+      ),
+    }));
+
+    if (tournament.players.length > 1) {
+      alert(`You have successfully abandoned ${tournament.name}.`);
+    } else {
+      alert(
+        `You have successfully abandoned the tournament. You were the last player of ${tournament.name}, so the tournament was deleted from the database.`
+      );
+    }
+
     navigate('..');
   };
 

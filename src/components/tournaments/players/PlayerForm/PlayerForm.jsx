@@ -26,6 +26,10 @@ const PlayerForm = () => {
 
     addNonVerifiedPlayerToTournament(tournamentId, playerData);
 
+    alert(
+      'You have successfully added a non-verified player to this tournament!'
+    );
+
     navigate(`/tournaments/${tournamentId}/players`);
   };
 

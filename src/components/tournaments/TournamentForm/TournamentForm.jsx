@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 import styles from './TournamentForm.module.css';
 
@@ -13,7 +14,7 @@ import { formattedTerminationDateTime } from '../../../utils/calculateTerminatio
 import trophiesImages from '../../../utils/trophiesImages';
 
 const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
-  const { userPlayerProfile } = getUserAuthCtx();
+  const { userPlayerProfile, setUserPlayerProfile } = getUserAuthCtx();
   const nameInput = useRef();
   const defaultAddressInput = useRef();
   const descriptionInput = useRef();
@@ -74,6 +75,8 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
     const tournamentCombinedTerminationDateTime = `${tournamentTerminationDate}T${tournamentTerminationTime}`;
     const terminationDate = new Date(tournamentCombinedTerminationDateTime);
 
+    const newTournamentId = uuidv4();
+
     const tournamentData = {
       creationDateTime: new Date(),
       isActive: true,
@@ -93,8 +96,27 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       players: [userPlayerProfile?.id],
     };
 
-    !isEditMode && addTournament(tournamentData, userPlayerProfile.id);
-    isEditMode && editTournament(tournamentId, tournamentData);
+    if (!isEditMode) {
+      setUserPlayerProfile((prevState) => ({
+        ...prevState,
+        tournaments: {
+          all: Array.from(
+            new Set([...prevState.tournaments.all, newTournamentId])
+          ),
+          active: Array.from(
+            new Set([...prevState.tournaments.active, newTournamentId])
+          ),
+        },
+      }));
+
+      addTournament(newTournamentId, tournamentData, userPlayerProfile.id);
+
+      alert(`You have successfully created ${tournamentData.name}`);
+    }
+    if (isEditMode) {
+      editTournament(tournamentId, tournamentData);
+      alert(`You have successfully edited ${tournamentData.name}`);
+    }
     navigate('..');
   };
 

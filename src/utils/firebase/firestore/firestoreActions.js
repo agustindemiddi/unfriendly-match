@@ -133,23 +133,25 @@ export const getTournament = async (tournamentId) => {
 };
 
 // add tournament:
-export const addTournament = async (tournamentData, userId) => {
-  const tournamentDoc = await addDoc(getTournamentsColRef(), tournamentData);
+export const addTournament = async (
+  newTournamentId,
+  tournamentData,
+  userId
+) => {
+  // const tournamentDoc = await addDoc(getTournamentsColRef(), tournamentData);
+  await setDoc(getTournamentDocRef(newTournamentId), tournamentData);
 
   await updateDoc(getPlayerDocRef(userId), {
-    'tournaments.all': arrayUnion(tournamentDoc.id),
-    'tournaments.active': arrayUnion(tournamentDoc.id),
+    // 'tournaments.all': arrayUnion(tournamentDoc.id),
+    // 'tournaments.active': arrayUnion(tournamentDoc.id),
+    'tournaments.all': arrayUnion(newTournamentId),
+    'tournaments.active': arrayUnion(newTournamentId),
   });
-  alert(`You have successfully created ${tournamentData.name}`);
 };
 
 // edit tournament:
-export const editTournament = async (tournamentId, tournamentData) => {
-  await updateDoc(getTournamentDocRef(tournamentId), {
-    ...tournamentData,
-  });
-  alert(`You have successfully edited ${tournamentData.name}`);
-};
+export const editTournament = async (tournamentId, tournamentData) =>
+  await updateDoc(getTournamentDocRef(tournamentId), tournamentData);
 
 // add non-verified player to tournament:
 export const addNonVerifiedPlayerToTournament = async (
@@ -159,9 +161,6 @@ export const addNonVerifiedPlayerToTournament = async (
   await updateDoc(getTournamentDocRef(tournamentId), {
     nonVerifiedPlayers: arrayUnion(playerData),
   });
-  alert(
-    'You have successfully added a non-verified player to this tournament!'
-  );
 };
 
 // get match:
@@ -269,11 +268,7 @@ export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
 
 // SUBSCRIBERS
 // subscribe user to tournament:
-export const subscribeToTournament = async (
-  tournamentId,
-  userId,
-  tournamentName
-) => {
+export const subscribeToTournament = async (tournamentId, userId) => {
   await updateDoc(getTournamentDocRef(tournamentId), {
     players: arrayUnion(userId),
   });
@@ -281,15 +276,10 @@ export const subscribeToTournament = async (
     'tournaments.all': arrayUnion(tournamentId),
     'tournaments.active': arrayUnion(tournamentId),
   });
-  alert(`You have successfully joined ${tournamentName}`);
 };
 
 // unsubscribe user from tournament:
-export const unsubscribeFromTournament = async (
-  tournamentId,
-  userId,
-  tournamentName
-) => {
+export const unsubscribeFromTournament = async (tournamentId, userId) => {
   await updateDoc(getTournamentDocRef(tournamentId), {
     players: arrayRemove(userId),
   });
@@ -298,14 +288,8 @@ export const unsubscribeFromTournament = async (
     'tournaments.active': arrayRemove(tournamentId),
   });
   const tournament = await getTournament(tournamentId);
-  if (tournament.players.length === 0) {
+  if (tournament.players.length === 0)
     await deleteDoc(getTournamentDocRef(tournamentId));
-    alert(
-      `You have successfully abandoned the tournament. You were the last player of ${tournamentName}, so the tournament was deleted from the database.`
-    );
-  } else {
-    alert(`You have successfully abandoned ${tournamentName}.`);
-  }
 };
 
 // subscribe user to match:

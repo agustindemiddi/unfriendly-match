@@ -82,7 +82,6 @@ const MatchForm = () => {
       collection(db, 'tournaments', params.tournamentId, 'matches'),
       matchData
     );
-    // console.log('Document written with ID: ', docRef.id);
   };
 
   const handleSubmit = (e) => {
