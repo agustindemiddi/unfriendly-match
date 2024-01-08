@@ -13,6 +13,7 @@ import {
   arrayUnion,
   arrayRemove,
   addDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import db from '../firebaseConfig';
 
@@ -139,7 +140,7 @@ export const addTournament = async (tournamentData, userId) => {
     'tournaments.all': arrayUnion(tournamentDoc.id),
     'tournaments.active': arrayUnion(tournamentDoc.id),
   });
-  alert(`${tournamentData.name} successfully created!`);
+  alert(`You have successfully created ${tournamentData.name}`);
 };
 
 // edit tournament:
@@ -147,7 +148,7 @@ export const editTournament = async (tournamentId, tournamentData) => {
   await updateDoc(getTournamentDocRef(tournamentId), {
     ...tournamentData,
   });
-  alert(`${tournamentData.name} successfully edited!`);
+  alert(`You have successfully edited ${tournamentData.name}`);
 };
 
 // add non-verified player to tournament:
@@ -280,7 +281,11 @@ export const addUserPlayerListener = (userId, setUpdatedUserPlayerProfile) =>
 
 // SUBSCRIBERS
 // subscribe user to tournament:
-export const subscribeToTournament = async (tournamentId, userId) => {
+export const subscribeToTournament = async (
+  tournamentId,
+  userId,
+  tournamentName
+) => {
   await updateDoc(getTournamentDocRef(tournamentId), {
     players: arrayUnion(userId),
   });
@@ -288,11 +293,15 @@ export const subscribeToTournament = async (tournamentId, userId) => {
     'tournaments.all': arrayUnion(tournamentId),
     'tournaments.active': arrayUnion(tournamentId),
   });
-  alert('You have joined this tournament!');
+  alert(`You have successfully joined ${tournamentName}`);
 };
 
 // unsubscribe user from tournament:
-export const unsubscribeFromTournament = async (tournamentId, userId) => {
+export const unsubscribeFromTournament = async (
+  tournamentId,
+  userId,
+  tournamentName
+) => {
   await updateDoc(getTournamentDocRef(tournamentId), {
     players: arrayRemove(userId),
   });
@@ -300,7 +309,15 @@ export const unsubscribeFromTournament = async (tournamentId, userId) => {
     'tournaments.all': arrayRemove(tournamentId),
     'tournaments.active': arrayRemove(tournamentId),
   });
-  alert('You have successfully abandoned this tournament.');
+  const tournament = await getTournament(tournamentId);
+  if (tournament.players.length === 0) {
+    await deleteDoc(getTournamentDocRef(tournamentId));
+    alert(
+      `You have successfully abandoned the tournament. You were the last player of ${tournamentName}, so the tournament was deleted from the database.`
+    );
+  } else {
+    alert(`You have successfully abandoned ${tournamentName}.`);
+  }
 };
 
 // subscribe user to match:

@@ -20,10 +20,11 @@ const TournamentPlayersPage = () => {
       setTournament(fetchedTournament);
 
       const verifiedPlayers = await getPlayers(fetchedTournament.players);
-      const nonVerifiedPlayers = fetchedTournament.nonVerifiedPlayers.map(
+      const nonVerifiedPlayers = fetchedTournament.nonVerifiedPlayers?.map(
         (player) => createNonVerifiedPlayerObjectFromFirestore(player)
       );
-      const players = [...verifiedPlayers, ...nonVerifiedPlayers];
+      const players = [...verifiedPlayers, ...(nonVerifiedPlayers || [])];
+
       setTournamentPlayers(players);
     };
     fetchTournamentPlayers();

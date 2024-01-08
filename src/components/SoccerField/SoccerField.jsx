@@ -100,7 +100,7 @@ const SoccerField = ({
                           : ''
                       }
                       key={`empty-${index}`}>
-                      <PlayerIconContainer />
+                      <PlayerIconContainer isTournamentPlayer={isTournamentPlayer} />
                     </li>
                   ))}
                 </ul>

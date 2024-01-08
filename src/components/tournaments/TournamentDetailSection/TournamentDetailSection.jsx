@@ -30,18 +30,23 @@ const TournamentDetailSection = ({ tournament, matches }) => {
     } else {
       setIsTournamentPlayer(false);
     }
-  }, [userPlayerProfile, tournament.players]);
+  }, [userPlayerProfile?.tournaments.all, tournament.players]);
 
   const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
 
   const handleSubscribeToTournament = () => {
-    subscribeToTournament(tournament.id, userPlayerProfile.id);
+    subscribeToTournament(tournament.id, userPlayerProfile.id, tournament.name);
     setIsTournamentPlayer(true);
   };
 
   const handleUnsubscribeFromTournament = () => {
-    unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
-    setIsTournamentPlayer(false);
+    unsubscribeFromTournament(
+      tournament.id,
+      userPlayerProfile.id,
+      tournament.name
+    );
+    // setIsTournamentPlayer(false);
+    navigate('..');
   };
 
   const { nextMatch, lastMatch } = separateMatches(matches);
