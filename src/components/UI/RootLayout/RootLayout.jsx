@@ -10,12 +10,9 @@ const RootLayout = () => {
         <MainNavigation />
       </header>
       <main>
-        <AsideNavigation />
+        {/* <AsideNavigation /> */}
         <Outlet />
       </main>
-      <footer>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur.
-      </footer>
     </>
   );
 };

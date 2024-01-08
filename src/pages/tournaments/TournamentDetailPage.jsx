@@ -33,6 +33,7 @@ const TournamentDetailPage = () => {
     <TournamentDetailSection
       tournament={tournament}
       matches={tournamentMatches}
+      setTournament={setTournament}
     />
   );
 };

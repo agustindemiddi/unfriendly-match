@@ -247,7 +247,7 @@ export const getTeams = async (teamAPlayersIdsArray, teamBPlayersIdsArray) => {
 export const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
   onSnapshot(
     getMatchDocRef(tournamentId, matchId),
-    { includeMetadataChanges: true },
+    // { includeMetadataChanges: true },
     (matchDoc) => {
       const match = createMatchObjectFromFirestore(matchDoc);
       setUpdatedMatch(match);
@@ -259,22 +259,10 @@ export const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
 export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
   onSnapshot(
     getTournamentDocRef(tournamentId),
-    { includeMetadataChanges: true },
+    // { includeMetadataChanges: true },
     (tournamentDoc) => {
       const tournament = createTournamentObjectFromFirestore(tournamentDoc);
       setUpdatedTournament(tournament);
-    },
-    (error) => console.log(error)
-  );
-
-// add listener to user player profile:
-export const addUserPlayerListener = (userId, setUpdatedUserPlayerProfile) =>
-  onSnapshot(
-    getPlayerDocRef(userId),
-    { includeMetadataChanges: true },
-    (playerDoc) => {
-      const player = createTournamentObjectFromFirestore(playerDoc);
-      setUpdatedUserPlayerProfile(player);
     },
     (error) => console.log(error)
   );
@@ -364,6 +352,7 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
 
 // SOCCERFIELD CONTAINER
 // add listener to matchDoc
+// add listener to tournamentDoc
 // get tournament
 // get players
 // get match teams

@@ -8,7 +8,6 @@ import {
   signUpWithEmail,
   logout,
 } from '../utils/firebase/firebaseAuthActions';
-import { addUserPlayerListener } from '../utils/firebase/firestore/firestoreActions';
 
 const authContext = createContext();
 
@@ -20,16 +19,6 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = authListener(setUser, setUserPlayerProfile);
     return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (userPlayerProfile) {
-      const unsubscribe = addUserPlayerListener(
-        userPlayerProfile.id,
-        setUserPlayerProfile
-      );
-      return () => unsubscribe();
-    }
   }, []);
 
   // auth.useDeviceLanguage(); // test how it works
@@ -54,6 +43,7 @@ export const AuthContextProvider = ({ children }) => {
         handleGoogleSignIn,
         handleEmailSignIn,
         handleSignOut,
+        setUserPlayerProfile,
       }}>
       {children}
     </authContext.Provider>

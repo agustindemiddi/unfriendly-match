@@ -3,9 +3,7 @@ import { useState, useEffect } from 'react';
 import TournamentsSection from '../../components/tournaments/TournamentsSection/TournamentsSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
-import {
-  getTournaments,
-} from '../../utils/firebase/firestore/firestoreActions';
+import { getTournaments } from '../../utils/firebase/firestore/firestoreActions';
 
 const TournamentsPage = () => {
   const { userPlayerProfile } = getUserAuthCtx();
@@ -22,7 +20,7 @@ const TournamentsPage = () => {
       };
       fetchAllUserTournaments();
     }
-  }, [userPlayerProfile]);
+  }, [userPlayerProfile?.tournaments.all]);
 
   return <TournamentsSection tournaments={userTournaments} />;
 };

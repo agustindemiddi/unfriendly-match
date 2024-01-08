@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import Lottie from 'lottie-react';
 
 import HomeSection from '../components/home/HomeSection/HomeSection';
 
 import { getUserAuthCtx } from '../context/authContext';
 import { getMatchesFromTournaments } from '../utils/firebase/firestore/firestoreActions';
-import bouncingBall from '../assets/bouncing-ball.json';
 
 const HomePage = () => {
   const { userPlayerProfile } = getUserAuthCtx();
@@ -26,13 +24,7 @@ const HomePage = () => {
     }
   }, [userPlayerProfile]);
 
-  const content = isLoading ? (
-    <Lottie animationData={bouncingBall} loop={true} />
-  ) : (
-    <HomeSection matches={userMatches} />
-  );
-
-  return content;
+  return <HomeSection matches={userMatches} isLoading={isLoading} />;
 };
 
 export default HomePage;

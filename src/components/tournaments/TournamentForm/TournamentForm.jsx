@@ -107,6 +107,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             placeholder='Tournament name'
             ref={nameInput}
             autoFocus
+            required
           />
         </fieldset>
         {isCustomMode && (
@@ -173,7 +174,9 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             type='date'
             defaultValue={formattedTerminationDateTime()}
             ref={terminationDateInput}
+            required
           />
+          {/* will need state to live update */}
           <legend>Tournament ends on {'XX/XX/XXXX'}</legend>
         </fieldset>
         {!isEditMode && isCustomMode && (

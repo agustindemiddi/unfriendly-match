@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
@@ -16,27 +15,33 @@ import {
   unsubscribeFromTournament,
 } from '../../../utils/firebase/firestore/firestoreActions';
 
-const TournamentDetailSection = ({ tournament, matches }) => {
-  const { userPlayerProfile } = getUserAuthCtx();
-  const [isTournamentPlayer, setIsTournamentPlayer] = useState(false);
+const TournamentDetailSection = ({ tournament, matches, setTournament }) => {
+  const { userPlayerProfile, setUserPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (
-      userPlayerProfile &&
-      tournament?.players?.includes(userPlayerProfile.id)
-    ) {
-      setIsTournamentPlayer(true);
-    } else {
-      setIsTournamentPlayer(false);
-    }
-  }, [userPlayerProfile?.tournaments.all, tournament.players]);
+  const isTournamentPlayer = tournament?.players?.includes(
+    userPlayerProfile?.id
+  );
 
   const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
 
   const handleSubscribeToTournament = () => {
     subscribeToTournament(tournament.id, userPlayerProfile.id, tournament.name);
-    setIsTournamentPlayer(true);
+    setUserPlayerProfile((prevState) => ({
+      ...prevState,
+      tournaments: {
+        all: Array.from(new Set([...prevState.tournaments.all, tournament.id])),
+        active: Array.from(
+          new Set([...prevState.tournaments.active, tournament.id])
+        ),
+      },
+    }));
+    setTournament((prevState) => ({
+      ...prevState,
+      players: Array.from(
+        new Set([...prevState.players, userPlayerProfile.id])
+      ),
+    }));
   };
 
   const handleUnsubscribeFromTournament = () => {
@@ -45,7 +50,23 @@ const TournamentDetailSection = ({ tournament, matches }) => {
       userPlayerProfile.id,
       tournament.name
     );
-    // setIsTournamentPlayer(false);
+    setUserPlayerProfile((prevState) => ({
+      ...prevState,
+      tournaments: {
+        all: prevState.tournaments.all.filter(
+          (tournamentId) => tournamentId !== tournament.id
+        ),
+        active: prevState.tournaments.active.filter(
+          (tournamentId) => tournamentId !== tournament.id
+        ),
+      },
+    }));
+    // setTournament((prevState) => ({
+    //   ...prevState,
+    //   players: prevState.players.filter(
+    //     (playerId) => playerId !== userPlayerProfile.id
+    //   ),
+    // }));
     navigate('..');
   };
 
