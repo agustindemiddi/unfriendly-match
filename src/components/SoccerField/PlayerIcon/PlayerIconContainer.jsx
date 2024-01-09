@@ -17,7 +17,7 @@ const PlayerIconContainer = ({
   isTournamentPlayer,
 }) => {
   const {
-    userPlayerProfile: { id: userId },
+    user: { uid: userId },
   } = getUserAuthCtx();
 
   const handleSubscribeToMatch = (tournamentId, matchId, userId) => {

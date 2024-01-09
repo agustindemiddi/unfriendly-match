@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import TournamentDetailSection from '../../components/tournaments/TournamentDetailSection/TournamentDetailSection';
 
+import { getUserAuthCtx } from '../../context/authContext';
 import {
   getTournament,
   getTournamentMatches,
@@ -10,31 +11,39 @@ import {
 
 const TournamentDetailPage = () => {
   const { tournamentId } = useParams();
+  const { updatedUserTournaments } = getUserAuthCtx();
+  const subscribedTournament = updatedUserTournaments?.all?.filter(
+    (tournament) => tournament.id === tournamentId
+  )[0];
+  const [tournament, setTournament] = useState([]);
   const [tournamentMatches, setTournamentMatches] = useState([]);
-  const [tournament, setTournament] = useState({});
 
   useEffect(() => {
+    if (!subscribedTournament) {
+      const fetchTournament = async () => {
+        const fetchedTournament = await getTournament(tournamentId);
+        setTournament(fetchedTournament);
+      };
+      fetchTournament();
+    }
+
     // get tournament matches:
     const fetchTournamentMatches = async () => {
       const matches = await getTournamentMatches(tournamentId);
       setTournamentMatches(matches);
     };
     fetchTournamentMatches();
-
-    // get tournament:
-    const fetchTournament = async () => {
-      const fetchedTournament = await getTournament(tournamentId);
-      setTournament(fetchedTournament);
-    };
-    fetchTournament();
   }, [tournamentId]);
 
   return (
-    <TournamentDetailSection
-      tournament={tournament}
-      matches={tournamentMatches}
-      setTournament={setTournament}
-    />
+    <>
+      {updatedUserTournaments && tournamentMatches && (
+        <TournamentDetailSection
+          tournament={subscribedTournament || tournament}
+          matches={tournamentMatches}
+        />
+      )}
+    </>
   );
 };
 

@@ -6,10 +6,9 @@ import AsideNavigationGroup from './AsideNavigationGroup/AsideNavigationGroup';
 import styles from './AsideNavigation.module.css';
 
 import { getUserAuthCtx } from '../../../context/authContext';
-import { getTournaments } from '../../../utils/firebase/firestore/firestoreActions';
 
 const AsideNavigation = () => {
-  const { userPlayerProfile } = getUserAuthCtx();
+  const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
   const location = useLocation();
   const initialNavTree = [
     { name: 'MAIN', url: '/' },
@@ -19,26 +18,22 @@ const AsideNavigation = () => {
   const [navTree, setNavTree] = useState(initialNavTree);
 
   useEffect(() => {
-    // get user active tournaments:
-    if (userPlayerProfile && location.pathname.startsWith('/tournaments')) {
-      const fetchAllUserTournaments = async () => {
-        const fetchedTournaments = await getTournaments(
-          userPlayerProfile.tournaments.active
-        );
-        setNavTree((prevState) => {
-          const newNavTree = [...prevState];
-          newNavTree[2].collection = fetchedTournaments;
-          return newNavTree;
-        });
-      };
-      fetchAllUserTournaments();
+    if (
+      updatedUserTournaments &&
+      location.pathname.startsWith('/tournaments')
+    ) {
+      setNavTree((prevState) => {
+        const newNavTree = [...prevState];
+        newNavTree[2].collection = updatedUserTournaments.active;
+        return newNavTree;
+      });
     } else if (
       userPlayerProfile &&
       !location.pathname.startsWith('/tournaments')
     ) {
       setNavTree(initialNavTree);
     }
-  }, [userPlayerProfile, location.pathname]);
+  }, [updatedUserTournaments?.active, location.pathname]);
 
   return (
     <aside className={styles.asideNavigationPanel}>

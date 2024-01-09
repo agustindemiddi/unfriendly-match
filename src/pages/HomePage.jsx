@@ -6,23 +6,23 @@ import { getUserAuthCtx } from '../context/authContext';
 import { getMatchesFromTournaments } from '../utils/firebase/firestore/firestoreActions';
 
 const HomePage = () => {
-  const { userPlayerProfile } = getUserAuthCtx();
+  const { updatedUserPlayerProfile } = getUserAuthCtx();
   const [isLoading, setIsLoading] = useState(true);
   const [userMatches, setUserMatches] = useState([]);
 
   useEffect(() => {
-    if (userPlayerProfile) {
+    if (updatedUserPlayerProfile?.tournaments.active.length > 0) {
       // get matches from user active tournaments:
       const fetchUserActiveTournamentsMatches = async () => {
         const fetchedMatches = await getMatchesFromTournaments(
-          userPlayerProfile.tournaments.active
+          updatedUserPlayerProfile.tournaments.active
         );
         setUserMatches(fetchedMatches);
-        setIsLoading(false);
       };
       fetchUserActiveTournamentsMatches();
     }
-  }, [userPlayerProfile]);
+    setIsLoading(false);
+  }, [updatedUserPlayerProfile?.tournaments.active]);
 
   return <HomeSection matches={userMatches} isLoading={isLoading} />;
 };

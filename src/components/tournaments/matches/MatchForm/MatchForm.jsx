@@ -18,7 +18,11 @@ import db from '../../../../utils/firebase/firebaseConfig';
 import { getUserAuthCtx } from '../../../../context/authContext';
 
 const MatchForm = () => {
-  const [tournament, setTournament] = useState();
+  const { tournamentId } = useParams();
+  const { updatedUserPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
+  const tournament = updatedUserTournaments?.all?.filter(
+    (tournament) => tournament.id === tournamentId
+  )[0];
   const [tournamentAvailablePlayers, setTournamentAvailablePlayers] = useState(
     []
   );
@@ -29,26 +33,6 @@ const MatchForm = () => {
   const matchSubscriptionStartDateInputRef = useRef();
   const matchSubscriptionStartTimeInputRef = useRef();
   const playerQuotaInputRef = useRef();
-  const params = useParams();
-  const { userPlayerProfile } = getUserAuthCtx();
-
-  // console.log(matchPlayers);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const docRef = doc(db, 'tournaments', params.tournamentId);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        setTournament(docSnap.data());
-      } else {
-        // docSnap.data() will be undefined in this case
-        console.log('No such document!');
-      }
-    };
-
-    fetchData();
-  }, [params.tournamentId]);
 
   useEffect(() => {
     if (tournament) {
@@ -66,11 +50,11 @@ const MatchForm = () => {
         });
         const tournamentPlayersArray =
           tournamentPlayersArrayWithUserPlayer.filter(
-            (player) => player.id !== userPlayerProfile.id
+            (player) => player.id !== updatedUserPlayerProfile?.id
           );
         setTournamentAvailablePlayers(tournamentPlayersArray);
 
-        setMatchPlayers([userPlayerProfile]);
+        setMatchPlayers([updatedUserPlayerProfile]);
       };
 
       fetchData();
@@ -79,7 +63,7 @@ const MatchForm = () => {
 
   const addMatch = async (matchData) => {
     const docRef = await addDoc(
-      collection(db, 'tournaments', params.tournamentId, 'matches'),
+      collection(db, 'tournaments', tournamentId, 'matches'),
       matchData
     );
   };
@@ -106,9 +90,9 @@ const MatchForm = () => {
     const playersRefs = matchPlayers.map((player) => player.id);
 
     const matchData = {
-      tournament: params.tournamentId,
-      creator: userPlayerProfile.id,
-      admins: [...new Set([...tournament.admins, userPlayerProfile.id])],
+      tournament: tournamentId,
+      creator: updatedUserPlayerProfile.id,
+      admins: [...new Set([...tournament.admins, updatedUserPlayerProfile.id])],
       creationDateTime: Timestamp.now(),
       subscriptionDateTime: matchSubscriptionDateTime, // custom or Timestamp.now() (default value)
       dateTime: matchDateTime,

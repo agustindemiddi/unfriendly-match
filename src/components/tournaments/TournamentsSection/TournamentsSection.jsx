@@ -7,15 +7,13 @@ import TournamentsList from './TournamentsList/TournamentsList';
 
 import styles from './TournamentsSection.module.css';
 
-import separateTournaments from '../../../utils/separateTournaments';
-
 const TournamentsSection = ({ tournaments }) => {
   const [isFinishedTournamentsShown, setIsFinishedTournamentsShown] =
     useState(false);
   const navigate = useNavigate();
 
   const { active: activeTournaments, finished: finishedTournaments } =
-    separateTournaments(tournaments);
+    tournaments;
 
   const actions = [
     {

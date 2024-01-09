@@ -9,16 +9,17 @@ import styles from './MatchDetailSection.module.css';
 import { getUserAuthCtx } from '../../../../context/authContext';
 
 const MatchDetailSection = ({ match }) => {
-  const { userPlayerProfile } = getUserAuthCtx();
+  const { updatedUserPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
 
-  const isAdmin = match?.admins?.includes(userPlayerProfile?.id);
+  const isAdmin = match?.admins?.includes(updatedUserPlayerProfile?.id);
 
   const adminActions = [];
-  isAdmin && adminActions.push({
-    label: 'Edit match',
-    onAction: () => navigate('edit'),
-  });
+  isAdmin &&
+    adminActions.push({
+      label: 'Edit match',
+      onAction: () => navigate('edit'),
+    });
 
   const actions = [
     {

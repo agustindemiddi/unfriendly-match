@@ -11,16 +11,16 @@ import {
 import bouncingBall from '../../assets/bouncing-ball.json';
 
 const ContactsPage = () => {
-  const { userPlayerProfile } = getUserAuthCtx();
+  const { updatedUserPlayerProfile } = getUserAuthCtx();
   const [isLoading, setIsLoading] = useState(true);
   const [userContacts, setUserContacts] = useState([]);
   // const [userTournaments, setUserTournaments] = useState([]);
 
   useEffect(() => {
-    if (userPlayerProfile) {
+    if (updatedUserPlayerProfile) {
       const fetchContacts = async () => {
         const userTournamentsIds = await getTournaments(
-          userPlayerProfile.tournaments.all
+          updatedUserPlayerProfile.tournaments.all
         );
         // setUserTournaments(userTournaments);
 
@@ -29,7 +29,7 @@ const ContactsPage = () => {
         );
         const allContactsIds = Array.from(
           new Set(tournamentPlayersIds.flat())
-        ).filter((playerId) => playerId !== userPlayerProfile.id);
+        ).filter((playerId) => playerId !== updatedUserPlayerProfile.id);
 
         const allContacts = await getPlayers(allContactsIds);
         setUserContacts(allContacts);
@@ -37,7 +37,7 @@ const ContactsPage = () => {
       };
       fetchContacts();
     }
-  }, [userPlayerProfile]);
+  }, [updatedUserPlayerProfile]);
 
   const content = isLoading ? (
     <Lottie animationData={bouncingBall} loop={true} />

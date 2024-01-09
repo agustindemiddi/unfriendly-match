@@ -1,4 +1,3 @@
-// import { useState, useEffect } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 
 import styles from './AsideNavigationMatchItem.module.css';

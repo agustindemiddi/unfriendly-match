@@ -9,11 +9,11 @@ import styles from './MatchesSection.module.css';
 import { getUserAuthCtx } from '../../../../context/authContext';
 import separateMatches from '../../../../utils/separateMatches';
 
-const MatchesSection = ({ matches, tournament }) => {
-  const { userPlayerProfile } = getUserAuthCtx();
+const MatchesSection = ({ tournament, matches }) => {
+  const { updatedUserPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
 
-  const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
+  const isAdmin = tournament?.admins?.includes(updatedUserPlayerProfile?.id);
 
   const {
     sortedUpcomingMatches,

@@ -14,7 +14,7 @@ import { formattedTerminationDateTime } from '../../../utils/calculateTerminatio
 import trophiesImages from '../../../utils/trophiesImages';
 
 const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
-  const { userPlayerProfile, setUserPlayerProfile } = getUserAuthCtx();
+  const { updatedUserPlayerProfile } = getUserAuthCtx();
   const nameInput = useRef();
   const defaultAddressInput = useRef();
   const descriptionInput = useRef();
@@ -30,10 +30,11 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (userPlayerProfile)
+    if (updatedUserPlayerProfile)
       nameInput.current.value =
-        tournament?.name ?? `${userPlayerProfile?.username}'s Tournament`;
-  }, [userPlayerProfile, tournament?.name]);
+        tournament?.name ??
+        `${updatedUserPlayerProfile?.username}'s Tournament`;
+  }, [updatedUserPlayerProfile, tournament?.name]);
 
   useEffect(() => {
     tournament?.defaultPlayerQuota &&
@@ -91,26 +92,17 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       hasMvpEnabled: hasMvpEnabledInput?.current?.checked || false,
       isPublic: isPublicInput.current.checked,
 
-      creator: userPlayerProfile?.id,
-      admins: [userPlayerProfile?.id],
-      players: [userPlayerProfile?.id],
+      creator: updatedUserPlayerProfile?.id,
+      admins: [updatedUserPlayerProfile?.id],
+      players: [updatedUserPlayerProfile?.id],
     };
 
     if (!isEditMode) {
-      setUserPlayerProfile((prevState) => ({
-        ...prevState,
-        tournaments: {
-          all: Array.from(
-            new Set([...prevState.tournaments.all, newTournamentId])
-          ),
-          active: Array.from(
-            new Set([...prevState.tournaments.active, newTournamentId])
-          ),
-        },
-      }));
-
-      addTournament(newTournamentId, tournamentData, userPlayerProfile.id);
-
+      addTournament(
+        newTournamentId,
+        tournamentData,
+        updatedUserPlayerProfile.id
+      );
       alert(`You have successfully created ${tournamentData.name}`);
     }
     if (isEditMode) {

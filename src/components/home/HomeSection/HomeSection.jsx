@@ -10,6 +10,7 @@ import separateMatches from '../../../utils/separateMatches';
 import bouncingBall from '../../../assets/bouncing-ball.json';
 
 const HomeSection = ({ matches, isLoading }) => {
+
   const {
     sortedUpcomingMatches,
     reverseSortedPreviousMatches,
@@ -20,7 +21,11 @@ const HomeSection = ({ matches, isLoading }) => {
   return (
     <>
       {isLoading ? (
-        <Lottie className={styles.loadingBall} animationData={bouncingBall} loop={true} />
+        <Lottie
+          className={styles.loadingBall}
+          animationData={bouncingBall}
+          loop={true}
+        />
       ) : (
         <Section>
           {/* <h2>Upcoming Matches:</h2>
@@ -36,9 +41,9 @@ const HomeSection = ({ matches, isLoading }) => {
 
           {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES >>> */}
           <h2>Test Match:</h2>
-      {sortedUpcomingMatches && sortedUpcomingMatches[1] && (
-        <SoccerFieldContainer match={sortedUpcomingMatches[1]} />
-      )}
+          {sortedUpcomingMatches && sortedUpcomingMatches[0] && (
+            <SoccerFieldContainer match={sortedUpcomingMatches[0]} />
+          )}
           {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES <<< */}
 
           {/* temporary >>> */}

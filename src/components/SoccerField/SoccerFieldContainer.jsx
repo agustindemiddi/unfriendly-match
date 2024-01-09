@@ -5,25 +5,28 @@ import SoccerField from './SoccerField';
 import { getUserAuthCtx } from '../../context/authContext';
 import {
   addMatchListener,
-  getTournament,
   getPlayers,
   getTeams,
-  addTournamentListener,
 } from '../../utils/firebase/firestore/firestoreActions';
 import getMatchStatus from '../../utils/getMatchStatus';
 import formatDate from '../../utils/formatDate';
 import calculateCountdown from '../../utils/calculateCountdownToMatchSubscription';
 
 const SoccerFieldContainer = ({ match }) => {
-  const { user } = getUserAuthCtx();
+  const { user, updatedUserTournaments } = getUserAuthCtx();
   const [updatedMatch, setUpdatedMatch] = useState(match);
-  const [updatedTournament, setUpdatedTournament] = useState({});
   const [subscribedPlayers, setSubscribedPlayers] = useState([]);
   const [teams, setTeams] = useState({ teamA: [], teamB: [] });
   const [matchSubscriptionCountdown, setMatchSubscriptionCountdown] =
     useState('');
 
   const { uid: userId } = user;
+
+  const updatedTournament = updatedUserTournaments?.all?.filter(
+    (t) => t.id === match.tournament
+  )[[0]];
+
+  const tournamentImage = updatedTournament?.image;
 
   const isTournamentPlayer = updatedTournament?.players?.includes(userId);
 
@@ -44,8 +47,6 @@ const SoccerFieldContainer = ({ match }) => {
     mvps,
   } = updatedMatch;
 
-  const { image: tournamentImage } = updatedTournament;
-
   useEffect(() => {
     // add listener to matchDoc:
     const unsubscribe = addMatchListener(
@@ -55,15 +56,6 @@ const SoccerFieldContainer = ({ match }) => {
     );
     return () => unsubscribe();
   }, [match.tournament, match.id]);
-
-  useEffect(() => {
-    // add listener to tournamentDoc:
-    const unsubscribe = addTournamentListener(
-      match.tournament,
-      setUpdatedTournament
-    );
-    return () => unsubscribe();
-  }, [match.tournament]);
 
   useEffect(() => {
     // get match players:

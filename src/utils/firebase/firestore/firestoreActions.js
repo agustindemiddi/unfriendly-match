@@ -170,7 +170,7 @@ export const getMatch = async (tournamentId, matchId) => {
   return match;
 };
 
-// get players:
+// get multiple players:
 export const getPlayers = async (playersIdsArray) => {
   if (playersIdsArray.length > 0) {
     const playersQuery = query(
@@ -187,7 +187,7 @@ export const getPlayers = async (playersIdsArray) => {
   }
 };
 
-// get tournaments:
+// get multiple tournaments:
 export const getTournaments = async (tournamentsIdsArray) => {
   if (tournamentsIdsArray.length > 0) {
     const tournamentsQuery = query(
@@ -204,7 +204,7 @@ export const getTournaments = async (tournamentsIdsArray) => {
   }
 };
 
-// get matches from tournament:
+// get all matches from tournament:
 export const getTournamentMatches = async (tournamentId) => {
   const querySnapshot = await getDocs(getTournamentMatchesColRef(tournamentId));
   const matchesArray = querySnapshot.docs.map((matchDoc) =>
@@ -213,7 +213,7 @@ export const getTournamentMatches = async (tournamentId) => {
   return matchesArray;
 };
 
-// get matches from different tournaments:
+// get all matches from multiple tournaments:
 export const getMatchesFromTournaments = async (tournamentsIdsArray) => {
   if (tournamentsIdsArray.length > 0) {
     const matchesArrays = await Promise.all(
@@ -266,6 +266,39 @@ export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
     (error) => console.log(error)
   );
 
+// add listener to user playerDoc profile (CAN'T MAKE IT WORK):
+export const addPlayerListener = (userId, setUpdatedPlayer) =>
+  onSnapshot(
+    getPlayerDocRef(userId),
+    (playerDoc) => {
+      const player = createPlayerObjectFromFirestore(playerDoc);
+      setUpdatedPlayer(player);
+    },
+    (error) => console.log(error)
+  );
+
+// add listener to multiple tournamentDocs:
+export const addMultipleTournamentsListener = (
+  tournamentsIdsArray,
+  setTournaments
+) => {
+  const tournamentsQuery = query(
+    getTournamentsColRef(),
+    where(documentId(), 'in', tournamentsIdsArray)
+  );
+  return onSnapshot(tournamentsQuery, (querySnapshot) => {
+    const tournamentsArray = [];
+    querySnapshot.forEach((tournamentDoc) => {
+      tournamentsArray.push(createTournamentObjectFromFirestore(tournamentDoc));
+    });
+    setTournaments({
+      all: tournamentsArray,
+      active: tournamentsArray.filter((tournament) => tournament.isActive),
+      finished: tournamentsArray.filter((tournament) => !tournament.isActive),
+    });
+  });
+};
+
 // SUBSCRIBERS
 // subscribe user to tournament:
 export const subscribeToTournament = async (tournamentId, userId) => {
@@ -311,9 +344,10 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
 // AUTHCONTEXT
 // create player profile object from user (first time sign up)
 // get player profile (when user signs in)
+// add listener to multiple tournamentDocs:
 
 // HOME PAGE
-// get matches from different tournaments
+// get matches from multiple tournaments
 
 // TOURNAMENTS PAGE
 // get tournaments

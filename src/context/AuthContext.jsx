@@ -8,18 +8,50 @@ import {
   signUpWithEmail,
   logout,
 } from '../utils/firebase/firebaseAuthActions';
+import {
+  addMultipleTournamentsListener,
+  addPlayerListener,
+} from '../utils/firebase/firestore/firestoreActions';
 
 const authContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userPlayerProfile, setUserPlayerProfile] = useState(null);
+  const [updatedUserTournaments, setUpdatedUserTournaments] = useState(null);
+  const [updatedUserPlayerProfile, setUpdatedUserPlayerProfile] =
+    useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // add listener to user auth:
     const unsubscribe = authListener(setUser, setUserPlayerProfile);
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (userPlayerProfile) {
+      // add listener to user playerDoc:
+      const unsubscribe = addPlayerListener(
+        userPlayerProfile.id,
+        setUpdatedUserPlayerProfile
+      );
+      return () => unsubscribe();
+    }
+  }, [userPlayerProfile]);
+
+  useEffect(() => {
+    if (userPlayerProfile && userPlayerProfile.tournaments.all.length > 0) {
+      // add listener to user tournamentDocs:
+      const unsubscribe = addMultipleTournamentsListener(
+        userPlayerProfile.tournaments.all,
+        setUpdatedUserTournaments
+      );
+      return () => unsubscribe();
+    } else {
+      setUpdatedUserTournaments([]);
+    }
+  }, [userPlayerProfile?.tournaments.all]);
 
   // auth.useDeviceLanguage(); // test how it works
 
@@ -39,11 +71,11 @@ export const AuthContextProvider = ({ children }) => {
     <authContext.Provider
       value={{
         user,
-        userPlayerProfile,
+        updatedUserTournaments,
+        updatedUserPlayerProfile,
         handleGoogleSignIn,
         handleEmailSignIn,
         handleSignOut,
-        setUserPlayerProfile,
       }}>
       {children}
     </authContext.Provider>

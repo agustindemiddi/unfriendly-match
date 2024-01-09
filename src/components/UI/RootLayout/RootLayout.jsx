@@ -10,7 +10,7 @@ const RootLayout = () => {
         <MainNavigation />
       </header>
       <main>
-        {/* <AsideNavigation /> */}
+        <AsideNavigation />
         <Outlet />
       </main>
     </>
