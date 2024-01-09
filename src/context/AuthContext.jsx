@@ -10,7 +10,6 @@ import {
 } from '../utils/firebase/firebaseAuthActions';
 import {
   addMultipleTournamentsListener,
-  addPlayerListener,
   getTournamentMatches,
 } from '../utils/firebase/firestore/firestoreActions';
 
@@ -20,8 +19,6 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userPlayerProfile, setUserPlayerProfile] = useState(null);
   const [updatedUserTournaments, setUpdatedUserTournaments] = useState(null);
-  const [updatedUserPlayerProfile, setUpdatedUserPlayerProfile] =
-    useState(null);
   const [tournamentMatches, setTournamentMatches] = useState(null);
   const { tournamentId } = useParams();
   const navigate = useNavigate();
@@ -31,17 +28,6 @@ export const AuthContextProvider = ({ children }) => {
     const unsubscribe = authListener(setUser, setUserPlayerProfile);
     return () => unsubscribe();
   }, []);
-
-  useEffect(() => {
-    if (userPlayerProfile) {
-      // add listener to user playerDoc:
-      const unsubscribe = addPlayerListener(
-        userPlayerProfile.id,
-        setUpdatedUserPlayerProfile
-      );
-      return () => unsubscribe();
-    }
-  }, [userPlayerProfile]);
 
   useEffect(() => {
     if (userPlayerProfile && userPlayerProfile.tournaments.all.length > 0) {
@@ -85,9 +71,10 @@ export const AuthContextProvider = ({ children }) => {
     <authContext.Provider
       value={{
         user,
+        userPlayerProfile,
         updatedUserTournaments,
-        updatedUserPlayerProfile,
         tournamentMatches,
+        setUserPlayerProfile,
         handleGoogleSignIn,
         handleEmailSignIn,
         handleSignOut,

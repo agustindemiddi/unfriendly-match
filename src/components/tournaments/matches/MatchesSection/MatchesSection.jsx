@@ -10,10 +10,10 @@ import { getUserAuthCtx } from '../../../../context/authContext';
 import separateMatches from '../../../../utils/separateMatches';
 
 const MatchesSection = ({ tournament, matches }) => {
-  const { updatedUserPlayerProfile } = getUserAuthCtx();
+  const { userPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
 
-  const isAdmin = tournament?.admins?.includes(updatedUserPlayerProfile?.id);
+  const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
 
   const {
     sortedUpcomingMatches,

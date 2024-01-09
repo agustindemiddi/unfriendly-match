@@ -9,10 +9,10 @@ import styles from './MatchDetailSection.module.css';
 import { getUserAuthCtx } from '../../../../context/authContext';
 
 const MatchDetailSection = ({ match }) => {
-  const { updatedUserPlayerProfile } = getUserAuthCtx();
+  const { userPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
 
-  const isAdmin = match?.admins?.includes(updatedUserPlayerProfile?.id);
+  const isAdmin = match?.admins?.includes(userPlayerProfile?.id);
 
   const adminActions = [];
   isAdmin &&

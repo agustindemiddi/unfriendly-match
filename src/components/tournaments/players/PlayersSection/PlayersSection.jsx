@@ -9,14 +9,14 @@ import styles from './PlayersSection.module.css';
 import { getUserAuthCtx } from '../../../../context/authContext';
 
 const PlayersSection = ({ tournament, players }) => {
-  const { updatedUserPlayerProfile } = getUserAuthCtx();
+  const { userPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
 
   const isTournamentPlayer = tournament?.players?.includes(
-    updatedUserPlayerProfile?.id
+    userPlayerProfile?.id
   );
 
-  const isAdmin = tournament?.admins?.includes(updatedUserPlayerProfile?.id);
+  const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
 
   const adminActions = [];
   isTournamentPlayer &&

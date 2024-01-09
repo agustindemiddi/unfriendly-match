@@ -11,7 +11,7 @@ import {
 
 const MatchForm = () => {
   const { tournamentId } = useParams();
-  const { updatedUserPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
+  const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
   const tournament = updatedUserTournaments?.all?.filter(
     (tournament) => tournament.id === tournamentId
   )[0];
@@ -32,10 +32,10 @@ const MatchForm = () => {
       const fetchPlayers = async () => {
         const playersArrayWithUserPlayer = await getPlayers(tournament.players);
         const playersArray = playersArrayWithUserPlayer.filter(
-          (player) => player.id !== updatedUserPlayerProfile.id
+          (player) => player.id !== userPlayerProfile.id
         );
         setTournamentAvailablePlayers(playersArray);
-        setMatchPlayers([updatedUserPlayerProfile]);
+        setMatchPlayers([userPlayerProfile]);
       };
       fetchPlayers();
     }
@@ -65,12 +65,12 @@ const MatchForm = () => {
     // const players = matchPlayers.map((player) => ({
     //   id: player.id,
     //   subscriptionDateTime: currentDateTime,
-    //   subscribedBy: updatedUserPlayerProfile.id,
+    //   subscribedBy: userPlayerProfile.id,
     // }));
 
     const matchData = {
       tournament: tournamentId,
-      creator: updatedUserPlayerProfile.id,
+      creator: userPlayerProfile.id,
       admins: tournament.admins,
       creationDateTime: currentDateTime,
       subscriptionDateTime: matchSubscriptionDateTime, // custom or Timestamp.now() (default value)

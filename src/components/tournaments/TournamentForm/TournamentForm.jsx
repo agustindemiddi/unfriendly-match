@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 import styles from './TournamentForm.module.css';
 
@@ -13,7 +14,7 @@ import { formattedTerminationDateTime } from '../../../utils/calculateTerminatio
 import trophiesImages from '../../../utils/trophiesImages';
 
 const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
-  const { updatedUserPlayerProfile } = getUserAuthCtx();
+  const { userPlayerProfile, setUserPlayerProfile } = getUserAuthCtx();
   const nameInput = useRef();
   const defaultAddressInput = useRef();
   const descriptionInput = useRef();
@@ -29,11 +30,11 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (updatedUserPlayerProfile)
+    if (userPlayerProfile)
       nameInput.current.value =
         tournament?.name ??
-        `${updatedUserPlayerProfile?.username}'s Tournament`;
-  }, [updatedUserPlayerProfile, tournament?.name]);
+        `${userPlayerProfile?.username}'s Tournament`;
+  }, [userPlayerProfile, tournament?.name]);
 
   useEffect(() => {
     tournament?.defaultPlayerQuota &&
@@ -89,17 +90,29 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       hasMvpEnabled: hasMvpEnabledInput?.current?.checked || false,
       isPublic: isPublicInput.current.checked,
 
-      creator: updatedUserPlayerProfile?.id,
-      admins: [updatedUserPlayerProfile?.id],
-      players: [updatedUserPlayerProfile?.id],
+      creator: userPlayerProfile?.id,
+      admins: [userPlayerProfile?.id],
+      players: [userPlayerProfile?.id],
     };
 
     if (!isEditMode) {
-      addTournament(updatedUserPlayerProfile.id, tournamentData);
+      const newTournamentId = uuidv4();
+
+      addTournament(userPlayerProfile.id, tournamentData, newTournamentId);
+
+      setUserPlayerProfile((prevState) => ({
+        ...prevState,
+        tournaments: {
+          all: [...prevState.tournaments.all, newTournamentId],
+          active: [...prevState.tournaments.active, newTournamentId],
+        },
+      }));
+
       alert(`You have successfully created ${tournamentData.name}`);
     }
     if (isEditMode) {
       editTournament(tournamentId, tournamentData);
+
       alert(`You have successfully edited ${tournamentData.name}`);
     }
     navigate('..');

@@ -16,25 +16,45 @@ import {
 import copyUrlToClipboard from '../../../utils/copyUrlToClipboard';
 
 const TournamentDetailSection = ({ tournament, matches }) => {
-  const { updatedUserPlayerProfile } = getUserAuthCtx();
+  const { userPlayerProfile, setUserPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
 
   const isTournamentPlayer = tournament?.players?.includes(
-    updatedUserPlayerProfile?.id
+    userPlayerProfile?.id
   );
 
-  const isAdmin = tournament?.admins?.includes(updatedUserPlayerProfile?.id);
+  const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
 
   const { nextMatch, lastMatch } = separateMatches(matches);
 
-  const handleSubscribeToTournament = () => {
-    subscribeToTournament(tournament.id, updatedUserPlayerProfile.id);
+  const handleSubscribeToTournament = async () => {
+    await subscribeToTournament(tournament.id, userPlayerProfile.id);
+
+    setUserPlayerProfile((prevState) => ({
+      ...prevState,
+      tournaments: {
+        all: [...prevState.tournaments.all, tournament.id],
+        active: [...prevState.tournaments.active, tournament.id],
+      },
+    }));
 
     alert(`You have successfully joined ${tournament.name}`);
   };
 
-  const handleUnsubscribeFromTournament = () => {
-    unsubscribeFromTournament(tournament.id, updatedUserPlayerProfile.id);
+  const handleUnsubscribeFromTournament = async () => {
+    await unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
+
+    setUserPlayerProfile((prevState) => ({
+      ...prevState,
+      tournaments: {
+        all: prevState.tournaments.all.filter(
+          (tournamentId) => tournamentId !== tournament.id
+        ),
+        active: prevState.tournaments.active.filter(
+          (tournamentId) => tournamentId !== tournament.id
+        ),
+      },
+    }));
 
     if (tournament.players.length > 1) {
       alert(`You have successfully abandoned ${tournament.name}.`);

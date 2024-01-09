@@ -134,12 +134,13 @@ export const getTournament = async (tournamentId) => {
 };
 
 // add tournament:
-export const addTournament = async (userId, tournamentData) => {
-  const tournamentDoc = await addDoc(getTournamentsColRef(), tournamentData);
+export const addTournament = async (userId, tournamentData, newTournamentId) => {
+  // const tournamentDoc = await addDoc(getTournamentsColRef(), tournamentData);
+  await setDoc(getTournamentDocRef(newTournamentId), tournamentData);
 
   await updateDoc(getPlayerDocRef(userId), {
-    'tournaments.all': arrayUnion(tournamentDoc.id),
-    'tournaments.active': arrayUnion(tournamentDoc.id),
+    'tournaments.all': arrayUnion(newTournamentId),
+    'tournaments.active': arrayUnion(newTournamentId),
   });
 };
 
@@ -245,7 +246,6 @@ export const getTeams = async (teamAPlayersIdsArray, teamBPlayersIdsArray) => {
 export const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
   onSnapshot(
     getMatchDocRef(tournamentId, matchId),
-    // { includeMetadataChanges: true },
     (matchDoc) => {
       const match = createMatchObjectFromFirestore(matchDoc);
       setUpdatedMatch(match);
@@ -257,21 +257,9 @@ export const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
 export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
   onSnapshot(
     getTournamentDocRef(tournamentId),
-    // { includeMetadataChanges: true },
     (tournamentDoc) => {
       const tournament = createTournamentObjectFromFirestore(tournamentDoc);
       setUpdatedTournament(tournament);
-    },
-    (error) => console.log(error)
-  );
-
-// add listener to user playerDoc profile (CAN'T MAKE IT WORK):
-export const addPlayerListener = (userId, setUpdatedPlayer) =>
-  onSnapshot(
-    getPlayerDocRef(userId),
-    (playerDoc) => {
-      const player = createPlayerObjectFromFirestore(playerDoc);
-      setUpdatedPlayer(player);
     },
     (error) => console.log(error)
   );

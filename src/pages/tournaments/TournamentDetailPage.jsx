@@ -9,16 +9,16 @@ import { getTournament } from '../../utils/firebase/firestore/firestoreActions';
 const TournamentDetailPage = () => {
   const { tournamentId } = useParams();
   const { updatedUserTournaments, tournamentMatches } = getUserAuthCtx();
-  const subscribedTournament = updatedUserTournaments?.all?.filter(
+  const tournament = updatedUserTournaments?.all?.filter(
     (tournament) => tournament.id === tournamentId
   )[0];
-  const [tournament, setTournament] = useState([]);
+  const [unsubscribedTournament, setUnsubscribedTournament] = useState([]);
 
   useEffect(() => {
-    if (!subscribedTournament) {
+    if (!tournament) {
       const fetchTournament = async () => {
         const fetchedTournament = await getTournament(tournamentId);
-        setTournament(fetchedTournament);
+        setUnsubscribedTournament(fetchedTournament);
       };
       fetchTournament();
     }
@@ -28,7 +28,7 @@ const TournamentDetailPage = () => {
     <>
       {updatedUserTournaments && tournamentMatches && (
         <TournamentDetailSection
-          tournament={subscribedTournament || tournament}
+          tournament={tournament || unsubscribedTournament}
           matches={tournamentMatches}
         />
       )}
