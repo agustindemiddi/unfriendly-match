@@ -1,6 +1,5 @@
 import {
   doc,
-  Timestamp,
   setDoc,
   getDocs,
   onSnapshot,
@@ -16,6 +15,8 @@ import {
   deleteDoc,
 } from 'firebase/firestore';
 import db from '../firebaseConfig';
+
+const currentDateTime = new Date();
 
 // DOCUMENTS AND COLLECTIONS REFERENCES
 const getPlayerDocRef = (playerId) => doc(db, `players/${playerId}`);
@@ -81,7 +82,7 @@ export const createPlayerObjectFromUser = (
   displayName,
   profilePicture
 ) => ({
-  creationDateTime: Timestamp.now(),
+  creationDateTime: currentDateTime,
   isVerified: true,
   isPublic: false,
   username: `${displayName}_${id}`,
@@ -133,19 +134,12 @@ export const getTournament = async (tournamentId) => {
 };
 
 // add tournament:
-export const addTournament = async (
-  newTournamentId,
-  tournamentData,
-  userId
-) => {
-  // const tournamentDoc = await addDoc(getTournamentsColRef(), tournamentData);
-  await setDoc(getTournamentDocRef(newTournamentId), tournamentData);
+export const addTournament = async (userId, tournamentData) => {
+  const tournamentDoc = await addDoc(getTournamentsColRef(), tournamentData);
 
   await updateDoc(getPlayerDocRef(userId), {
-    // 'tournaments.all': arrayUnion(tournamentDoc.id),
-    // 'tournaments.active': arrayUnion(tournamentDoc.id),
-    'tournaments.all': arrayUnion(newTournamentId),
-    'tournaments.active': arrayUnion(newTournamentId),
+    'tournaments.all': arrayUnion(tournamentDoc.id),
+    'tournaments.active': arrayUnion(tournamentDoc.id),
   });
 };
 
@@ -168,6 +162,11 @@ export const getMatch = async (tournamentId, matchId) => {
   const matchDoc = await getDocument(getMatchDocRef(tournamentId, matchId));
   const match = createMatchObjectFromFirestore(matchDoc);
   return match;
+};
+
+// add match:
+export const addMatch = async (tournamentId, matchData) => {
+  await addDoc(getTournamentMatchesColRef(tournamentId), matchData);
 };
 
 // get multiple players:
@@ -326,6 +325,15 @@ export const unsubscribeFromTournament = async (tournamentId, userId) => {
 };
 
 // subscribe user to match:
+// export const subscribeToMatch = async (tournamentId, matchId, userId) => {
+//   await updateDoc(getMatchDocRef(tournamentId, matchId), {
+//     players: arrayUnion({
+//       id: userId,
+//       subscriptionDateTime: currentDateTime,
+//       subscribedBy: userId,
+//     }),
+//   });
+// };
 export const subscribeToMatch = async (tournamentId, matchId, userId) => {
   await updateDoc(getMatchDocRef(tournamentId, matchId), {
     players: arrayUnion(userId),
@@ -333,6 +341,11 @@ export const subscribeToMatch = async (tournamentId, matchId, userId) => {
 };
 
 // unsubscribe user from match:
+// export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
+//   await updateDoc(getMatchDocRef(tournamentId, matchId), {
+//     players: arrayRemove({ id: userId }),
+//   });
+// };
 export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
   await updateDoc(getMatchDocRef(tournamentId, matchId), {
     players: arrayRemove(userId),
@@ -385,3 +398,6 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
 
 // PLAYER FORM
 // add non-verified player to tournament
+
+// MATCH FORM
+// get multiple players

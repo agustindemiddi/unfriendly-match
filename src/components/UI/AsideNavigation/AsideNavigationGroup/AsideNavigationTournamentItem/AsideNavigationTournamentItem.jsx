@@ -1,4 +1,5 @@
-import { NavLink, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, useParams, useLocation } from 'react-router-dom';
 
 import AsideNavigationMatchItem from './AsideNavigationMatchItem/AsideNavigationMatchItem';
 
@@ -8,8 +9,18 @@ import { getUserAuthCtx } from '../../../../../context/authContext';
 import separateMatches from '../../../../../utils/separateMatches';
 
 const AsideNavigationTournamentItem = ({ navItem }) => {
+  const [isMatchesLocation, setIsMatchesLocation] = useState(false);
   const { tournamentId } = useParams();
   const { tournamentMatches } = getUserAuthCtx();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.startsWith(`/tournaments/${tournamentId}/matches`)) {
+      setIsMatchesLocation(true);
+    } else {
+      setIsMatchesLocation(false);
+    }
+  }, [location.pathname]);
 
   const { reverseSortedListedAllMatches, reverseSortedPreviousMatches } =
     separateMatches(tournamentMatches || []);
@@ -26,7 +37,10 @@ const AsideNavigationTournamentItem = ({ navItem }) => {
         {navItem.name}
       </NavLink>
       {isSelectedTournament && reverseSortedListedAllMatches?.length > 0 && (
-        <div className={styles.matchesList}>
+        <div
+          className={`${styles.matchesList} ${
+            isMatchesLocation ? styles.matchesLocation : ''
+          }`}>
           <NavLink
             className={({ isActive }) =>
               isActive

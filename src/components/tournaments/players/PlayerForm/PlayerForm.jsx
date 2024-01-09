@@ -20,8 +20,8 @@ const PlayerForm = () => {
 
     const playerData = {
       id: uuidv4(),
-      displayName: nameInput.current.value,
       creationDateTime: new Date(),
+      displayName: nameInput.current.value,
     };
 
     addNonVerifiedPlayerToTournament(tournamentId, playerData);

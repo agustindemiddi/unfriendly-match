@@ -1,21 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  doc,
-  getDoc,
-  query,
-  where,
-  documentId,
-  getDocs,
-  addDoc,
-  collection,
-  Timestamp,
-} from 'firebase/firestore';
 
 import styles from './MatchForm.module.css';
 
-import db from '../../../../utils/firebase/firebaseConfig';
 import { getUserAuthCtx } from '../../../../context/authContext';
+import {
+  getPlayers,
+  addMatch,
+} from '../../../../utils/firebase/firestore/firestoreActions';
 
 const MatchForm = () => {
   const { tournamentId } = useParams();
@@ -23,10 +15,11 @@ const MatchForm = () => {
   const tournament = updatedUserTournaments?.all?.filter(
     (tournament) => tournament.id === tournamentId
   )[0];
+  const [matchPlayers, setMatchPlayers] = useState([]);
   const [tournamentAvailablePlayers, setTournamentAvailablePlayers] = useState(
     []
   );
-  const [matchPlayers, setMatchPlayers] = useState([]);
+
   const matchDateInputRef = useRef();
   const matchTimeInputRef = useRef();
   const matchAddressInputRef = useRef();
@@ -36,37 +29,17 @@ const MatchForm = () => {
 
   useEffect(() => {
     if (tournament) {
-      const fetchData = async () => {
-        const q = query(
-          collection(db, 'players'),
-          where(documentId(), 'in', tournament.players)
+      const fetchPlayers = async () => {
+        const playersArrayWithUserPlayer = await getPlayers(tournament.players);
+        const playersArray = playersArrayWithUserPlayer.filter(
+          (player) => player.id !== updatedUserPlayerProfile.id
         );
-        const querySnapshot = await getDocs(q);
-
-        const tournamentPlayersArrayWithUserPlayer = [];
-        querySnapshot.forEach((doc) => {
-          const player = { ...doc.data(), id: doc.id };
-          tournamentPlayersArrayWithUserPlayer.push(player);
-        });
-        const tournamentPlayersArray =
-          tournamentPlayersArrayWithUserPlayer.filter(
-            (player) => player.id !== updatedUserPlayerProfile?.id
-          );
-        setTournamentAvailablePlayers(tournamentPlayersArray);
-
+        setTournamentAvailablePlayers(playersArray);
         setMatchPlayers([updatedUserPlayerProfile]);
       };
-
-      fetchData();
+      fetchPlayers();
     }
   }, [tournament]);
-
-  const addMatch = async (matchData) => {
-    const docRef = await addDoc(
-      collection(db, 'tournaments', tournamentId, 'matches'),
-      matchData
-    );
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -74,26 +47,32 @@ const MatchForm = () => {
     const matchDate = matchDateInputRef.current.value;
     const matchTime = matchTimeInputRef.current.value;
     const matchCombinedDateTime = `${matchDate}T${matchTime}`;
-    // Timestamp.fromDate() doesn't seem to be needed. Try to add from other part of the world and compare.
-    const matchDateTime = Timestamp.fromDate(new Date(matchCombinedDateTime));
+    const matchDateTime = new Date(matchCombinedDateTime);
 
     const matchSubscriptionDate =
       matchSubscriptionStartDateInputRef.current.value;
     const matchSubscriptionTime =
       matchSubscriptionStartTimeInputRef.current.value;
     const matchSubscriptionCombinedDateTime = `${matchSubscriptionDate}T${matchSubscriptionTime}`;
-    // Timestamp.fromDate() doesn't seem to be needed. Try to add from other part of the world and compare.
-    const matchSubscriptionDateTime = Timestamp.fromDate(
-      new Date(matchSubscriptionCombinedDateTime)
+    const matchSubscriptionDateTime = new Date(
+      matchSubscriptionCombinedDateTime
     );
 
+    const currentDateTime = new Date();
+
     const playersRefs = matchPlayers.map((player) => player.id);
+
+    // const players = matchPlayers.map((player) => ({
+    //   id: player.id,
+    //   subscriptionDateTime: currentDateTime,
+    //   subscribedBy: updatedUserPlayerProfile.id,
+    // }));
 
     const matchData = {
       tournament: tournamentId,
       creator: updatedUserPlayerProfile.id,
-      admins: [...new Set([...tournament.admins, updatedUserPlayerProfile.id])],
-      creationDateTime: Timestamp.now(),
+      admins: tournament.admins,
+      creationDateTime: currentDateTime,
       subscriptionDateTime: matchSubscriptionDateTime, // custom or Timestamp.now() (default value)
       dateTime: matchDateTime,
       address: matchAddressInputRef.current.value,
@@ -105,7 +84,7 @@ const MatchForm = () => {
       mvps: [],
     };
 
-    addMatch(matchData);
+    addMatch(tournamentId, matchData);
     console.log('match added!');
   };
 

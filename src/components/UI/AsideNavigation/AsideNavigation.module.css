@@ -18,10 +18,3 @@
 .asideNavigationPanel > nav > ul > li > ul > li > div > ul > li {
   margin-top: 4px;
 }
-
-.asideNavigationPanel > nav > ul > li > ul > li > div {
-  margin-top: 16px;
-  border: 1px solid white;
-  border-radius: 5px;
-  padding: 20px 20px 30px;
-}

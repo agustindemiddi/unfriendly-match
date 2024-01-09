@@ -1,4 +1,3 @@
-import { redirect } from 'react-router-dom';
 import {
   onAuthStateChanged,
   GoogleAuthProvider,

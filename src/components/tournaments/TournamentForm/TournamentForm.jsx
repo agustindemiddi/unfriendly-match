@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 
 import styles from './TournamentForm.module.css';
 
@@ -76,8 +75,6 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
     const tournamentCombinedTerminationDateTime = `${tournamentTerminationDate}T${tournamentTerminationTime}`;
     const terminationDate = new Date(tournamentCombinedTerminationDateTime);
 
-    const newTournamentId = uuidv4();
-
     const tournamentData = {
       creationDateTime: new Date(),
       isActive: true,
@@ -98,11 +95,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
     };
 
     if (!isEditMode) {
-      addTournament(
-        newTournamentId,
-        tournamentData,
-        updatedUserPlayerProfile.id
-      );
+      addTournament(updatedUserPlayerProfile.id, tournamentData);
       alert(`You have successfully created ${tournamentData.name}`);
     }
     if (isEditMode) {
