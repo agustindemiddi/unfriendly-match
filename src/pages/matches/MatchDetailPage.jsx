@@ -1,23 +1,15 @@
-import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import MatchDetailSection from '../../components/tournaments/matches/MatchDetailSection/MatchDetailSection';
 
-import { getMatch } from '../../utils/firebase/firestore/firestoreActions';
+import { getUserAuthCtx } from '../../context/authContext';
 
 const MatchDetailPage = () => {
-  const { tournamentId, matchId } = useParams();
-  const [match, setMatch] = useState();
+  const { matchId } = useParams();
+  const { tournamentMatches } = getUserAuthCtx();
+  const match = tournamentMatches?.filter((match) => match.id === matchId)[0];
 
-  useEffect(() => {
-    const fetchMatch = async () => {
-      const fetchedMatch = await getMatch(tournamentId, matchId);
-      setMatch(fetchedMatch);
-    };
-    fetchMatch();
-  }, [tournamentId, matchId]);
-
-  return <MatchDetailSection match={match} />;
+  return <>{match && <MatchDetailSection match={match} />}</>;
 };
 
 export default MatchDetailPage;

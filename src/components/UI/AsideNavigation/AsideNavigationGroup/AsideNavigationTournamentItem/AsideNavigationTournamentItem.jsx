@@ -1,30 +1,18 @@
-import { useState, useEffect } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 
 import AsideNavigationMatchItem from './AsideNavigationMatchItem/AsideNavigationMatchItem';
 
 import styles from './AsideNavigationTournamentItem.module.css';
 
-import { getTournamentMatches } from '../../../../../utils/firebase/firestore/firestoreActions';
+import { getUserAuthCtx } from '../../../../../context/authContext';
 import separateMatches from '../../../../../utils/separateMatches';
 
 const AsideNavigationTournamentItem = ({ navItem }) => {
   const { tournamentId } = useParams();
-  const [tournamentMatches, setTournamentMatches] = useState([]);
-
-  useEffect(() => {
-    // get tournament matches:
-    if (location.pathname.startsWith(`/tournaments/${tournamentId}`)) {
-      const fetchTournamentMatches = async () => {
-        const matches = await getTournamentMatches(tournamentId);
-        setTournamentMatches(matches);
-      };
-      fetchTournamentMatches();
-    }
-  }, [location.pathname, tournamentId]);
+  const { tournamentMatches } = getUserAuthCtx();
 
   const { reverseSortedListedAllMatches, reverseSortedPreviousMatches } =
-    separateMatches(tournamentMatches);
+    separateMatches(tournamentMatches || []);
 
   const isSelectedTournament = navItem.id === tournamentId;
 

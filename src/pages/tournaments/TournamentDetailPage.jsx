@@ -4,19 +4,15 @@ import { useParams } from 'react-router-dom';
 import TournamentDetailSection from '../../components/tournaments/TournamentDetailSection/TournamentDetailSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
-import {
-  getTournament,
-  getTournamentMatches,
-} from '../../utils/firebase/firestore/firestoreActions';
+import { getTournament } from '../../utils/firebase/firestore/firestoreActions';
 
 const TournamentDetailPage = () => {
   const { tournamentId } = useParams();
-  const { updatedUserTournaments } = getUserAuthCtx();
+  const { updatedUserTournaments, tournamentMatches } = getUserAuthCtx();
   const subscribedTournament = updatedUserTournaments?.all?.filter(
     (tournament) => tournament.id === tournamentId
   )[0];
   const [tournament, setTournament] = useState([]);
-  const [tournamentMatches, setTournamentMatches] = useState([]);
 
   useEffect(() => {
     if (!subscribedTournament) {
@@ -26,13 +22,6 @@ const TournamentDetailPage = () => {
       };
       fetchTournament();
     }
-
-    // get tournament matches:
-    const fetchTournamentMatches = async () => {
-      const matches = await getTournamentMatches(tournamentId);
-      setTournamentMatches(matches);
-    };
-    fetchTournamentMatches();
   }, [tournamentId]);
 
   return (

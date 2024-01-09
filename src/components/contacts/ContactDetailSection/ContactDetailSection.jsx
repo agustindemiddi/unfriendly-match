@@ -5,18 +5,18 @@ import Section from '../../UI/Section/Section';
 
 import styles from './ContactDetailSection.module.css';
 
-const ContactDetail = ({ item }) => {
+const ContactDetail = ({ player }) => {
   // armar el fallback de otra manera. este codigo es espantoso
   return (
-    <Section noActionsBar>
-      {item.username && (
+    <Section>
+      {player.username && (
         <>
-          <h2>{item.name}</h2>
-          <p>description: {item.description}</p>
-          <img src={item.image} alt='' />
+          <h2>{player.name}</h2>
+          <p>description: {player.description}</p>
+          <img src={player.image} alt='' />
         </>
       )}
-      {!item.username && (
+      {!player.username && (
         <>
           <p>Player not found!</p>
           <Button>

@@ -8,7 +8,7 @@ import styles from './AsideNavigation.module.css';
 import { getUserAuthCtx } from '../../../context/authContext';
 
 const AsideNavigation = () => {
-  const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
+  const { updatedUserTournaments } = getUserAuthCtx();
   const location = useLocation();
   const initialNavTree = [
     { name: 'MAIN', url: '/' },
@@ -27,11 +27,8 @@ const AsideNavigation = () => {
         newNavTree[2].collection = updatedUserTournaments.active;
         return newNavTree;
       });
-    } else if (
-      userPlayerProfile &&
-      !location.pathname.startsWith('/tournaments')
-    ) {
-      setNavTree(initialNavTree);
+    } else {
+      setNavTree(() => initialNavTree);
     }
   }, [updatedUserTournaments?.active, location.pathname]);
 

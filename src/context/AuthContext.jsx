@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
   authListener,
@@ -11,6 +11,7 @@ import {
 import {
   addMultipleTournamentsListener,
   addPlayerListener,
+  getTournamentMatches,
 } from '../utils/firebase/firestore/firestoreActions';
 
 const authContext = createContext();
@@ -21,6 +22,8 @@ export const AuthContextProvider = ({ children }) => {
   const [updatedUserTournaments, setUpdatedUserTournaments] = useState(null);
   const [updatedUserPlayerProfile, setUpdatedUserPlayerProfile] =
     useState(null);
+  const [tournamentMatches, setTournamentMatches] = useState(null);
+  const { tournamentId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,6 +56,17 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [userPlayerProfile?.tournaments.all]);
 
+  useEffect(() => {
+    // get tournament matches:
+    if (location.pathname.startsWith(`/tournaments/${tournamentId}`)) {
+      const fetchTournamentMatches = async () => {
+        const matches = await getTournamentMatches(tournamentId);
+        setTournamentMatches(matches);
+      };
+      fetchTournamentMatches();
+    }
+  }, [location.pathname, tournamentId]);
+
   // auth.useDeviceLanguage(); // test how it works
 
   const handleGoogleSignIn = async () => await signInWithGoogle();
@@ -73,6 +87,7 @@ export const AuthContextProvider = ({ children }) => {
         user,
         updatedUserTournaments,
         updatedUserPlayerProfile,
+        tournamentMatches,
         handleGoogleSignIn,
         handleEmailSignIn,
         handleSignOut,

@@ -30,7 +30,9 @@ const MatchDetailSection = ({ match }) => {
 
   return (
     <>
-      <Section>{match && <SoccerFieldContainer match={match} />}</Section>
+      <Section>
+        <SoccerFieldContainer match={match} />
+      </Section>
       <AsideActionsPanel adminActions={adminActions} actions={actions} />
     </>
   );

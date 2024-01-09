@@ -22,7 +22,7 @@ const sections = [
 ];
 
 const MainNavigation = () => {
-  const { handleSignOut, user } = getUserAuthCtx();
+  const { user, handleSignOut } = getUserAuthCtx();
 
   return (
     <>
