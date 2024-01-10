@@ -23,14 +23,26 @@ const PlayerForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const playerId = uuidv4();
+
+    const displayName = nameInput.current.value;
     const playerData = {
-      id: uuidv4(),
       creationDateTime: new Date(),
+      isVerified: false,
+      isPublic: false,
+      displayName: displayName,
+      username: `${displayName}_${playerId}`,
+      image: '',
+      description: '',
+      tournaments: {
+        all: [tournamentId],
+        active: [tournamentId],
+        finished: [],
+      },
       createdBy: userPlayerProfile.id,
-      displayName: nameInput.current.value,
     };
 
-    addNonVerifiedPlayerToTournament(tournamentId, playerData);
+    addNonVerifiedPlayerToTournament(tournamentId, playerId, playerData);
 
     nameInput.current.value = '';
 

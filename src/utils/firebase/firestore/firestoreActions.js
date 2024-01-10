@@ -35,13 +35,6 @@ const getTournamentMatchesColRef = (tournamentId) =>
   collection(db, `tournaments/${tournamentId}/matches`);
 
 // OBJECT CREATION FROM FIRESTORE DOCUMENT
-export const createNonVerifiedPlayerObjectFromFirestore = (playerDoc) => ({
-  ...playerDoc,
-  creationDateTime: playerDoc.creationDateTime?.toDate(),
-  image: '/default-user.svg',
-  isVerified: false, // not sure if necessary yet
-});
-
 export const createPlayerObjectFromFirestore = (playerDoc) => ({
   ...playerDoc.data(),
   id: playerDoc.id,
@@ -86,8 +79,8 @@ export const createPlayerObjectFromUser = (
   creationDateTime: currentDateTime,
   isVerified: true,
   isPublic: false,
-  username: `${displayName}_${id}`,
   displayName: displayName,
+  username: `${displayName}_${id}`,
   image: profilePicture || '',
   description: '',
   tournaments: {
@@ -152,13 +145,16 @@ export const addTournament = async (
 export const editTournament = async (tournamentId, tournamentData) =>
   await updateDoc(getTournamentDocRef(tournamentId), tournamentData);
 
-// add non-verified player to tournament:
+// create non-verified player and add to tournament:
 export const addNonVerifiedPlayerToTournament = async (
   tournamentId,
+  playerId,
   playerData
 ) => {
+  await setDoc(getPlayerDocRef(playerId), playerData);
+
   await updateDoc(getTournamentDocRef(tournamentId), {
-    nonVerifiedPlayers: arrayUnion(playerData),
+    players: arrayUnion(playerId),
   });
 };
 

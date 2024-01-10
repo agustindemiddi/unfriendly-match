@@ -4,10 +4,7 @@ import { useParams } from 'react-router-dom';
 import PlayersSection from '../../components/players/PlayersSection/PlayersSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
-import {
-  getPlayers,
-  createNonVerifiedPlayerObjectFromFirestore,
-} from '../../utils/firebase/firestore/firestoreActions';
+import { getPlayers } from '../../utils/firebase/firestore/firestoreActions';
 
 const TournamentPlayersPage = () => {
   const { tournamentId } = useParams();
@@ -20,17 +17,12 @@ const TournamentPlayersPage = () => {
   useEffect(() => {
     if (tournament) {
       const fetchTournamentPlayers = async () => {
-        const verifiedPlayers = await getPlayers(tournament.players);
-        const nonVerifiedPlayers = tournament.nonVerifiedPlayers?.map(
-          (player) => createNonVerifiedPlayerObjectFromFirestore(player)
-        );
-        const players = [...verifiedPlayers, ...(nonVerifiedPlayers || [])];
-
+        const players = await getPlayers(tournament.players);
         setTournamentPlayers(players);
       };
       fetchTournamentPlayers();
     }
-  }, [tournament]);
+  }, [tournament?.players]);
 
   return (
     <>
