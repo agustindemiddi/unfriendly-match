@@ -81,7 +81,6 @@ const TournamentDetailSection = ({ tournament, matches }) => {
       {
         label: 'Create match',
         onAction: () => navigate(`/tournaments/${tournament.id}/matches/new`),
-        color: 'greenish',
       },
       {
         label: 'Edit tournament',

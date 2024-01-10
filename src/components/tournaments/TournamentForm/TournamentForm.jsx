@@ -32,7 +32,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   useEffect(() => {
     if (userPlayerProfile)
       nameInput.current.value =
-        tournament?.name ?? `${userPlayerProfile?.username}'s Tournament`;
+        tournament?.name ?? `${userPlayerProfile?.displayName}'s Tournament`;
   }, [userPlayerProfile, tournament?.name]);
 
   useEffect(() => {

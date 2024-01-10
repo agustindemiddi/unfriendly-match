@@ -24,7 +24,6 @@ const PlayersSection = ({ tournament, players }) => {
     adminActions.push({
       label: 'Create provisory player',
       onAction: () => navigate(`/tournaments/${tournament.id}/players/new`),
-      color: 'greenish',
     });
 
   const actions = [

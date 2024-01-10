@@ -12,7 +12,7 @@ const NewMatchSection = () => {
   const actions = [
     {
       label: 'Cancel',
-      onAction: () => navigate('../..'),
+      onAction: () => navigate('..'),
     },
   ];
 

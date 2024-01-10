@@ -45,6 +45,7 @@ export const createNonVerifiedPlayerObjectFromFirestore = (playerDoc) => ({
 export const createPlayerObjectFromFirestore = (playerDoc) => ({
   ...playerDoc.data(),
   id: playerDoc.id,
+  creationDateTime: playerDoc.data().creationDateTime?.toDate(),
   image: playerDoc.data()?.image || '/default-user.svg',
 });
 
@@ -134,8 +135,11 @@ export const getTournament = async (tournamentId) => {
 };
 
 // add tournament:
-export const addTournament = async (userId, tournamentData, newTournamentId) => {
-  // const tournamentDoc = await addDoc(getTournamentsColRef(), tournamentData);
+export const addTournament = async (
+  userId,
+  tournamentData,
+  newTournamentId
+) => {
   await setDoc(getTournamentDocRef(newTournamentId), tournamentData);
 
   await updateDoc(getPlayerDocRef(userId), {

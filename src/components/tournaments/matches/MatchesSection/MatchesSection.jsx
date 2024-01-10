@@ -29,7 +29,6 @@ const MatchesSection = ({ tournament, matches }) => {
       onAction: () => {
         navigate('new');
       },
-      color: 'greenish',
     });
 
   const actions = [
