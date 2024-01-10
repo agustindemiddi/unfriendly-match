@@ -6,10 +6,8 @@ const PlayerIcon = ({
   image,
   isSubscriptionOpen,
   isUserSubscribed,
-  username,
+  displayName,
   playerId,
-  tournamentId,
-  matchId,
   userId,
   handleSubscribeToMatch,
   handleUnsubscribeFromMatch,
@@ -23,16 +21,14 @@ const PlayerIcon = ({
               className={`${styles.unsubscribe} ${
                 isUserSubscribed ? styles.unsubscribeIsUserSubscribed : ''
               }`}
-              onClick={() =>
-                handleUnsubscribeFromMatch(tournamentId, matchId, userId)
-              }>
+              onClick={handleUnsubscribeFromMatch}>
               x
             </div>
           )}
           <img className={styles.playerIcon} src={image} alt='Player image' />
-          {username ? (
+          {displayName ? (
             <Link to={`/${playerId}`}>
-              <span className={styles.hidden}>{username}</span>
+              <span className={styles.hidden}>{displayName}</span>
             </Link>
           ) : null}
         </div>
@@ -43,7 +39,7 @@ const PlayerIcon = ({
           } ${
             isUserSubscribed ? styles.noPlayerContainerIsUserSubscribed : ''
           }`}
-          onClick={() => handleSubscribeToMatch(tournamentId, matchId, userId)}>
+          onClick={handleSubscribeToMatch}>
           {isSubscriptionOpen && (
             <p className={isUserSubscribed ? styles.isUserSubscribed : ''}>
               in!

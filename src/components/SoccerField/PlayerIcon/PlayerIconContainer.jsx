@@ -10,25 +10,27 @@ const PlayerIconContainer = ({
   image,
   isSubscriptionOpen,
   isUserSubscribed,
-  username,
+  displayName,
   playerId,
   tournamentId,
   matchId,
   isTournamentPlayer,
 }) => {
-  const {
-    user: { uid: userId },
-  } = getUserAuthCtx();
+  const { userPlayerProfile } = getUserAuthCtx();
 
-  const handleSubscribeToMatch = (tournamentId, matchId, userId) => {
+  const handleSubscribeToMatch = async (
+    tournamentId,
+    matchId,
+    userPlayerProfile
+  ) => {
     if (!isTournamentPlayer) alert('You must join the tournament first!');
     if (isTournamentPlayer && isSubscriptionOpen && !isUserSubscribed)
-      subscribeToMatch(tournamentId, matchId, userId);
+      await subscribeToMatch(tournamentId, matchId, userPlayerProfile);
   };
 
-  const handleUnsubscribeFromMatch = (tournamentId, matchId, userId) => {
+  const handleUnsubscribeFromMatch = async (tournamentId, matchId, userId) => {
     if (playerId === userId && isSubscriptionOpen && isUserSubscribed)
-      unsubscribeFromMatch(tournamentId, matchId, userId);
+      await unsubscribeFromMatch(tournamentId, matchId, userId);
   };
 
   return (
@@ -36,13 +38,17 @@ const PlayerIconContainer = ({
       image={image}
       isSubscriptionOpen={isSubscriptionOpen}
       isUserSubscribed={isUserSubscribed}
-      username={username}
+      displayName={displayName}
       playerId={playerId}
       tournamentId={tournamentId}
       matchId={matchId}
-      userId={userId}
-      handleSubscribeToMatch={handleSubscribeToMatch}
-      handleUnsubscribeFromMatch={handleUnsubscribeFromMatch}
+      userId={userPlayerProfile.id}
+      handleSubscribeToMatch={() =>
+        handleSubscribeToMatch(tournamentId, matchId, userPlayerProfile)
+      }
+      handleUnsubscribeFromMatch={() =>
+        handleUnsubscribeFromMatch(tournamentId, matchId, userPlayerProfile.id)
+      }
     />
   );
 };

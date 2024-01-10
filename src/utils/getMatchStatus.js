@@ -3,7 +3,7 @@ const getMatchStatus = ({
   subscriptionDateTime,
   dateTime,
   playerQuota,
-  players,
+  sortedUpdatedMatchPlayers,
   teams,
   mvps,
   userId,
@@ -17,7 +17,7 @@ const getMatchStatus = ({
   let isSubscriptionEnded = currentTime >= dateTime;
 
   // remaining players quota derived state:
-  let remainingPlayersQuota = playerQuota - players.length;
+  let remainingPlayersQuota = playerQuota - sortedUpdatedMatchPlayers.length;
 
   // match subscription is open/closed derived state:
   let isSubscriptionOpen =
@@ -31,14 +31,16 @@ const getMatchStatus = ({
   const mvpPlayers = allPlayers.filter((player) => mvps.includes(player.id));
   let mvpsString;
   if (mvpPlayers.length === 1) {
-    mvpsString = `MVP: ${mvpPlayers[0].username}`;
+    mvpsString = `MVP: ${mvpPlayers[0].displayName}`;
   } else if (mvpPlayers.length > 1) {
-    const mvpPlayerNames = mvpPlayers.map((player) => player.username);
+    const mvpPlayerNames = mvpPlayers.map((player) => player.displayName);
     mvpsString = `MVPs: ${mvpPlayerNames.join(', ')}`;
   }
 
   // user is subscribed to match derived state:
-  let isUserSubscribed = players.some((playerId) => playerId === userId);
+  let isUserSubscribed = sortedUpdatedMatchPlayers.some(
+    (player) => player.id === userId
+  );
 
   return {
     isSubscriptionStarted,

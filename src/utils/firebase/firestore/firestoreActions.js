@@ -16,8 +16,6 @@ import {
 } from 'firebase/firestore';
 import db from '../firebaseConfig';
 
-const currentDateTime = new Date();
-
 // DOCUMENTS AND COLLECTIONS REFERENCES
 const getPlayerDocRef = (playerId) => doc(db, `players/${playerId}`);
 
@@ -27,6 +25,9 @@ const getTournamentDocRef = (tournamentId) =>
 const getMatchDocRef = (tournamentId, matchId) =>
   doc(db, `tournaments/${tournamentId}/matches/${matchId}`);
 
+const getMatchPlayerDocRef = (tournamentId, matchId, playerId) =>
+  doc(db, `tournaments/${tournamentId}/matches/${matchId}/players/${playerId}`);
+
 const getPlayersColRef = () => collection(db, 'players');
 
 const getTournamentsColRef = () => collection(db, 'tournaments');
@@ -34,13 +35,24 @@ const getTournamentsColRef = () => collection(db, 'tournaments');
 const getTournamentMatchesColRef = (tournamentId) =>
   collection(db, `tournaments/${tournamentId}/matches`);
 
+const getMatchPlayersColRef = (tournamentId, matchId) =>
+  collection(db, `tournaments/${tournamentId}/matches/${matchId}/players`);
+
 // OBJECT CREATION FROM FIRESTORE DOCUMENT
-export const createPlayerObjectFromFirestore = (playerDoc) => ({
-  ...playerDoc.data(),
-  id: playerDoc.id,
-  creationDateTime: playerDoc.data().creationDateTime?.toDate(),
-  image: playerDoc.data()?.image || '/default-user.svg',
-});
+export const createPlayerObjectFromFirestore = (playerDoc) => {
+  const playerData = {
+    ...playerDoc.data(),
+    id: playerDoc.id,
+    creationDateTime: playerDoc.data().creationDateTime?.toDate(),
+    image: playerDoc.data()?.image || '/default-user.svg',
+  };
+  if (playerDoc.data().subscriptionDateTime) {
+    playerData.subscriptionDateTime = playerDoc
+      .data()
+      .subscriptionDateTime.toDate();
+  }
+  return playerData;
+};
 
 export const createTournamentObjectFromFirestore = (tournamentDoc) => ({
   ...tournamentDoc.data(),
@@ -76,7 +88,7 @@ export const createPlayerObjectFromUser = (
   displayName,
   profilePicture
 ) => ({
-  creationDateTime: currentDateTime,
+  creationDateTime: new Date(),
   isVerified: true,
   isPublic: false,
   displayName: displayName,
@@ -153,9 +165,9 @@ export const addNonVerifiedPlayerToTournament = async (
 ) => {
   await setDoc(getPlayerDocRef(playerId), playerData);
 
-  await updateDoc(getTournamentDocRef(tournamentId), {
-    players: arrayUnion(playerId),
-  });
+  // await updateDoc(getTournamentDocRef(tournamentId), {
+  //   players: arrayUnion(playerId),
+  // });
 };
 
 // get match:
@@ -166,8 +178,8 @@ export const getMatch = async (tournamentId, matchId) => {
 };
 
 // add match:
-export const addMatch = async (tournamentId, matchData) => {
-  await addDoc(getTournamentMatchesColRef(tournamentId), matchData);
+export const addMatch = async (tournamentId, matchId, matchData) => {
+  await setDoc(getMatchDocRef(tournamentId, matchId), matchData);
 };
 
 // get multiple players:
@@ -226,6 +238,17 @@ export const getMatchesFromTournaments = async (tournamentsIdsArray) => {
   }
 };
 
+// get all players from match:
+export const getMatchPlayers = async (tournamentId, matchId) => {
+  const querySnapshot = await getDocs(
+    getMatchPlayersColRef(tournamentId, matchId)
+  );
+  const playersArray = querySnapshot.docs.map((playerdDoc) =>
+    createPlayerObjectFromFirestore(playerdDoc)
+  );
+  return playersArray;
+};
+
 // get teams:
 export const getTeams = async (teamAPlayersIdsArray, teamBPlayersIdsArray) => {
   const teamsPlayersIdsArray = [teamAPlayersIdsArray, teamBPlayersIdsArray];
@@ -243,7 +266,7 @@ export const getTeams = async (teamAPlayersIdsArray, teamBPlayersIdsArray) => {
 
 // LISTENERS
 // add listener to matchDoc:
-export const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
+const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
   onSnapshot(
     getMatchDocRef(tournamentId, matchId),
     (matchDoc) => {
@@ -253,7 +276,27 @@ export const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
     (error) => console.log(error)
   );
 
-// add listener to tournamentDoc:
+// add listener to multiple matchPlayersDocs:
+export const addMultipleMatchPlayersListener = (
+  tournamentId,
+  matchId,
+  MatchPlayersIdsArray,
+  setUpdatedMatchPlayers
+) => {
+  const matchPlayersQuery = query(
+    getMatchPlayersColRef(tournamentId, matchId),
+    where(documentId(), 'in', MatchPlayersIdsArray)
+  );
+  return onSnapshot(matchPlayersQuery, (querySnapshot) => {
+    const matchPlayersArray = [];
+    querySnapshot.forEach((matchPlayerDoc) => {
+      matchPlayersArray.push(createPlayerObjectFromFirestore(matchPlayerDoc));
+    });
+    setUpdatedMatchPlayers(matchPlayersArray);
+  });
+};
+
+// add listener to tournamentDoc: // estoy escuchando a un tournament especifico y tambien a todos. chequear si puedo obviar este listener
 export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
   onSnapshot(
     getTournamentDocRef(tournamentId),
@@ -264,7 +307,7 @@ export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
     (error) => console.log(error)
   );
 
-// add listener to multiple tournamentDocs:
+// add listener to multiple tournamentsDocs:
 export const addMultipleTournamentsListener = (
   tournamentsIdsArray,
   setTournaments
@@ -313,31 +356,25 @@ export const unsubscribeFromTournament = async (tournamentId, userId) => {
 };
 
 // subscribe user to match:
-// export const subscribeToMatch = async (tournamentId, matchId, userId) => {
-//   await updateDoc(getMatchDocRef(tournamentId, matchId), {
-//     players: arrayUnion({
-//       id: userId,
-//       subscriptionDateTime: currentDateTime,
-//       subscribedBy: userId,
-//     }),
-//   });
-// };
-export const subscribeToMatch = async (tournamentId, matchId, userId) => {
-  await updateDoc(getMatchDocRef(tournamentId, matchId), {
-    players: arrayUnion(userId),
-  });
+export const subscribeToMatch = async (tournamentId, matchId, player) => {
+  const playerData = {
+    ...player,
+    subscriptionDateTime: new Date(),
+    subscribedBy: player.id,
+  };
+  await setDoc(
+    getMatchPlayerDocRef(tournamentId, matchId, player.id),
+    playerData
+  );
 };
 
 // unsubscribe user from match:
-// export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
-//   await updateDoc(getMatchDocRef(tournamentId, matchId), {
-//     players: arrayRemove({ id: userId }),
-//   });
-// };
-export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
-  await updateDoc(getMatchDocRef(tournamentId, matchId), {
-    players: arrayRemove(userId),
-  });
+export const unsubscribeFromMatch = async (tournamentId, matchId, playerId) => {
+  try {
+    await deleteDoc(getMatchPlayerDocRef(tournamentId, matchId, playerId));
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // COMPONENTS AND USED ACTIONS:
@@ -370,7 +407,7 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, userId) => {
 // get players
 
 // SOCCERFIELD CONTAINER
-// add listener to matchDoc
+// add listener to multiple matchPlayersDocs
 // add listener to tournamentDoc
 // get tournament
 // get players

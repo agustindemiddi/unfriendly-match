@@ -20,8 +20,8 @@ const PlayerForm = () => {
     nameInput.current.focus();
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     const playerId = uuidv4();
 
@@ -42,7 +42,7 @@ const PlayerForm = () => {
       createdBy: userPlayerProfile.id,
     };
 
-    addNonVerifiedPlayerToTournament(tournamentId, playerId, playerData);
+    await addNonVerifiedPlayerToTournament(tournamentId, playerId, playerData);
 
     nameInput.current.value = '';
 

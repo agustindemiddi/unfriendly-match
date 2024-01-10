@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 import styles from './MatchForm.module.css';
 
@@ -7,6 +8,7 @@ import { getUserAuthCtx } from '../../../context/authContext';
 import {
   getPlayers,
   addMatch,
+  subscribeToMatch,
 } from '../../../utils/firebase/firestore/firestoreActions';
 
 const MatchForm = () => {
@@ -41,8 +43,8 @@ const MatchForm = () => {
     }
   }, [tournament]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     const matchDate = matchDateInputRef.current.value;
     const matchTime = matchTimeInputRef.current.value;
@@ -58,33 +60,35 @@ const MatchForm = () => {
       matchSubscriptionCombinedDateTime
     );
 
-    const currentDateTime = new Date();
-
-    const playersRefs = matchPlayers.map((player) => player.id);
-
-    // const players = matchPlayers.map((player) => ({
-    //   id: player.id,
-    //   subscriptionDateTime: currentDateTime,
-    //   subscribedBy: userPlayerProfile.id,
-    // }));
-
     const matchData = {
       tournament: tournamentId,
       creator: userPlayerProfile.id,
       admins: tournament.admins,
-      creationDateTime: currentDateTime,
+      creationDateTime: new Date(),
       subscriptionDateTime: matchSubscriptionDateTime, // custom or Timestamp.now() (default value)
       dateTime: matchDateTime,
       address: matchAddressInputRef.current.value,
       playerQuota: playerQuotaInputRef.current.value * 2,
-      players: playersRefs,
       teamA: [],
       teamB: [],
       result: {},
       mvps: [],
     };
 
-    addMatch(tournamentId, matchData);
+    const matchId = uuidv4();
+    await addMatch(tournamentId, matchId, matchData);
+
+    await Promise.all(
+      matchPlayers.map(async (player) => {
+        const playerData = {
+          ...player,
+          subscriptionDateTime: new Date(),
+          subscribedBy: userPlayerProfile.id,
+        };
+        await subscribeToMatch(tournamentId, matchId, playerData);
+      })
+    );
+
     console.log('match added!');
   };
 

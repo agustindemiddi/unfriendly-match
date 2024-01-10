@@ -67,7 +67,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
     setPointsPerGameWon(number);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const tournamentTerminationDate = terminationDateInput.current.value;
@@ -97,7 +97,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
     if (!isEditMode) {
       const newTournamentId = uuidv4();
 
-      addTournament(userPlayerProfile.id, tournamentData, newTournamentId);
+      await addTournament(userPlayerProfile.id, tournamentData, newTournamentId);
 
       setUserPlayerProfile((prevState) => ({
         ...prevState,
@@ -110,7 +110,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       alert(`You have successfully created ${tournamentData.name}`);
     }
     if (isEditMode) {
-      editTournament(tournamentId, tournamentData);
+      await editTournament(tournamentId, tournamentData);
 
       alert(`You have successfully edited ${tournamentData.name}`);
     }

@@ -4,9 +4,9 @@ import SoccerField from './SoccerField';
 
 import { getUserAuthCtx } from '../../context/authContext';
 import {
-  addMatchListener,
-  getPlayers,
   getTeams,
+  getMatchPlayers,
+  addMultipleMatchPlayersListener,
 } from '../../utils/firebase/firestore/firestoreActions';
 import getMatchStatus from '../../utils/getMatchStatus';
 import formatDate from '../../utils/formatDate';
@@ -16,6 +16,8 @@ const SoccerFieldContainer = ({ match }) => {
   const { user, updatedUserTournaments } = getUserAuthCtx();
   const [updatedMatch, setUpdatedMatch] = useState(match);
   const [subscribedPlayers, setSubscribedPlayers] = useState([]);
+  const [updatedMatchPlayers, setUpdatedMatchPlayers] =
+    useState(subscribedPlayers);
   const [teams, setTeams] = useState({ teamA: [], teamB: [] });
   const [matchSubscriptionCountdown, setMatchSubscriptionCountdown] =
     useState('');
@@ -23,16 +25,20 @@ const SoccerFieldContainer = ({ match }) => {
   const { uid: userId } = user;
 
   const tournament = updatedUserTournaments?.all?.filter(
-    (t) => t.id === match.tournament
+    (tournament) => tournament.id === match.tournament
   )[[0]];
 
   const tournamentImage = tournament?.image;
 
   const isTournamentPlayer = tournament?.players?.includes(userId);
 
+  const sortedUpdatedMatchPlayers = [...updatedMatchPlayers].sort(
+    (a, b) => a.subscriptionDateTime - b.subscriptionDateTime
+  );
+
   const {
     id: matchId,
-    tournament: tournamentId,
+    tournament: tournamentId, // quizas conviene sacarlo de updatedUserTournaments, no se
     creator,
     admins,
     creationDateTime,
@@ -40,7 +46,7 @@ const SoccerFieldContainer = ({ match }) => {
     dateTime,
     address,
     playerQuota,
-    players,
+    // players,
     teamA,
     teamB,
     result,
@@ -48,23 +54,29 @@ const SoccerFieldContainer = ({ match }) => {
   } = updatedMatch;
 
   useEffect(() => {
-    // add listener to matchDoc:
-    const unsubscribe = addMatchListener(
-      match.tournament,
-      match.id,
-      setUpdatedMatch
-    );
-    return () => unsubscribe();
-  }, [match.tournament, match.id]);
+    // get match players:
+    if (tournament) {
+      const fetchPlayers = async () => {
+        const fetchedPlayers = await getMatchPlayers(tournament.id, match.id);
+        setSubscribedPlayers(fetchedPlayers);
+      };
+      fetchPlayers();
+    }
+  }, [tournament?.id, match.id]);
 
   useEffect(() => {
-    // get match players:
-    const fetchPlayers = async () => {
-      const fetchedPlayers = await getPlayers(players);
-      setSubscribedPlayers(fetchedPlayers);
-    };
-    fetchPlayers();
-  }, [players]);
+    // add listener to matchPlayersDocs:
+    if (subscribedPlayers.length > 0) {
+      const MatchPlayersIdsArray = subscribedPlayers.map((player) => player.id);
+      const unsubscribe = addMultipleMatchPlayersListener(
+        tournamentId,
+        matchId,
+        MatchPlayersIdsArray,
+        setUpdatedMatchPlayers
+      );
+      return () => unsubscribe();
+    }
+  }, [tournamentId, matchId, subscribedPlayers]);
 
   useEffect(() => {
     // get match teams:
@@ -97,7 +109,7 @@ const SoccerFieldContainer = ({ match }) => {
     subscriptionDateTime,
     dateTime,
     playerQuota,
-    players,
+    sortedUpdatedMatchPlayers,
     teams,
     mvps,
     userId,
@@ -124,7 +136,7 @@ const SoccerFieldContainer = ({ match }) => {
         isSubscriptionOpen,
         mvpsString,
         tournamentImage,
-        subscribedPlayers,
+        sortedUpdatedMatchPlayers,
         teams,
         formattedSubscriptionDateTime,
         formattedDateTime,

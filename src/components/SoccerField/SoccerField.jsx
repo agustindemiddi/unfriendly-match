@@ -21,7 +21,7 @@ const SoccerField = ({
     isSubscriptionOpen,
     mvpsString,
     tournamentImage,
-    subscribedPlayers,
+    sortedUpdatedMatchPlayers,
     teams,
     formattedSubscriptionDateTime,
     formattedDateTime,
@@ -100,7 +100,9 @@ const SoccerField = ({
                           : ''
                       }
                       key={`empty-${index}`}>
-                      <PlayerIconContainer isTournamentPlayer={isTournamentPlayer} />
+                      <PlayerIconContainer
+                        isTournamentPlayer={isTournamentPlayer}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -110,9 +112,9 @@ const SoccerField = ({
                   className={`${styles.matchPlayers} ${
                     playerQuota >= 12 ? styles.matchPlayersAlternative : ''
                   }`}>
-                  {subscribedPlayers &&
-                    subscribedPlayers.length > 0 &&
-                    subscribedPlayers.map((player) => (
+                  {sortedUpdatedMatchPlayers &&
+                    sortedUpdatedMatchPlayers.length > 0 &&
+                    sortedUpdatedMatchPlayers.map((player) => (
                       <li
                         className={
                           playerQuota === 12
@@ -133,7 +135,7 @@ const SoccerField = ({
                             image={player.image}
                             isSubscriptionOpen={isSubscriptionOpen}
                             isUserSubscribed={isUserSubscribed}
-                            username={player.username}
+                            displayName={player.displayName}
                             playerId={player.id}
                             tournamentId={tournamentId}
                             matchId={matchId}
@@ -142,7 +144,7 @@ const SoccerField = ({
                         ) : (
                           <PlayerIconContainer
                             image={player.image}
-                            username={player.username}
+                            displayName={player.displayName}
                           />
                         )}
                       </li>
@@ -188,7 +190,7 @@ const SoccerField = ({
                   <li key={player.id}>
                     <PlayerIconContainer
                       image={player.image}
-                      username={player.username}
+                      displayName={player.displayName}
                     />
                   </li>
                 ))}
@@ -209,7 +211,7 @@ const SoccerField = ({
                   <li key={player.id}>
                     <PlayerIconContainer
                       image={player.image}
-                      username={player.username}
+                      displayName={player.displayName}
                     />
                   </li>
                 ))}
