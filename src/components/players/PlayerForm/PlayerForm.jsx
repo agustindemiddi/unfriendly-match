@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import styles from './PlayerForm.module.css';
 
-import { getUserAuthCtx } from '../../../../context/authContext';
-import { addNonVerifiedPlayerToTournament } from '../../../../utils/firebase/firestore/firestoreActions';
+import { getUserAuthCtx } from '../../../context/authContext';
+import { addNonVerifiedPlayerToTournament } from '../../../utils/firebase/firestore/firestoreActions';
 
 const PlayerForm = () => {
   const { tournamentId } = useParams();

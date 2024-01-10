@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import styles from './MatchItem.module.css';
 
-import formatDate from '../../../../../../utils/formatDate';
+import formatDate from '../../../../../utils/formatDate';
 
 const MatchItem = ({ match }) => {
   return (

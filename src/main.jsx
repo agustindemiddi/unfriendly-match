@@ -17,14 +17,15 @@ import TournamentsPage from './pages/tournaments/TournamentsPage';
 import TournamentDetailPage from './pages/tournaments/TournamentDetailPage';
 import NewTournamentPage from './pages/tournaments/NewTournamentPage';
 import EditTournamentPage from './pages/tournaments/EditTournamentPage';
-import TournamentPlayersPage from './pages/tournaments/TournamentPlayersPage';
-import NewPlayerPage from './pages/tournaments/NewPlayerPage';
-import EditPlayerPage from './pages/tournaments/EditPlayerPage';
 
 import MatchesPage from './pages/matches/MatchesPage';
 import NewMatchPage from './pages/matches/NewMatchPage';
 import MatchDetailPage from './pages/matches/MatchDetailPage';
 import EditMatchPage from './pages/matches/EditMatchPage';
+
+import TournamentPlayersPage from './pages/players/TournamentPlayersPage';
+import NewPlayerPage from './pages/players/NewPlayerPage';
+import EditPlayerPage from './pages/players/EditPlayerPage';
 
 // import Test from './components/_testing/Test';
 

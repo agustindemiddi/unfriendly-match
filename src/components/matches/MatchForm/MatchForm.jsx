@@ -3,11 +3,11 @@ import { useParams } from 'react-router-dom';
 
 import styles from './MatchForm.module.css';
 
-import { getUserAuthCtx } from '../../../../context/authContext';
+import { getUserAuthCtx } from '../../../context/authContext';
 import {
   getPlayers,
   addMatch,
-} from '../../../../utils/firebase/firestore/firestoreActions';
+} from '../../../utils/firebase/firestore/firestoreActions';
 
 const MatchForm = () => {
   const { tournamentId } = useParams();

@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 
-import Section from '../../../UI/Section/Section';
-import AsideActionsPanel from '../../../UI/AsideActionsPanel/AsideActionsPanel';
+import Section from '../../UI/Section/Section';
+import AsideActionsPanel from '../../UI/AsideActionsPanel/AsideActionsPanel';
 import PlayersList from './PlayersList/PlayersList';
 
 import styles from './PlayersSection.module.css';
 
-import { getUserAuthCtx } from '../../../../context/authContext';
+import { getUserAuthCtx } from '../../../context/authContext';
 
 const PlayersSection = ({ tournament, players }) => {
   const { userPlayerProfile } = getUserAuthCtx();

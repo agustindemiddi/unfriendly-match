@@ -1,17 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 
-import Section from '../../../UI/Section/Section';
-import AsideActionsPanel from '../../../UI/AsideActionsPanel/AsideActionsPanel';
+import Section from '../../UI/Section/Section';
+import AsideActionsPanel from '../../UI/AsideActionsPanel/AsideActionsPanel';
 import PlayerForm from '../PlayerForm/PlayerForm';
 
-import styles from './NewPlayerSection.module.css';
+import styles from './EditPlayerSection.module.css';
 
-const NewPlayerSection = () => {
+const EditPlayerSection = () => {
   const navigate = useNavigate();
 
   const actions = [
     {
-      label: 'Back',
+      label: 'Cancel',
       onAction: () => navigate('..'),
     },
   ];
@@ -26,4 +26,4 @@ const NewPlayerSection = () => {
   );
 };
 
-export default NewPlayerSection;
+export default EditPlayerSection;

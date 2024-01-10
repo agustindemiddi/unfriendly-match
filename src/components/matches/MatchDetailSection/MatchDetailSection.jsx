@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 
-import Section from '../../../UI/Section/Section';
-import AsideActionsPanel from '../../../UI/AsideActionsPanel/AsideActionsPanel';
-import SoccerFieldContainer from '../../../SoccerField/SoccerFieldContainer';
+import Section from '../../UI/Section/Section';
+import AsideActionsPanel from '../../UI/AsideActionsPanel/AsideActionsPanel';
+import SoccerFieldContainer from '../../SoccerField/SoccerFieldContainer';
 
 import styles from './MatchDetailSection.module.css';
 
-import { getUserAuthCtx } from '../../../../context/authContext';
+import { getUserAuthCtx } from '../../../context/authContext';
 
 const MatchDetailSection = ({ match }) => {
   const { userPlayerProfile } = getUserAuthCtx();
