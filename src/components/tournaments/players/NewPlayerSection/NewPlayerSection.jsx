@@ -11,7 +11,7 @@ const NewPlayerSection = () => {
 
   const actions = [
     {
-      label: 'Cancel',
+      label: 'Back',
       onAction: () => navigate('..'),
     },
   ];

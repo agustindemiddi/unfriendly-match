@@ -1,0 +1,7 @@
+.formContainer form {
+  display: flex;
+}
+
+.formContainer form input {
+  flex: 1;
+}
