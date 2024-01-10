@@ -166,7 +166,7 @@ const MatchForm = () => {
               <li
                 key={player.id}
                 onClick={() => handleDeletePlayerFromThisMatch(player)}>
-                {player.username}
+                {player.displayName}
               </li>
             ))}
           </ul>
@@ -181,7 +181,7 @@ const MatchForm = () => {
               <li
                 key={player.id}
                 onClick={() => handleAddPlayerToThisMatch(player)}>
-                {player.username}
+                {player.displayName}
               </li>
             ))}
           </ul>
