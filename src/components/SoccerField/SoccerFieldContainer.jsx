@@ -14,10 +14,7 @@ import calculateCountdown from '../../utils/calculateCountdownToMatchSubscriptio
 
 const SoccerFieldContainer = ({ match }) => {
   const { user, updatedUserTournaments } = getUserAuthCtx();
-  const [updatedMatch, setUpdatedMatch] = useState(match);
-  const [subscribedPlayers, setSubscribedPlayers] = useState([]);
-  const [updatedMatchPlayers, setUpdatedMatchPlayers] =
-    useState(subscribedPlayers);
+  const [updatedMatchPlayers, setUpdatedMatchPlayers] = useState([]);
   const [teams, setTeams] = useState({ teamA: [], teamB: [] });
   const [matchSubscriptionCountdown, setMatchSubscriptionCountdown] =
     useState('');
@@ -38,7 +35,7 @@ const SoccerFieldContainer = ({ match }) => {
 
   const {
     id: matchId,
-    tournament: tournamentId, // quizas conviene sacarlo de updatedUserTournaments, no se
+    tournament: tournamentId,
     creator,
     admins,
     creationDateTime,
@@ -46,46 +43,48 @@ const SoccerFieldContainer = ({ match }) => {
     dateTime,
     address,
     playerQuota,
-    // players,
     teamA,
     teamB,
     result,
     mvps,
-  } = updatedMatch;
+  } = match;
 
   useEffect(() => {
-    // get match players:
-    if (tournament) {
-      const fetchPlayers = async () => {
-        const fetchedPlayers = await getMatchPlayers(tournament.id, match.id);
-        setSubscribedPlayers(fetchedPlayers);
-      };
-      fetchPlayers();
-    }
-  }, [tournament?.id, match.id]);
+    const fetchPlayers = async () => {
+      try {
+        // Fetch match players:
+        const fetchedPlayers = await getMatchPlayers(tournamentId, matchId);
 
-  useEffect(() => {
-    // add listener to matchPlayersDocs:
-    if (subscribedPlayers.length > 0) {
-      const MatchPlayersIdsArray = subscribedPlayers.map((player) => player.id);
-      const unsubscribe = addMultipleMatchPlayersListener(
-        tournamentId,
-        matchId,
-        MatchPlayersIdsArray,
-        setUpdatedMatchPlayers
-      );
-      return () => unsubscribe();
-    }
-  }, [tournamentId, matchId, subscribedPlayers]);
+        // add listener to matchPlayersDocs:
+        if (fetchedPlayers.length > 0) {
+          const matchPlayersIdsArray = fetchedPlayers.map(
+            (player) => player.id
+          );
+          const unsubscribe = addMultipleMatchPlayersListener(
+            tournamentId,
+            matchId,
+            matchPlayersIdsArray,
+            setUpdatedMatchPlayers
+          );
+          return () => unsubscribe();
+        }
+      } catch (error) {
+        console.error('Error fetching match players:', error);
+      }
+    };
+    fetchPlayers();
+  }, [tournamentId, matchId]);
 
   useEffect(() => {
     // get match teams:
-    const fetchTeams = async () => {
-      const fetchedTeams = await getTeams(teamA, teamB);
-      setTeams(fetchedTeams);
-    };
-    fetchTeams();
-  }, [teamA, teamB]);
+    if (Object.keys(result).length > 0) {
+      const fetchTeams = async () => {
+        const fetchedTeams = await getTeams(teamA, teamB);
+        setTeams(fetchedTeams);
+      };
+      fetchTeams();
+    }
+  }, [result, teamA, teamB]);
 
   useEffect(() => {
     // set countdown to match date time subscription:
