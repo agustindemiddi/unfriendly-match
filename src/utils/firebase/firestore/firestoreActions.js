@@ -165,9 +165,9 @@ export const addNonVerifiedPlayerToTournament = async (
 ) => {
   await setDoc(getPlayerDocRef(playerId), playerData);
 
-  // await updateDoc(getTournamentDocRef(tournamentId), {
-  //   players: arrayUnion(playerId),
-  // });
+  await updateDoc(getTournamentDocRef(tournamentId), {
+    players: arrayUnion(playerId),
+  });
 };
 
 // get match:
@@ -350,6 +350,7 @@ export const unsubscribeFromTournament = async (tournamentId, userId) => {
     'tournaments.all': arrayRemove(tournamentId),
     'tournaments.active': arrayRemove(tournamentId),
   });
+  // if last player unsubscribes from tournament, delete tournament:
   const tournament = await getTournament(tournamentId);
   if (tournament.players.length === 0)
     await deleteDoc(getTournamentDocRef(tournamentId));

@@ -1,6 +1,16 @@
 import styles from './StandingsTable.module.css';
 
+import { getUserAuthCtx } from '../../../../context/authContext';
+
 const StandingsTable = () => {
+  const { tournamentMatches } = getUserAuthCtx();
+
+  const finishedMatches = tournamentMatches.filter(
+    (match) => Object.keys(match.result).length > 0
+  );
+
+  console.log(finishedMatches[0].teamA);
+
   return (
     <table className={styles.standingsTable}>
       <thead>

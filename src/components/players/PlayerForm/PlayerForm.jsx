@@ -46,6 +46,8 @@ const PlayerForm = () => {
 
     nameInput.current.value = '';
 
+    console.log('player created!');
+
     // navigate(`/tournaments/${tournamentId}/players`);
   };
 
