@@ -358,24 +358,28 @@ export const unsubscribeFromTournament = async (tournamentId, userId) => {
 
 // subscribe user to match:
 export const subscribeToMatch = async (tournamentId, matchId, player) => {
+  // playerData de matchPlayers no necesita toda la data de playerDoc
   const playerData = {
     ...player,
     subscriptionDateTime: new Date(),
     subscribedBy: player.id,
+    match: matchId, // quizas innecesario
   };
   await setDoc(
     getMatchPlayerDocRef(tournamentId, matchId, player.id),
     playerData
   );
+  await updateDoc(getMatchDocRef(tournamentId, matchId), {
+    players: arrayUnion(player.id),
+  });
 };
 
 // unsubscribe user from match:
 export const unsubscribeFromMatch = async (tournamentId, matchId, playerId) => {
-  try {
-    await deleteDoc(getMatchPlayerDocRef(tournamentId, matchId, playerId));
-  } catch (error) {
-    console.log(error);
-  }
+  await deleteDoc(getMatchPlayerDocRef(tournamentId, matchId, playerId));
+  await updateDoc(getMatchDocRef(tournamentId, matchId), {
+    players: arrayRemove(playerId),
+  });
 };
 
 // COMPONENTS AND USED ACTIONS:
@@ -424,3 +428,6 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, playerId) => {
 // get multiple players
 // add match
 // subscribe user to match
+
+// STANDINGS TABLE
+// get multiple players
