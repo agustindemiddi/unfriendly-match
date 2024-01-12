@@ -380,20 +380,18 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, playerId) => {
 
 // COMPONENTS AND USED ACTIONS:
 
-// AUTHCONTEXT
-// create player profile object from user (first time sign up)
+// FIREBASE AUTH ACTIONS
 // get player profile (when user signs in)
-// add listener to multiple tournamentDocs:
+
+// AUTH CONTEXT
+// add listener to multiple tournamentsDocs
+// get all matches from tournament
 
 // HOME PAGE
-// get matches from multiple tournaments
-
-// TOURNAMENTS PAGE
-// get tournaments
+// get all matches from multiple tournaments
 
 // TOURNAMENT DETAIL PAGE
-// get tournament
-// get matches from tournament
+// get tournament (as fallback if user is not subscribed)
 
 // TOURNAMENT DETAIL SECTION
 // subscribe user to tournament
@@ -404,26 +402,25 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, playerId) => {
 // edit tournament
 
 // TOURNAMENT PLAYERS PAGE
-// get tournament
-// get players
+// get tournament (as fallback if user is not subscribed)
+// get multiple players
 
 // SOCCERFIELD CONTAINER
+// get all players from match
 // add listener to multiple matchPlayersDocs
-// add listener to tournamentDoc
-// get tournament
-// get players
-// get match teams
+// get teams
 
 // PLAYER ICON CONTAINER
 // subscribe user to match
 // unsubscribe user from match
 
 // CONTACTS PAGE
-// get tournaments
-// get players
+// get multiple players
 
 // PLAYER FORM
-// add non-verified player to tournament
+// create non-verified player and add to tournament
 
 // MATCH FORM
 // get multiple players
+// add match
+// subscribe user to match

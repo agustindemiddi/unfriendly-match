@@ -9,10 +9,11 @@ import { getTournament } from '../../utils/firebase/firestore/firestoreActions';
 const TournamentDetailPage = () => {
   const { tournamentId } = useParams();
   const { updatedUserTournaments, tournamentMatches } = getUserAuthCtx();
+  const [unsubscribedTournament, setUnsubscribedTournament] = useState([]);
+
   const tournament = updatedUserTournaments?.all?.filter(
     (tournament) => tournament.id === tournamentId
   )[0];
-  const [unsubscribedTournament, setUnsubscribedTournament] = useState([]);
 
   useEffect(() => {
     if (!tournament) {

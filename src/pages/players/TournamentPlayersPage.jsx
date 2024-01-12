@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import PlayersSection from '../../components/players/PlayersSection/PlayersSection';
+import TournamentPlayersSection from '../../components/players/TournamentPlayersSection/TournamentPlayersSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
-import { getPlayers } from '../../utils/firebase/firestore/firestoreActions';
+import {
+  getTournament,
+  getPlayers,
+} from '../../utils/firebase/firestore/firestoreActions';
 
 const TournamentPlayersPage = () => {
   const { tournamentId } = useParams();
   const { updatedUserTournaments } = getUserAuthCtx();
+  const [unsubscribedTournament, setUnsubscribedTournament] = useState([]);
+  const [tournamentPlayers, setTournamentPlayers] = useState([]);
+
   const tournament = updatedUserTournaments?.all?.filter(
     (tournament) => tournament.id === tournamentId
   )[0];
-  const [tournamentPlayers, setTournamentPlayers] = useState([]);
 
   useEffect(() => {
     if (tournament) {
@@ -24,10 +29,26 @@ const TournamentPlayersPage = () => {
     }
   }, [tournament?.players]);
 
+  useEffect(() => {
+    if (!tournament) {
+      const fetchTournamentAndPlayers = async () => {
+        const fetchedTournament = await getTournament(tournamentId);
+        setUnsubscribedTournament(fetchedTournament);
+
+        const players = await getPlayers(fetchedTournament.players);
+        setTournamentPlayers(players);
+      };
+      fetchTournamentAndPlayers();
+    }
+  }, [tournamentId]);
+
   return (
     <>
-      {tournament && tournamentPlayers.length > 0 && (
-        <PlayersSection tournament={tournament} players={tournamentPlayers} />
+      {tournamentPlayers.length > 0 && (
+        <TournamentPlayersSection
+          tournament={tournament || unsubscribedTournament}
+          players={tournamentPlayers}
+        />
       )}
     </>
   );

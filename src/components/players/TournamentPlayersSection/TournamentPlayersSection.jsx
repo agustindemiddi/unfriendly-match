@@ -4,11 +4,11 @@ import Section from '../../UI/Section/Section';
 import AsideActionsPanel from '../../UI/AsideActionsPanel/AsideActionsPanel';
 import PlayersList from './PlayersList/PlayersList';
 
-import styles from './PlayersSection.module.css';
+import styles from './TournamentPlayersSection.module.css';
 
 import { getUserAuthCtx } from '../../../context/authContext';
 
-const PlayersSection = ({ tournament, players }) => {
+const TournamentPlayersSection = ({ tournament, players }) => {
   const { userPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
 
@@ -44,4 +44,4 @@ const PlayersSection = ({ tournament, players }) => {
   );
 };
 
-export default PlayersSection;
+export default TournamentPlayersSection;

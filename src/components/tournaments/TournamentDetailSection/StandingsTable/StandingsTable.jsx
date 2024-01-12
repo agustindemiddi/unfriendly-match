@@ -9,7 +9,12 @@ const StandingsTable = () => {
     (match) => Object.keys(match.result).length > 0
   );
 
-  console.log(finishedMatches[0].teamA);
+  // finishedMatches.map((match) => [
+  //   match.result.teamA > match.result.teamB
+  // ]);
+
+  console.log(finishedMatches[0].players);
+
 
   return (
     <table className={styles.standingsTable}>

@@ -4,25 +4,18 @@ import Lottie from 'lottie-react';
 import ContactsSection from '../../components/contacts/ContactsSection/ContactsSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
-import {
-  getTournaments,
-  getPlayers,
-} from '../../utils/firebase/firestore/firestoreActions';
+import { getPlayers } from '../../utils/firebase/firestore/firestoreActions';
 import bouncingBall from '../../assets/bouncing-ball.json';
 
 const ContactsPage = () => {
-  const { userPlayerProfile } = getUserAuthCtx();
+  const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
   const [isLoading, setIsLoading] = useState(true);
   const [userContacts, setUserContacts] = useState([]);
 
   useEffect(() => {
-    if (userPlayerProfile) {
+    if (updatedUserTournaments && userPlayerProfile) {
       const fetchContacts = async () => {
-        const userTournamentsIds = await getTournaments(
-          userPlayerProfile.tournaments.all
-        );
-
-        const tournamentPlayersIds = userTournamentsIds.map(
+        const tournamentPlayersIds = updatedUserTournaments.all.map(
           (tournament) => tournament.players
         );
         const allContactsIds = Array.from(
@@ -35,7 +28,7 @@ const ContactsPage = () => {
       };
       fetchContacts();
     }
-  }, [userPlayerProfile]);
+  }, [updatedUserTournaments?.all]);
 
   const content = isLoading ? (
     <Lottie animationData={bouncingBall} loop={true} />

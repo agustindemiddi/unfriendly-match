@@ -28,7 +28,6 @@ const MatchForm = () => {
   const matchAddressInputRef = useRef();
   const matchSubscriptionStartDateInputRef = useRef();
   const matchSubscriptionStartTimeInputRef = useRef();
-  // const playerQuotaInputRef = useRef();
 
   useEffect(() => {
     if (tournament) {

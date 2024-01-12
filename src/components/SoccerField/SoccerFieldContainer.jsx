@@ -4,9 +4,9 @@ import SoccerField from './SoccerField';
 
 import { getUserAuthCtx } from '../../context/authContext';
 import {
-  getTeams,
   getMatchPlayers,
   addMultipleMatchPlayersListener,
+  getTeams,
 } from '../../utils/firebase/firestore/firestoreActions';
 import getMatchStatus from '../../utils/getMatchStatus';
 import formatDate from '../../utils/formatDate';
