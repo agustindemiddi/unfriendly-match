@@ -21,13 +21,14 @@ const MatchForm = () => {
   const [tournamentAvailablePlayers, setTournamentAvailablePlayers] = useState(
     []
   );
+  const [typeOfMatch, setTypeOfMatch] = useState(5);
 
   const matchDateInputRef = useRef();
   const matchTimeInputRef = useRef();
   const matchAddressInputRef = useRef();
   const matchSubscriptionStartDateInputRef = useRef();
   const matchSubscriptionStartTimeInputRef = useRef();
-  const playerQuotaInputRef = useRef();
+  // const playerQuotaInputRef = useRef();
 
   useEffect(() => {
     if (tournament) {
@@ -42,6 +43,36 @@ const MatchForm = () => {
       fetchPlayers();
     }
   }, [tournament]);
+
+  useEffect(() => {
+    tournament?.defaultPlayerQuota &&
+      setTypeOfMatch(tournament.defaultPlayerQuota / 2);
+  }, [tournament?.defaultPlayerQuota]);
+
+  const typeOptions = Array.from({ length: 11 }, (_, index) => index + 1);
+
+  const handleSelectType = (number) => {
+    setTypeOfMatch(number);
+  };
+
+  const handleAddPlayerToThisMatch = (player) => {
+    setMatchPlayers((prevState) => [...prevState, player]);
+
+    setTournamentAvailablePlayers((prevState) =>
+      prevState.filter(
+        (tournamentAvailablePlayer) =>
+          tournamentAvailablePlayer.id !== player.id
+      )
+    );
+  };
+
+  const handleDeletePlayerFromThisMatch = (player) => {
+    setTournamentAvailablePlayers((prevState) => [...prevState, player]);
+
+    setMatchPlayers((prevState) =>
+      prevState.filter((matchPlayer) => matchPlayer.id !== player.id)
+    );
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -68,7 +99,7 @@ const MatchForm = () => {
       subscriptionDateTime: matchSubscriptionDateTime, // custom or Timestamp.now() (default value)
       dateTime: matchDateTime,
       address: matchAddressInputRef.current.value,
-      playerQuota: playerQuotaInputRef.current.value * 2,
+      playerQuota: typeOfMatch * 2,
       teamA: [],
       teamB: [],
       result: {},
@@ -92,78 +123,81 @@ const MatchForm = () => {
     console.log('match added!');
   };
 
-  const handleAddPlayerToThisMatch = (player) => {
-    setMatchPlayers((prevState) => [...prevState, player]);
-
-    setTournamentAvailablePlayers((prevState) =>
-      prevState.filter(
-        (tournamentAvailablePlayer) =>
-          tournamentAvailablePlayer.id !== player.id
-      )
-    );
-  };
-
-  const handleDeletePlayerFromThisMatch = (player) => {
-    setTournamentAvailablePlayers((prevState) => [...prevState, player]);
-
-    setMatchPlayers((prevState) =>
-      prevState.filter((matchPlayer) => matchPlayer.id !== player.id)
-    );
-  };
-
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
-      <label>
-        Día del partido:
-        <input type='date' name='match-date' ref={matchDateInputRef} required />
-      </label>
-      <label>
-        Hora del partido:
-        <input type='time' name='match-time' ref={matchTimeInputRef} required />
-      </label>
-      <label>
-        Dirección:
+    <form className={styles.matchForm} onSubmit={handleSubmit}>
+      <fieldset>
+        <legend>Match day:</legend>
         <input
-          name='match-address'
-          placeholder='match-address'
-          ref={matchAddressInputRef}
-          defaultValue={tournament ? tournament.defaultAddress : undefined}
+          type='date'
+          name='match-date'
+          // defaultValue={'proximo dia de la semana x default'}
+          ref={matchDateInputRef}
           required
         />
-      </label>
-      <label>
-        Día de comienzo del registro al partido:
+      </fieldset>
+
+      <fieldset>
+        <legend>Match time:</legend>
+        <input
+          type='time'
+          name='match-time'
+          // defaultValue={'horario x default'}
+          ref={matchTimeInputRef}
+          required
+        />
+      </fieldset>
+
+      <fieldset>
+        <input
+          name='match-address'
+          placeholder='Address'
+          defaultValue={tournament?.defaultAddress}
+          ref={matchAddressInputRef}
+        />
+      </fieldset>
+
+      <fieldset>
+        <legend>Match subscription starts on:</legend>
         <input
           type='date'
           name='match-subscription-date'
+          /// defaultValue={'dia suscription x default'}
           ref={matchSubscriptionStartDateInputRef}
           required
         />
-      </label>
-      <label>
-        Hora de comienzo del registro al partido:
+      </fieldset>
+
+      <fieldset>
+        <legend>at:</legend>
         <input
           type='time'
           name='match-subscription-time'
+          // defaultValue={'horario suscription x default'}
           ref={matchSubscriptionStartTimeInputRef}
           required
         />
-      </label>
-      <label>
-        Cantidad de jugadores por equipo:
-        <input
-          type='number'
-          ref={playerQuotaInputRef}
-          min={1}
-          max={11}
-          defaultValue={
-            tournament ? tournament.defaultPlayerQuota / 2 : undefined
-          }
-          required
-        />
-      </label>
-      <label>
-        Anotar jugadores a este partido:
+      </fieldset>
+
+      <fieldset className={styles.type}>
+        <legend>Select type of match:</legend>
+        <div>
+          {typeOptions.map((number) => (
+            <button
+              type='button'
+              key={number}
+              className={
+                number === typeOfMatch ? styles.selectedTypeOfMatch : ''
+              }
+              onClick={() => handleSelectType(number)}>
+              {`F${number}`}
+            </button>
+          ))}
+        </div>
+        <legend>{typeOfMatch} players per team</legend>
+      </fieldset>
+
+      <fieldset className={styles.subscribePlayersToMatch}>
+        <legend> Subscribe players to this match:</legend>
         {matchPlayers && (
           <ul>
             {matchPlayers.map((player) => (
@@ -175,10 +209,8 @@ const MatchForm = () => {
             ))}
           </ul>
         )}
-      </label>
 
-      <label>
-        Jugadores disponibles:
+        <legend> Available players:</legend>
         {tournamentAvailablePlayers && (
           <ul>
             {tournamentAvailablePlayers.map((player) => (
@@ -190,7 +222,7 @@ const MatchForm = () => {
             ))}
           </ul>
         )}
-      </label>
+      </fieldset>
 
       <button type='submit'>Create Match</button>
     </form>

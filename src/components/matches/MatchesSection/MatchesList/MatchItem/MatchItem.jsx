@@ -11,7 +11,7 @@ const MatchItem = ({ match }) => {
       <p>address: {match.address}</p>
       <p>matchRegistryDateTime: {formatDate(match.registryDateTime)}</p>
       <p>admins: {match.admins[0]}</p>
-      <p>players: {match.players[0]}</p>
+      {/* <p>players: {match.players[0] || 'no players subscribed to this match'}</p> */}
       <p>matchCreationDateTime: {formatDate(match.creationDateTime)}</p>
       <Link to={`${match.id}`}>
         <button>Entrar</button>

@@ -1,4 +1,58 @@
-.form {
+.matchForm {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  width: 400px;
+}
+
+.matchForm fieldset {
+  display: flex;
+  gap: 25px;
+}
+
+.matchForm fieldset button,
+.matchForm fieldset input {
+  flex: 1;
+}
+
+.matchForm fieldset.type {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.matchForm fieldset.type div {
+  flex: 1;
+
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.matchForm fieldset.type div button {
+  flex: 0;
+
+  padding: 0;
+  border: none;
+  color: inherit;
+  background-color: rgb(45, 45, 45);
+  cursor: pointer;
+
+  min-width: 30px;
+  min-height: 30px;
+  border-radius: 30px;
+  font-size: smaller;
+  color: rgb(100, 100, 100);
+}
+
+.selectedTypeOfMatch {
+  background-color: rgb(64, 150, 255) !important;
+  font-size: medium !important;
+  font-weight: 500;
+  color: white !important;
+}
+
+.subscribePlayersToMatch {
   display: flex;
   flex-direction: column;
 }
