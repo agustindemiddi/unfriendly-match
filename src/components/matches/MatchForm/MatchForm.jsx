@@ -33,8 +33,6 @@ const MatchForm = () => {
     (tournament) => tournament.id === tournamentId
   )[0];
 
-  console.log(matchDate);
-
   useEffect(() => {
     tournament && setMatchDate(getNextMatchDate(tournament.defaultMatchDay));
   }, [tournament?.defaultMatchDay]);

@@ -222,7 +222,9 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
                 </button>
               ))}
             </div>
-            <legend>Matches are usually played on {selectedWeekDay}s</legend>
+            {defaultMatchDay && (
+              <legend>Matches are usually played on {selectedWeekDay}s</legend>
+            )}
           </fieldset>
         )}
         {isCustomMode && (
