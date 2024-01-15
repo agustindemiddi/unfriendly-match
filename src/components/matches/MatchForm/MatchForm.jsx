@@ -17,6 +17,10 @@ const MatchForm = () => {
   const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
   const [matchDate, setMatchDate] = useState();
   const [matchTime, setMatchTime] = useState();
+  const [
+    isSubscriptionStartsImmediatelySelected,
+    setIsSubscriptionStartsImmediatelySelected,
+  ] = useState(true);
   const [matchPlayers, setMatchPlayers] = useState([]);
   const [tournamentAvailablePlayers, setTournamentAvailablePlayers] = useState(
     []
@@ -66,6 +70,8 @@ const MatchForm = () => {
     setTypeOfMatch(number);
   };
 
+  const handleSubscriptionDateTime = () => {};
+
   const handleAddPlayerToThisMatch = (player) => {
     setMatchPlayers((prevState) => [...prevState, player]);
 
@@ -93,21 +99,24 @@ const MatchForm = () => {
     const matchCombinedDateTime = `${matchDate}T${matchTime}`;
     const matchDateTime = new Date(matchCombinedDateTime);
 
-    const matchSubscriptionDate =
-      matchSubscriptionStartDateInputRef.current.value;
-    const matchSubscriptionTime =
-      matchSubscriptionStartTimeInputRef.current.value;
-    const matchSubscriptionCombinedDateTime = `${matchSubscriptionDate}T${matchSubscriptionTime}`;
-    const matchSubscriptionDateTime = new Date(
-      matchSubscriptionCombinedDateTime
-    );
+    let matchSubscriptionDateTime;
+    if (isSubscriptionStartsImmediatelySelected) {
+      matchSubscriptionDateTime = new Date();
+    } else {
+      const matchSubscriptionDate =
+        matchSubscriptionStartDateInputRef.current.value;
+      const matchSubscriptionTime =
+        matchSubscriptionStartTimeInputRef.current.value;
+      const matchSubscriptionCombinedDateTime = `${matchSubscriptionDate}T${matchSubscriptionTime}`;
+      matchSubscriptionDateTime = new Date(matchSubscriptionCombinedDateTime);
+    }
 
     const matchData = {
       tournament: tournamentId,
       creator: userPlayerProfile.id,
       admins: tournament.admins,
       creationDateTime: new Date(),
-      subscriptionDateTime: matchSubscriptionDateTime, // custom or Timestamp.now() (default value)
+      subscriptionDateTime: matchSubscriptionDateTime,
       dateTime: matchDateTime,
       address: matchAddressInputRef.current.value,
       playerQuota: typeOfMatch * 2,
@@ -131,26 +140,28 @@ const MatchForm = () => {
 
   return (
     <form className={styles.matchForm} onSubmit={handleSubmit}>
-      <fieldset>
-        <legend>Match day:</legend>
-        <input
-          type='date'
-          name='match-date'
-          defaultValue={matchDate}
-          ref={matchDateInputRef}
-          required
-        />
-      </fieldset>
+      <fieldset className={styles.matchDateTime}>
+        <div>
+          <legend>Match day:</legend>
+          <input
+            type='date'
+            name='match-date'
+            defaultValue={matchDate}
+            ref={matchDateInputRef}
+            required
+          />
+        </div>
 
-      <fieldset>
-        <legend>Match time:</legend>
-        <input
-          type='time'
-          name='match-time'
-          defaultValue={matchTime}
-          ref={matchTimeInputRef}
-          required
-        />
+        <div>
+          <legend>Match time:</legend>
+          <input
+            type='time'
+            name='match-time'
+            defaultValue={matchTime}
+            ref={matchTimeInputRef}
+            required
+          />
+        </div>
       </fieldset>
 
       <fieldset>
@@ -159,28 +170,6 @@ const MatchForm = () => {
           placeholder='Address'
           defaultValue={tournament?.defaultAddress}
           ref={matchAddressInputRef}
-        />
-      </fieldset>
-
-      <fieldset>
-        <legend>Match subscription starts on:</legend>
-        <input
-          type='date'
-          name='match-subscription-date'
-          /// defaultValue={'dia suscription x default'}
-          ref={matchSubscriptionStartDateInputRef}
-          required
-        />
-      </fieldset>
-
-      <fieldset>
-        <legend>at:</legend>
-        <input
-          type='time'
-          name='match-subscription-time'
-          // defaultValue={'horario suscription x default'}
-          ref={matchSubscriptionStartTimeInputRef}
-          required
         />
       </fieldset>
 
@@ -200,6 +189,45 @@ const MatchForm = () => {
           ))}
         </div>
         <legend>{typeOfMatch} players per team</legend>
+      </fieldset>
+
+      <fieldset className={styles.matchSubscriptionDateTime}>
+        <legend>Match subscription starts:</legend>
+        <div>
+          <div
+            className={
+              isSubscriptionStartsImmediatelySelected
+                ? styles.selectedSubscriptionDateTime
+                : ''
+            }
+            onClick={() => setIsSubscriptionStartsImmediatelySelected(true)}>
+            Immediately
+          </div>
+
+          <div
+            className={
+              !isSubscriptionStartsImmediatelySelected
+                ? styles.selectedSubscriptionDateTime
+                : ''
+            }
+            onClick={() => setIsSubscriptionStartsImmediatelySelected(false)}>
+            <input
+              type='date'
+              name='match-subscription-date'
+              /// defaultValue={'dia suscription x default'}
+              ref={matchSubscriptionStartDateInputRef}
+              required
+            />
+
+            <input
+              type='time'
+              name='match-subscription-time'
+              // defaultValue={'horario suscription x default'}
+              ref={matchSubscriptionStartTimeInputRef}
+              required
+            />
+          </div>
+        </div>
       </fieldset>
 
       <fieldset className={styles.subscribePlayersToMatch}>
