@@ -30,7 +30,7 @@ const SoccerFieldContainer = ({ match }) => {
   const isTournamentPlayer = tournament?.players?.includes(userId);
 
   const sortedUpdatedMatchPlayers = [...updatedMatchPlayers].sort(
-    (a, b) => a.subscriptionDateTime - b.subscriptionDateTime
+    (a, b) => a.matchSubscriptionDateTime - b.matchSubscriptionDateTime
   );
 
   const {

@@ -109,14 +109,9 @@ const MatchForm = () => {
     await addMatch(tournamentId, matchId, matchData);
 
     await Promise.all(
-      matchPlayers.map(async (player) => {
-        const playerData = {
-          ...player,
-          subscriptionDateTime: new Date(),
-          subscribedBy: userPlayerProfile.id,
-        };
-        await subscribeToMatch(tournamentId, matchId, playerData);
-      })
+      matchPlayers.map((player) =>
+        subscribeToMatch(tournamentId, matchId, player)
+      )
     );
 
     console.log('match added!');

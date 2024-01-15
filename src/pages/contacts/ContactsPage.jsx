@@ -12,8 +12,11 @@ const ContactsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [userContacts, setUserContacts] = useState([]);
 
+  console.log(updatedUserTournaments);
+
   useEffect(() => {
-    if (updatedUserTournaments && userPlayerProfile) {
+    if (updatedUserTournaments?.length > 0 && userPlayerProfile) {
+      setIsLoading(true);
       const fetchContacts = async () => {
         const tournamentPlayersIds = updatedUserTournaments.all.map(
           (tournament) => tournament.players
@@ -27,6 +30,8 @@ const ContactsPage = () => {
         setIsLoading(false);
       };
       fetchContacts();
+    } else {
+      setIsLoading(false);
     }
   }, [updatedUserTournaments?.all]);
 

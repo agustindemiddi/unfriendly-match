@@ -9,14 +9,14 @@ const ContactDetail = ({ player }) => {
   // armar el fallback de otra manera. este codigo es espantoso
   return (
     <Section>
-      {player.username && (
+      {player.displayName && (
         <>
-          <h2>{player.name}</h2>
-          <p>description: {player.description}</p>
-          <img src={player.image} alt='' />
+          <h2>name: {player.displayName}</h2>
+          <p>id: {player.id}</p>
+          <img className={styles.image} src={player.image} alt='' />
         </>
       )}
-      {!player.username && (
+      {!player.displayName && (
         <>
           <p>Player not found!</p>
           <Button>
