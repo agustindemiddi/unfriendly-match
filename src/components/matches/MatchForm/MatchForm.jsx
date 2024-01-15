@@ -10,13 +10,13 @@ import {
   addMatch,
   subscribeToMatch,
 } from '../../../utils/firebase/firestore/firestoreActions';
+import getNextMatchDate from '../../../utils/getNextMatchDate';
 
 const MatchForm = () => {
   const { tournamentId } = useParams();
   const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
-  const tournament = updatedUserTournaments?.all?.filter(
-    (tournament) => tournament.id === tournamentId
-  )[0];
+  const [matchDate, setMatchDate] = useState();
+  const [matchTime, setMatchTime] = useState();
   const [matchPlayers, setMatchPlayers] = useState([]);
   const [tournamentAvailablePlayers, setTournamentAvailablePlayers] = useState(
     []
@@ -28,6 +28,25 @@ const MatchForm = () => {
   const matchAddressInputRef = useRef();
   const matchSubscriptionStartDateInputRef = useRef();
   const matchSubscriptionStartTimeInputRef = useRef();
+
+  const tournament = updatedUserTournaments?.all?.filter(
+    (tournament) => tournament.id === tournamentId
+  )[0];
+
+  console.log(matchDate);
+
+  useEffect(() => {
+    tournament && setMatchDate(getNextMatchDate(tournament.defaultMatchDay));
+  }, [tournament?.defaultMatchDay]);
+
+  useEffect(() => {
+    tournament && setMatchTime(tournament.defaultMatchTime);
+  }, [tournament?.defaultMatchTime]);
+
+  useEffect(() => {
+    tournament?.defaultPlayerQuota &&
+      setTypeOfMatch(tournament.defaultPlayerQuota / 2);
+  }, [tournament?.defaultPlayerQuota]);
 
   useEffect(() => {
     if (tournament) {
@@ -41,12 +60,7 @@ const MatchForm = () => {
       };
       fetchPlayers();
     }
-  }, [tournament]);
-
-  useEffect(() => {
-    tournament?.defaultPlayerQuota &&
-      setTypeOfMatch(tournament.defaultPlayerQuota / 2);
-  }, [tournament?.defaultPlayerQuota]);
+  }, [tournament?.players]);
 
   const typeOptions = Array.from({ length: 11 }, (_, index) => index + 1);
 
@@ -124,7 +138,7 @@ const MatchForm = () => {
         <input
           type='date'
           name='match-date'
-          // defaultValue={'proximo dia de la semana x default'}
+          defaultValue={matchDate}
           ref={matchDateInputRef}
           required
         />
@@ -135,7 +149,7 @@ const MatchForm = () => {
         <input
           type='time'
           name='match-time'
-          // defaultValue={'horario x default'}
+          defaultValue={matchTime}
           ref={matchTimeInputRef}
           required
         />
