@@ -100,6 +100,83 @@
   text-align: start;
 }
 
+.tournamentForm fieldset.defaultMatchSubscriptionDateTime {
+  display: flex;
+  flex-direction: column;
+}
+
+.tournamentForm fieldset.defaultMatchSubscriptionDateTime > div {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  color: rgb(100, 100, 100);
+  background-color: rgb(45, 45, 45);
+  border-radius: 10px;
+  padding: 15px;
+  opacity: 80%;
+}
+
+.tournamentForm
+  fieldset.defaultMatchSubscriptionDateTime
+  > div:nth-child(3)
+  > * {
+  flex: 1;
+}
+
+.tournamentForm
+  fieldset.defaultMatchSubscriptionDateTime
+  > div:nth-child(2):hover {
+  cursor: pointer;
+  opacity: 100%;
+}
+
+.tournamentForm
+  fieldset.defaultMatchSubscriptionDateTime
+  > div:nth-child(3):hover {
+  cursor: pointer;
+}
+
+.tournamentForm
+  fieldset.defaultMatchSubscriptionDateTime
+  > div:nth-child(3)
+  input,
+.tournamentForm
+  fieldset.defaultMatchSubscriptionDateTime
+  > div:nth-child(3)
+  select {
+  opacity: 25%;
+}
+
+.tournamentForm
+  fieldset.defaultMatchSubscriptionDateTime
+  > div:nth-child(3)
+  input:hover,
+.tournamentForm
+  fieldset.defaultMatchSubscriptionDateTime
+  > div:nth-child(3)
+  select:hover {
+  cursor: pointer;
+  opacity: 35%;
+}
+
+.selectedSubscriptionDateTime {
+  color: white !important;
+  background-color: rgb(64, 150, 255) !important;
+  font-size: medium !important;
+  cursor: default !important;
+  opacity: 100% !important;
+}
+
+.selectedSubscriptionDateTime span {
+  font-weight: 500;
+}
+
+.selectedSubscriptionDateTime input,
+.selectedSubscriptionDateTime select {
+  cursor: default !important;
+  opacity: 100% !important;
+}
+
 .tournamentForm fieldset.trophies div {
   display: flex;
   justify-content: center;

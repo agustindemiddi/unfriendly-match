@@ -21,10 +21,22 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   const [defaultTeamPlayerQuota, setDefaultTeamPlayerQuota] = useState(5);
   const [defaultMatchDay, setDefaultMatchDay] = useState();
   const [defaultMatchTime, setDefaultMatchTime] = useState();
+  const [
+    isSubscriptionStartsImmediatelySelected,
+    setIsSubscriptionStartsImmediatelySelected,
+  ] = useState(true);
+  const [
+    defaultMatchSubscriptionDaysBefore,
+    setDefaultMatchSubscriptionDaysBefore,
+  ] = useState('default');
+  const [defaultMatchSubscriptionTime, setDefaultMatchSubscriptionTime] =
+    useState('');
   const [tournamentImage, setTournamentImage] = useState(
     '/trophies/trophy01.jpg'
   );
   const defaultMatchTimeInput = useRef();
+  const defaultMatchSubscriptionDaysBeforeSelect = useRef();
+  const defaultMatchSubscriptionTimeInput = useRef();
   const terminationDateInput = useRef();
   const [pointsPerGameWon, setPointsPerGameWon] = useState(3);
   const hasMvpEnabledInput = useRef();
@@ -48,6 +60,14 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
     tournament?.defaultMatchTime &&
       setDefaultMatchTime(tournament.defaultMatchTime);
 
+    tournament?.defaultMatchSubscriptionDaysBefore &&
+      setDefaultMatchSubscriptionDaysBefore(
+        tournament.defaultMatchSubscriptionDaysBefore
+      );
+
+    tournament?.defaultMatchSubscriptionTime &&
+      setDefaultMatchSubscriptionTime(tournament.defaultMatchSubscriptionTime);
+
     tournament?.image && setTournamentImage(tournament.image);
 
     const updatedTerminationDate = tournament?.terminationDate
@@ -58,11 +78,11 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
     tournament?.defaultPlayerQuota,
     tournament?.defaultMatchDay,
     tournament?.defaultMatchTime,
+    tournament?.defaultMatchSubscriptionDay,
+    tournament?.defaultMatchSubscriptionTime,
     tournament?.image,
     tournament?.terminationDate,
   ]);
-
-  console.log(defaultMatchTime);
 
   const typeOptions = Array.from({ length: 11 }, (_, index) => index + 1);
 
@@ -88,8 +108,14 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
     setDefaultTeamPlayerQuota(number);
   };
 
-  const handleSelectWeekDay = (weekDayIndex) => {
+  const handleSelectDefaultMatchDay = (weekDayIndex) => {
     setDefaultMatchDay(weekDayIndex);
+  };
+
+  const handleSelectSubscriptionStartsImmediately = () => {
+    setIsSubscriptionStartsImmediatelySelected(true);
+    setDefaultMatchSubscriptionDaysBefore('default');
+    setDefaultMatchSubscriptionTime('');
   };
 
   const handleSelectImage = (image) => {
@@ -102,6 +128,13 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (defaultMatchSubscriptionDaysBefore && !defaultMatchDay) {
+      alert(
+        'If you customize the subscription start day, you must also specify the day of the week the matches are usually played'
+      );
+      return;
+    }
 
     const tournamentTerminationDate = terminationDateInput.current.value;
     const tournamentTerminationTime = '23:59:59';
@@ -116,8 +149,11 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       defaultAddress: defaultAddressInput?.current?.value || '',
       description: descriptionInput?.current?.value || '',
       defaultPlayerQuota: defaultTeamPlayerQuota * 2,
-      defaultMatchDay: defaultMatchDay,
-      defaultMatchTime: defaultMatchTimeInput.current.value,
+      defaultMatchDay: defaultMatchDay || null,
+      defaultMatchTime: defaultMatchTimeInput.current.value || null,
+      defaultMatchSubscriptionDaysBefore:
+        defaultMatchSubscriptionDaysBefore || null,
+      defaultMatchSubscriptionTime: defaultMatchSubscriptionTime || null,
       image: tournamentImage,
       terminationDate: terminationDate,
       pointsPerGameWon: pointsPerGameWon,
@@ -128,6 +164,8 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       admins: [userPlayerProfile?.id],
       players: [userPlayerProfile?.id],
     };
+
+    // console.log(tournamentData);
 
     if (!isEditMode) {
       const newTournamentId = uuidv4();
@@ -217,13 +255,15 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
                   className={
                     index === defaultMatchDay ? styles.selectedMatchDay : ''
                   }
-                  onClick={() => handleSelectWeekDay(index)}>
+                  onClick={() => handleSelectDefaultMatchDay(index)}>
                   {weekDay}
                 </button>
               ))}
             </div>
-            {defaultMatchDay && (
+            {defaultMatchDay ? (
               <legend>Matches are usually played on {selectedWeekDay}s</legend>
+            ) : (
+              `You have not selected a default day of the week for the matches of this tournament`
             )}
           </fieldset>
         )}
@@ -238,6 +278,64 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             <legend>Matches usually starts at {'hh:mm'}</legend>
           </fieldset>
         )}
+
+        {isCustomMode && (
+          <fieldset className={styles.defaultMatchSubscriptionDateTime}>
+            <legend>Select default match subscription day and time:</legend>
+            <div
+              className={
+                isSubscriptionStartsImmediatelySelected
+                  ? styles.selectedSubscriptionDateTime
+                  : ''
+              }
+              onClick={handleSelectSubscriptionStartsImmediately}>
+              <span>
+                Subscripton starts immediately
+                <br />
+                after match creation
+              </span>
+            </div>
+
+            <div
+              className={
+                !isSubscriptionStartsImmediatelySelected
+                  ? styles.selectedSubscriptionDateTime
+                  : ''
+              }
+              onClick={() => setIsSubscriptionStartsImmediatelySelected(false)}>
+              {/* Subscripton starts: */}
+              <select
+                onChange={(event) =>
+                  setDefaultMatchSubscriptionDaysBefore(event.target.value)
+                }
+                // name='default-match-subscription-days-before'
+                value={defaultMatchSubscriptionDaysBefore}
+                ref={defaultMatchSubscriptionDaysBeforeSelect}>
+                <option value='default' disabled>
+                  Select days before
+                </option>
+                <option value='0'>Same day</option>
+                <option value='1'>1 day before</option>
+                <option value='2'>2 days before</option>
+                <option value='3'>3 days before</option>
+                <option value='4'>4 days before</option>
+                <option value='5'>5 days before</option>
+                <option value='6'>6 days before</option>
+                <option value='7'>7 days before</option>
+              </select>
+              <input
+                type='time'
+                onChange={(event) =>
+                  setDefaultMatchSubscriptionTime(event.target.value)
+                }
+                // name='default-match-subscription-time'
+                value={defaultMatchSubscriptionTime}
+                ref={defaultMatchSubscriptionTimeInput}
+              />
+            </div>
+          </fieldset>
+        )}
+
         {isCustomMode && (
           <fieldset className={styles.trophies}>
             <legend>Select an image:</legend>

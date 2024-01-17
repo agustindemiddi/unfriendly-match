@@ -80,6 +80,10 @@
   padding: 15px;
 }
 
+.matchForm fieldset.matchSubscriptionDateTime > div > div:hover {
+  cursor: pointer;
+}
+
 .matchForm fieldset.matchSubscriptionDateTime > div > div:nth-child(1) {
   justify-content: center;
   align-items: center;
@@ -88,7 +92,6 @@
 }
 
 .matchForm fieldset.matchSubscriptionDateTime > div > div:nth-child(1):hover {
-  cursor: pointer;
   opacity: 100%;
 }
 
@@ -114,9 +117,12 @@
   color: white !important;
   background-color: rgb(64, 150, 255) !important;
   font-size: medium !important;
-  font-weight: 500;
   cursor: default !important;
   opacity: 100% !important;
+}
+
+.selectedSubscriptionDateTime span {
+  font-weight: 500;
 }
 
 .selectedSubscriptionDateTime input {

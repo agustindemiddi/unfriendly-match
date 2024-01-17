@@ -10,13 +10,18 @@ import {
   addMatch,
   subscribeToMatch,
 } from '../../../utils/firebase/firestore/firestoreActions';
-import getNextMatchDate from '../../../utils/getNextMatchDate';
+import {
+  getNextMatchDate,
+  getNextMatchSubscriptionDate,
+} from '../../../utils/getNextMatchDates';
 
 const MatchForm = () => {
   const { tournamentId } = useParams();
   const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
-  const [matchDate, setMatchDate] = useState();
-  const [matchTime, setMatchTime] = useState();
+  const [matchDate, setMatchDate] = useState('');
+  const [matchTime, setMatchTime] = useState('');
+  const [matchSubscriptionDate, setMatchSubscriptionDate] = useState('');
+  const [matchSubscriptionTime, setMatchSubscriptionTime] = useState('');
   const [
     isSubscriptionStartsImmediatelySelected,
     setIsSubscriptionStartsImmediatelySelected,
@@ -30,25 +35,49 @@ const MatchForm = () => {
   const matchDateInputRef = useRef();
   const matchTimeInputRef = useRef();
   const matchAddressInputRef = useRef();
-  const matchSubscriptionStartDateInputRef = useRef();
-  const matchSubscriptionStartTimeInputRef = useRef();
+  const matchSubscriptionDateInputRef = useRef();
+  const matchSubscriptionTimeInputRef = useRef();
 
   const tournament = updatedUserTournaments?.all?.filter(
     (tournament) => tournament.id === tournamentId
   )[0];
 
   useEffect(() => {
-    tournament && setMatchDate(getNextMatchDate(tournament.defaultMatchDay));
+    tournament?.defaultMatchDay &&
+      setMatchDate(getNextMatchDate(tournament.defaultMatchDay));
   }, [tournament?.defaultMatchDay]);
 
   useEffect(() => {
-    tournament && setMatchTime(tournament.defaultMatchTime);
+    tournament?.defaultMatchTime && setMatchTime(tournament.defaultMatchTime);
   }, [tournament?.defaultMatchTime]);
 
   useEffect(() => {
     tournament?.defaultPlayerQuota &&
       setTypeOfMatch(tournament.defaultPlayerQuota / 2);
   }, [tournament?.defaultPlayerQuota]);
+
+  useEffect(() => {
+    if (
+      tournament?.defaultMatchDay &&
+      tournament.defaultMatchSubscriptionDaysBefore
+    ) {
+      setMatchSubscriptionDate(
+        getNextMatchSubscriptionDate(
+          tournament.defaultMatchDay,
+          tournament.defaultMatchSubscriptionDaysBefore
+        )
+      );
+      setIsSubscriptionStartsImmediatelySelected(false);
+    }
+  }, [
+    tournament?.defaultMatchDay,
+    tournament?.defaultMatchSubscriptionDaysBefore,
+  ]);
+
+  useEffect(() => {
+    tournament?.defaultMatchSubscriptionTime &&
+      setMatchSubscriptionTime(tournament.defaultMatchSubscriptionTime);
+  }, [tournament?.defaultMatchSubscriptionTime]);
 
   useEffect(() => {
     if (tournament) {
@@ -70,7 +99,22 @@ const MatchForm = () => {
     setTypeOfMatch(number);
   };
 
-  const handleSubscriptionDateTime = () => {};
+  const handleSelectSubscriptionStartsImmediately = () => {
+    setIsSubscriptionStartsImmediatelySelected(true);
+    setMatchSubscriptionDate('');
+    setMatchSubscriptionTime('');
+  };
+
+  const handleMatchSubscriptionTimeChange = (event) => {
+    const inputTime = event.target.value;
+    const maxTime = matchSubscriptionDate === matchDate ? matchTime : '';
+
+    if (inputTime > maxTime) {
+      setMatchSubscriptionTime(maxTime);
+    } else {
+      setMatchSubscriptionTime(inputTime);
+    }
+  };
 
   const handleAddPlayerToThisMatch = (player) => {
     setMatchPlayers((prevState) => [...prevState, player]);
@@ -94,21 +138,19 @@ const MatchForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const matchDate = matchDateInputRef.current.value;
-    const matchTime = matchTimeInputRef.current.value;
-    const matchCombinedDateTime = `${matchDate}T${matchTime}`;
-    const matchDateTime = new Date(matchCombinedDateTime);
+    const date = matchDateInputRef.current.value;
+    const time = matchTimeInputRef.current.value;
+    const combinedDateTime = `${date}T${time}`;
+    const dateTime = new Date(combinedDateTime);
 
-    let matchSubscriptionDateTime;
+    let subscriptionDateTime;
     if (isSubscriptionStartsImmediatelySelected) {
-      matchSubscriptionDateTime = new Date();
+      subscriptionDateTime = new Date();
     } else {
-      const matchSubscriptionDate =
-        matchSubscriptionStartDateInputRef.current.value;
-      const matchSubscriptionTime =
-        matchSubscriptionStartTimeInputRef.current.value;
-      const matchSubscriptionCombinedDateTime = `${matchSubscriptionDate}T${matchSubscriptionTime}`;
-      matchSubscriptionDateTime = new Date(matchSubscriptionCombinedDateTime);
+      const subscriptionDate = matchSubscriptionDateInputRef.current.value;
+      const subscriptionTime = matchSubscriptionTimeInputRef.current.value;
+      const subscriptionCombinedDateTime = `${subscriptionDate}T${subscriptionTime}`;
+      subscriptionDateTime = new Date(subscriptionCombinedDateTime);
     }
 
     const matchData = {
@@ -116,8 +158,8 @@ const MatchForm = () => {
       creator: userPlayerProfile.id,
       admins: tournament.admins,
       creationDateTime: new Date(),
-      subscriptionDateTime: matchSubscriptionDateTime,
-      dateTime: matchDateTime,
+      subscriptionDateTime: subscriptionDateTime,
+      dateTime: dateTime,
       address: matchAddressInputRef.current.value,
       playerQuota: typeOfMatch * 2,
       teamA: [],
@@ -145,8 +187,10 @@ const MatchForm = () => {
           <legend>Match day:</legend>
           <input
             type='date'
+            onChange={(event) => setMatchDate(event.target.value)}
             name='match-date'
-            defaultValue={matchDate}
+            // defaultValue={matchDate}
+            value={matchDate}
             ref={matchDateInputRef}
             required
           />
@@ -156,8 +200,10 @@ const MatchForm = () => {
           <legend>Match time:</legend>
           <input
             type='time'
+            onChange={(event) => setMatchTime(event.target.value)}
             name='match-time'
-            defaultValue={matchTime}
+            // defaultValue={matchTime}
+            value={matchTime}
             ref={matchTimeInputRef}
             required
           />
@@ -200,8 +246,8 @@ const MatchForm = () => {
                 ? styles.selectedSubscriptionDateTime
                 : ''
             }
-            onClick={() => setIsSubscriptionStartsImmediatelySelected(true)}>
-            Immediately
+            onClick={handleSelectSubscriptionStartsImmediately}>
+            <span>Immediately</span>
           </div>
 
           <div
@@ -213,18 +259,21 @@ const MatchForm = () => {
             onClick={() => setIsSubscriptionStartsImmediatelySelected(false)}>
             <input
               type='date'
+              onChange={(event) => setMatchSubscriptionDate(event.target.value)}
               name='match-subscription-date'
-              /// defaultValue={'dia suscription x default'}
-              ref={matchSubscriptionStartDateInputRef}
-              required
+              // defaultValue={matchSubscriptionDate}
+              value={matchSubscriptionDate}
+              max={matchDate}
+              ref={matchSubscriptionDateInputRef}
             />
 
             <input
               type='time'
+              onChange={handleMatchSubscriptionTimeChange}
               name='match-subscription-time'
-              // defaultValue={'horario suscription x default'}
-              ref={matchSubscriptionStartTimeInputRef}
-              required
+              // defaultValue={matchSubscriptionTime}
+              value={matchSubscriptionTime}
+              ref={matchSubscriptionTimeInputRef}
             />
           </div>
         </div>
