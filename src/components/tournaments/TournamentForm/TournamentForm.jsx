@@ -9,18 +9,22 @@ import {
   addTournament,
   editTournament,
 } from '../../../utils//firebase/firestore/firestoreActions';
-import { formattedTerminationDateTime } from '../../../utils/calculateTerminationDate';
+import { getFormattedTerminationDate } from '../../../utils/getTerminationDate';
 
 import trophiesImages from '../../../utils/trophiesImages';
 
 const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   const { userPlayerProfile, setUserPlayerProfile } = getUserAuthCtx();
+
   const nameInput = useRef();
   const defaultAddressInput = useRef();
   const descriptionInput = useRef();
-  const [defaultTeamPlayerQuota, setDefaultTeamPlayerQuota] = useState(5);
-  const [defaultMatchDay, setDefaultMatchDay] = useState();
-  const [defaultMatchTime, setDefaultMatchTime] = useState();
+
+  const [defaultTeamPlayerQuota, setDefaultTeamPlayerQuota] = useState(
+    !isEditMode ? 5 : null
+  );
+  const [defaultMatchDay, setDefaultMatchDay] = useState('');
+  const [defaultMatchTime, setDefaultMatchTime] = useState('');
   const [
     isSubscriptionStartsImmediatelySelected,
     setIsSubscriptionStartsImmediatelySelected,
@@ -28,11 +32,14 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   const [
     defaultMatchSubscriptionDaysBefore,
     setDefaultMatchSubscriptionDaysBefore,
-  ] = useState('default');
+  ] = useState('notSet');
   const [defaultMatchSubscriptionTime, setDefaultMatchSubscriptionTime] =
     useState('');
   const [tournamentImage, setTournamentImage] = useState(
     '/trophies/trophy01.jpg'
+  );
+  const [terminationDate, setTerminationDate] = useState(
+    getFormattedTerminationDate()
   );
   const defaultMatchTimeInput = useRef();
   const defaultMatchSubscriptionDaysBeforeSelect = useRef();
@@ -60,25 +67,44 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
     tournament?.defaultMatchTime &&
       setDefaultMatchTime(tournament.defaultMatchTime);
 
-    tournament?.defaultMatchSubscriptionDaysBefore &&
+    if (
+      tournament?.defaultMatchSubscriptionDaysBefore ||
+      tournament?.defaultMatchSubscriptionDaysBefore === 0
+    ) {
+      setIsSubscriptionStartsImmediatelySelected(false);
       setDefaultMatchSubscriptionDaysBefore(
         tournament.defaultMatchSubscriptionDaysBefore
       );
+    }
 
-    tournament?.defaultMatchSubscriptionTime &&
+    if (tournament?.defaultMatchSubscriptionTime) {
+      setIsSubscriptionStartsImmediatelySelected(false);
       setDefaultMatchSubscriptionTime(tournament.defaultMatchSubscriptionTime);
+    }
+
+    if (
+      tournament?.defaultMatchSubscriptionDaysBefore === 0 &&
+      tournament.defaultMatchSubscriptionTime > tournament.defaultMatchTime
+    ) {
+      setIsSubscriptionStartsImmediatelySelected(false);
+      setDefaultMatchSubscriptionTime(tournament.defaultMatchSubscriptionTime);
+    }
 
     tournament?.image && setTournamentImage(tournament.image);
 
-    const updatedTerminationDate = tournament?.terminationDate
-      ? formattedTerminationDateTime(tournament.terminationDate)
-      : formattedTerminationDateTime();
-    terminationDateInput.current.value = updatedTerminationDate;
+    // const updatedTerminationDate = tournament?.terminationDate
+    //   ? getFormattedTerminationDate(tournament.terminationDate)
+    //   : getFormattedTerminationDate();
+    // terminationDateInput.current.value = updatedTerminationDate;
+    tournament?.terminationDate &&
+      setTerminationDate(
+        getFormattedTerminationDate(tournament.terminationDate)
+      );
   }, [
     tournament?.defaultPlayerQuota,
     tournament?.defaultMatchDay,
     tournament?.defaultMatchTime,
-    tournament?.defaultMatchSubscriptionDay,
+    tournament?.defaultMatchSubscriptionDaysBefore,
     tournament?.defaultMatchSubscriptionTime,
     tournament?.image,
     tournament?.terminationDate,
@@ -104,32 +130,37 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
 
   const pointsPerGameWonOptions = [2, 3];
 
-  const handleSelectType = (number) => {
-    setDefaultTeamPlayerQuota(number);
-  };
-
-  const handleSelectDefaultMatchDay = (weekDayIndex) => {
-    setDefaultMatchDay(weekDayIndex);
-  };
-
   const handleSelectSubscriptionStartsImmediately = () => {
     setIsSubscriptionStartsImmediatelySelected(true);
-    setDefaultMatchSubscriptionDaysBefore('default');
+    setDefaultMatchSubscriptionDaysBefore('notSet');
     setDefaultMatchSubscriptionTime('');
   };
 
-  const handleSelectImage = (image) => {
-    setTournamentImage(image);
-  };
+  const handleDefaultMatchSubscriptionTimeChange = (event) => {
+    if (defaultMatchSubscriptionDaysBefore === 0 && !defaultMatchTime) {
+      alert(
+        'If you select the subscription to start the same day as the matches, you must also specify the time when the matches will normally be played'
+      );
+      return;
+    }
 
-  const handleSelectPointsPerGameWon = (number) => {
-    setPointsPerGameWon(number);
+    const inputTime = event.target.value;
+    const maxTime =
+      defaultMatchTime && defaultMatchSubscriptionDaysBefore === 0
+        ? defaultMatchTime
+        : inputTime;
+
+    if (inputTime > maxTime) {
+      setDefaultMatchSubscriptionTime(maxTime);
+    } else {
+      setDefaultMatchSubscriptionTime(inputTime);
+    }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (defaultMatchSubscriptionDaysBefore && !defaultMatchDay) {
+    if (defaultMatchSubscriptionDaysBefore !== 'notSet' && !defaultMatchDay) {
       alert(
         'If you customize the subscription start day, you must also specify the day of the week the matches are usually played'
       );
@@ -148,12 +179,16 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       name: nameInput.current.value,
       defaultAddress: defaultAddressInput?.current?.value || '',
       description: descriptionInput?.current?.value || '',
-      defaultPlayerQuota: defaultTeamPlayerQuota * 2,
+      defaultPlayerQuota: defaultTeamPlayerQuota
+        ? defaultTeamPlayerQuota * 2
+        : null,
       defaultMatchDay: defaultMatchDay || null,
-      defaultMatchTime: defaultMatchTimeInput.current.value || null,
+      defaultMatchTime: defaultMatchTimeInput?.current?.value || '',
       defaultMatchSubscriptionDaysBefore:
-        defaultMatchSubscriptionDaysBefore || null,
-      defaultMatchSubscriptionTime: defaultMatchSubscriptionTime || null,
+        defaultMatchSubscriptionDaysBefore === 'notSet'
+          ? null
+          : defaultMatchSubscriptionDaysBefore,
+      defaultMatchSubscriptionTime: defaultMatchSubscriptionTime || '',
       image: tournamentImage,
       terminationDate: terminationDate,
       pointsPerGameWon: pointsPerGameWon,
@@ -164,8 +199,6 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       admins: [userPlayerProfile?.id],
       players: [userPlayerProfile?.id],
     };
-
-    // console.log(tournamentData);
 
     if (!isEditMode) {
       const newTournamentId = uuidv4();
@@ -200,6 +233,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
         <fieldset>
           <input
             type='text'
+            name='tournament-name'
             placeholder='Tournament name'
             ref={nameInput}
             autoFocus
@@ -210,6 +244,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
           <fieldset>
             <input
               type='text'
+              name='default-address'
               placeholder='Tournament default address'
               defaultValue={tournament?.defaultAddress}
               ref={defaultAddressInput}
@@ -219,6 +254,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
         {isCustomMode && (
           <fieldset>
             <textarea
+              name='tournament-description'
               rows='3'
               placeholder='Description (optional)'
               defaultValue={tournament?.description}
@@ -226,7 +262,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
           </fieldset>
         )}
         <fieldset className={styles.type}>
-          <legend>Select default type of tournament:</legend>
+          <legend>Select default type of matches:</legend>
           <div>
             {typeOptions.map((number) => (
               <button
@@ -237,12 +273,20 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
                     ? styles.selectedPlayerQuota
                     : ''
                 }
-                onClick={() => handleSelectType(number)}>
+                onClick={() =>
+                  number === defaultTeamPlayerQuota
+                    ? setDefaultTeamPlayerQuota(null)
+                    : setDefaultTeamPlayerQuota(number)
+                }>
                 {`F${number}`}
               </button>
             ))}
           </div>
-          <legend>{defaultTeamPlayerQuota} players per team</legend>
+          <legend>
+            {defaultTeamPlayerQuota
+              ? `${defaultTeamPlayerQuota} players per team`
+              : 'You have not selected the default type of match for this tournament'}
+          </legend>
         </fieldset>
         {isCustomMode && (
           <fieldset className={styles.defaultMatchDay}>
@@ -255,16 +299,20 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
                   className={
                     index === defaultMatchDay ? styles.selectedMatchDay : ''
                   }
-                  onClick={() => handleSelectDefaultMatchDay(index)}>
+                  onClick={() =>
+                    index === defaultMatchDay
+                      ? setDefaultMatchDay(null)
+                      : setDefaultMatchDay(index)
+                  }>
                   {weekDay}
                 </button>
               ))}
             </div>
-            {defaultMatchDay ? (
-              <legend>Matches are usually played on {selectedWeekDay}s</legend>
-            ) : (
-              `You have not selected a default day of the week for the matches of this tournament`
-            )}
+            <legend>
+              {defaultMatchDay
+                ? `Normally, matches are played on ${selectedWeekDay}s`
+                : 'You have not selected the default day of the week for the matches of this tournament'}
+            </legend>
           </fieldset>
         )}
         {isCustomMode && (
@@ -272,10 +320,16 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             <legend>Select default match time:</legend>
             <input
               type='time'
-              defaultValue={defaultMatchTime}
+              name='default-match-time'
+              onChange={(event) => setDefaultMatchTime(event.target.value)}
+              value={defaultMatchTime}
               ref={defaultMatchTimeInput}
             />
-            <legend>Matches usually starts at {'hh:mm'}</legend>
+            <legend>
+              {defaultMatchTime
+                ? `Normally, matches are played at ${defaultMatchTime}`
+                : 'You have not set the default start time for the matches of this tournament'}
+            </legend>
           </fieldset>
         )}
 
@@ -303,15 +357,16 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
                   : ''
               }
               onClick={() => setIsSubscriptionStartsImmediatelySelected(false)}>
-              {/* Subscripton starts: */}
               <select
                 onChange={(event) =>
-                  setDefaultMatchSubscriptionDaysBefore(event.target.value)
+                  setDefaultMatchSubscriptionDaysBefore(
+                    parseInt(event.target.value)
+                  )
                 }
-                // name='default-match-subscription-days-before'
+                name='default-match-subscription-days-before'
                 value={defaultMatchSubscriptionDaysBefore}
                 ref={defaultMatchSubscriptionDaysBeforeSelect}>
-                <option value='default' disabled>
+                <option value='notSet' disabled>
                   Select days before
                 </option>
                 <option value='0'>Same day</option>
@@ -325,10 +380,8 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
               </select>
               <input
                 type='time'
-                onChange={(event) =>
-                  setDefaultMatchSubscriptionTime(event.target.value)
-                }
-                // name='default-match-subscription-time'
+                onChange={handleDefaultMatchSubscriptionTimeChange}
+                name='default-match-subscription-time'
                 value={defaultMatchSubscriptionTime}
                 ref={defaultMatchSubscriptionTimeInput}
               />
@@ -349,7 +402,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
                       ? styles.selectedTournamentImage
                       : ''
                   }
-                  onClick={() => handleSelectImage(image)}>
+                  onClick={() => setTournamentImage(image)}>
                   <img src={image} alt={`${image} image`} />
                 </button>
               ))}
@@ -360,12 +413,16 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
           <legend>Select approximate termination date:</legend>
           <input
             type='date'
-            defaultValue={formattedTerminationDateTime()}
+            onChange={(event) => setTerminationDate(event.target.value)}
+            name='termination-date'
+            value={terminationDate}
+            // defaultValue={getFormattedTerminationDate()}
             ref={terminationDateInput}
             required
           />
-          {/* will need state to live update */}
-          <legend>Tournament ends on {'dd/mm/yyyy'}</legend>
+          {terminationDate && (
+            <legend>Tournament ends around {terminationDate}</legend>
+          )}
         </fieldset>
         {!isEditMode && isCustomMode && (
           <fieldset className={styles.pointsPerGameWon}>
@@ -379,7 +436,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
                     ? styles.selectedPointsPerGameWon
                     : ''
                 }
-                onClick={() => handleSelectPointsPerGameWon(points)}>
+                onClick={() => setPointsPerGameWon(points)}>
                 {points} points
               </button>
             ))}
@@ -388,7 +445,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
         {!isEditMode && isCustomMode && (
           <fieldset>
             <label>
-              <input type='checkbox' ref={hasMvpEnabledInput} />
+              <input type='checkbox' name='has-mvp' ref={hasMvpEnabledInput} />
               <span>Enable MVP voting.</span>
             </label>
           </fieldset>
@@ -397,8 +454,9 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
           <label>
             <input
               type='checkbox'
-              ref={isPublicInput}
+              name='is-public'
               defaultChecked={tournament?.isPublic}
+              ref={isPublicInput}
             />
             <span>This is a public tournament.</span>
           </label>

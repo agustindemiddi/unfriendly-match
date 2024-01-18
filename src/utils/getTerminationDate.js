@@ -5,7 +5,7 @@ const setLastTimeOfDay = (date) => {
   return date;
 };
 
-export const calculateTerminationDateTime = () => {
+const getTerminationDateTime = () => {
   const currentDateTime = new Date();
 
   if (currentDateTime.getMonth() >= 2 && currentDateTime.getMonth() < 8) {
@@ -33,11 +33,9 @@ export const calculateTerminationDateTime = () => {
   }
 };
 
-export const formattedTerminationDateTime = (
-  date = calculateTerminationDateTime()
+export const getFormattedTerminationDate = (
+  date = getTerminationDateTime()
 ) => {
-  // const date = calculateTerminationDateTime();
-
   const year = date.getFullYear();
   let month = date.getMonth() + 1;
   let day = date.getDate();

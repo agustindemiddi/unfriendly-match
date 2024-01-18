@@ -30,7 +30,7 @@ const MatchForm = () => {
   const [tournamentAvailablePlayers, setTournamentAvailablePlayers] = useState(
     []
   );
-  const [typeOfMatch, setTypeOfMatch] = useState(5);
+  const [typeOfMatch, setTypeOfMatch] = useState(null);
 
   const matchDateInputRef = useRef();
   const matchTimeInputRef = useRef();
@@ -59,15 +59,16 @@ const MatchForm = () => {
   useEffect(() => {
     if (
       tournament?.defaultMatchDay &&
-      tournament.defaultMatchSubscriptionDaysBefore
+      (tournament.defaultMatchSubscriptionDaysBefore ||
+        tournament?.defaultMatchSubscriptionDaysBefore === 0)
     ) {
+      setIsSubscriptionStartsImmediatelySelected(false);
       setMatchSubscriptionDate(
         getNextMatchSubscriptionDate(
           tournament.defaultMatchDay,
           tournament.defaultMatchSubscriptionDaysBefore
         )
       );
-      setIsSubscriptionStartsImmediatelySelected(false);
     }
   }, [
     tournament?.defaultMatchDay,
@@ -75,9 +76,23 @@ const MatchForm = () => {
   ]);
 
   useEffect(() => {
-    tournament?.defaultMatchSubscriptionTime &&
+    if (tournament?.defaultMatchSubscriptionTime) {
+      setIsSubscriptionStartsImmediatelySelected(false);
       setMatchSubscriptionTime(tournament.defaultMatchSubscriptionTime);
+    }
   }, [tournament?.defaultMatchSubscriptionTime]);
+
+  useEffect(() => {
+    if (matchDate < matchSubscriptionDate) {
+      setMatchSubscriptionDate(matchDate);
+    }
+    if (
+      matchDate === matchSubscriptionDate &&
+      matchSubscriptionTime > matchTime
+    ) {
+      setMatchSubscriptionTime(matchTime);
+    }
+  }, [matchDate, matchTime, matchSubscriptionDate, matchSubscriptionTime]);
 
   useEffect(() => {
     if (tournament) {
@@ -95,10 +110,6 @@ const MatchForm = () => {
 
   const typeOptions = Array.from({ length: 11 }, (_, index) => index + 1);
 
-  const handleSelectType = (number) => {
-    setTypeOfMatch(number);
-  };
-
   const handleSelectSubscriptionStartsImmediately = () => {
     setIsSubscriptionStartsImmediatelySelected(true);
     setMatchSubscriptionDate('');
@@ -106,8 +117,15 @@ const MatchForm = () => {
   };
 
   const handleMatchSubscriptionTimeChange = (event) => {
+    if (matchSubscriptionDate === matchDate && !matchTime) {
+      alert(
+        'If subscription starts the same day of the match, you must specify the match starting time before setting the time for the subscription!'
+      );
+      return;
+    }
+
     const inputTime = event.target.value;
-    const maxTime = matchSubscriptionDate === matchDate ? matchTime : '';
+    const maxTime = matchSubscriptionDate === matchDate ? matchTime : inputTime;
 
     if (inputTime > maxTime) {
       setMatchSubscriptionTime(maxTime);
@@ -138,6 +156,25 @@ const MatchForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!typeOfMatch) {
+      alert('You must select the type of match!');
+      return;
+    }
+
+    if (matchSubscriptionTime && !matchSubscriptionDate) {
+      alert(
+        'If you select a custom time for the subscription to start, you must specify the day too!'
+      );
+      return;
+    }
+
+    // if (matchSubscriptionDate && !matchSubscriptionTime) {
+    //   alert(
+    //     'If you select a custom date for the subscription to start, you must specify the time too!'
+    //   );
+    //   return;
+    // }
+
     const date = matchDateInputRef.current.value;
     const time = matchTimeInputRef.current.value;
     const combinedDateTime = `${date}T${time}`;
@@ -147,8 +184,11 @@ const MatchForm = () => {
     if (isSubscriptionStartsImmediatelySelected) {
       subscriptionDateTime = new Date();
     } else {
-      const subscriptionDate = matchSubscriptionDateInputRef.current.value;
-      const subscriptionTime = matchSubscriptionTimeInputRef.current.value;
+      // const subscriptionDate = matchSubscriptionDateInputRef.current.value;
+      const subscriptionDate = matchSubscriptionDate || matchDate;
+      // const subscriptionTime = matchSubscriptionTimeInputRef.current.value;
+      const subscriptionTime =
+        matchDate && !matchSubscriptionTime ? '00:00' : matchSubscriptionTime;
       const subscriptionCombinedDateTime = `${subscriptionDate}T${subscriptionTime}`;
       subscriptionDateTime = new Date(subscriptionCombinedDateTime);
     }
@@ -160,7 +200,7 @@ const MatchForm = () => {
       creationDateTime: new Date(),
       subscriptionDateTime: subscriptionDateTime,
       dateTime: dateTime,
-      address: matchAddressInputRef.current.value,
+      address: matchAddressInputRef.current.value || '',
       playerQuota: typeOfMatch * 2,
       teamA: [],
       teamB: [],
@@ -229,7 +269,11 @@ const MatchForm = () => {
               className={
                 number === typeOfMatch ? styles.selectedTypeOfMatch : ''
               }
-              onClick={() => handleSelectType(number)}>
+              onClick={() =>
+                number == typeOfMatch
+                  ? setTypeOfMatch(null)
+                  : setTypeOfMatch(number)
+              }>
               {`F${number}`}
             </button>
           ))}
@@ -269,6 +313,7 @@ const MatchForm = () => {
 
             <input
               type='time'
+              // onChange={(event) => setMatchSubscriptionTime(event.target.value)}
               onChange={handleMatchSubscriptionTimeChange}
               name='match-subscription-time'
               // defaultValue={matchSubscriptionTime}
@@ -280,31 +325,35 @@ const MatchForm = () => {
       </fieldset>
 
       <fieldset className={styles.subscribePlayersToMatch}>
-        <legend> Subscribe players to this match:</legend>
-        {matchPlayers && (
-          <ul>
-            {matchPlayers.map((player) => (
-              <li
-                key={player.id}
-                onClick={() => handleDeletePlayerFromThisMatch(player)}>
-                {player.displayName}
-              </li>
-            ))}
-          </ul>
-        )}
+        <div>
+          <legend> Subscribe players to this match:</legend>
+          {matchPlayers.length > 0 && (
+            <ul>
+              {matchPlayers.map((player) => (
+                <li
+                  key={player.id}
+                  onClick={() => handleDeletePlayerFromThisMatch(player)}>
+                  {player.displayName}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
-        <legend> Available players:</legend>
-        {tournamentAvailablePlayers && (
-          <ul>
-            {tournamentAvailablePlayers.map((player) => (
-              <li
-                key={player.id}
-                onClick={() => handleAddPlayerToThisMatch(player)}>
-                {player.displayName}
-              </li>
-            ))}
-          </ul>
-        )}
+        <div>
+          <legend> Available players:</legend>
+          {tournamentAvailablePlayers.length > 0 && (
+            <ul>
+              {tournamentAvailablePlayers.map((player) => (
+                <li
+                  key={player.id}
+                  onClick={() => handleAddPlayerToThisMatch(player)}>
+                  {player.displayName}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </fieldset>
 
       <button type='submit'>Create Match</button>

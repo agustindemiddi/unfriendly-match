@@ -132,7 +132,10 @@
 
 .subscribePlayersToMatch {
   display: flex;
-  flex-direction: column;
+}
+
+.subscribePlayersToMatch div {
+  flex: 1;
 }
 
 .subscribePlayersToMatch ul li {
