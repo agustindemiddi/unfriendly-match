@@ -75,7 +75,7 @@ export const createMatchObjectFromFirestore = (matchDoc) => ({
   dateTime: matchDoc.data().dateTime?.toDate(),
 });
 
-const createMatchPlayerObjectFromPlayer = (matchId, player) => ({
+const createMatchPlayerObjectFromPlayer = (tournamentId, matchId, player) => ({
   // id: player.id,
   displayName: player.displayName,
   username: player.username,
@@ -86,6 +86,7 @@ const createMatchPlayerObjectFromPlayer = (matchId, player) => ({
   matchSubscriptionDateTime: new Date(),
   matchSubscribedBy: player.id,
   match: matchId, // quizas innecesario
+  tournament: tournamentId, // quizas innecesario
 });
 
 export const createMatchPlayerObjectFromFirestore = (matchPlayerDoc) => {
@@ -430,7 +431,11 @@ export const unsubscribeFromTournament = async (tournamentId, userId) => {
 
 // subscribe user to match:
 export const subscribeToMatch = async (tournamentId, matchId, player) => {
-  const playerData = createMatchPlayerObjectFromPlayer(matchId, player);
+  const playerData = createMatchPlayerObjectFromPlayer(
+    tournamentId,
+    matchId,
+    player
+  );
   await setDoc(
     getMatchPlayerDocRef(tournamentId, matchId, player.id),
     playerData
