@@ -1,9 +1,9 @@
-import styles from './PlayerItem.module.css';
+import styles from './TournamentPlayerItem.module.css';
 
 import { getUserAuthCtx } from '../../../../../context/authContext';
 import { mergePlayers } from '../../../../../utils/firebase/firestore/firestoreActions';
 
-const PlayerItem = ({ player }) => {
+const TournamentPlayerItem = ({ player }) => {
   const { userPlayerProfile } = getUserAuthCtx();
 
   const handleMerge = async () => {
@@ -20,4 +20,4 @@ const PlayerItem = ({ player }) => {
   );
 };
 
-export default PlayerItem;
+export default TournamentPlayerItem;

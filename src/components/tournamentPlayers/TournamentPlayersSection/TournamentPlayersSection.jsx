@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
 import AsideActionsPanel from '../../UI/AsideActionsPanel/AsideActionsPanel';
-import PlayersList from './PlayersList/PlayersList';
+import TournamentPlayersList from './TournamentPlayersList/TournamentPlayersList';
 
 import styles from './TournamentPlayersSection.module.css';
 
@@ -37,7 +37,7 @@ const TournamentPlayersSection = ({ tournament, players }) => {
     <>
       <Section>
         <h2>{tournament.name} players:</h2>
-        {players.length > 0 && <PlayersList players={players} />}
+        {players.length > 0 && <TournamentPlayersList players={players} />}
       </Section>
       <AsideActionsPanel adminActions={adminActions} actions={actions} />
     </>

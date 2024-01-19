@@ -2,12 +2,12 @@ import { useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
-import styles from './PlayerForm.module.css';
+import styles from './TournamentPlayerForm.module.css';
 
 import { getUserAuthCtx } from '../../../context/authContext';
 import { addNonVerifiedPlayerToTournament } from '../../../utils/firebase/firestore/firestoreActions';
 
-const PlayerForm = () => {
+const TournamentPlayerForm = () => {
   const { tournamentId } = useParams();
   const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
   const tournament = updatedUserTournaments?.all?.filter(
@@ -71,4 +71,4 @@ const PlayerForm = () => {
   );
 };
 
-export default PlayerForm;
+export default TournamentPlayerForm;

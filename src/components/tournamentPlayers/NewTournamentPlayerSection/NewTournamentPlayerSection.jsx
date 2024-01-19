@@ -2,11 +2,11 @@ import { useNavigate } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
 import AsideActionsPanel from '../../UI/AsideActionsPanel/AsideActionsPanel';
-import PlayerForm from '../PlayerForm/PlayerForm';
+import TournamentPlayerForm from '../TournamentPlayerForm/TournamentPlayerForm';
 
-import styles from './NewPlayerSection.module.css';
+import styles from './NewTournamentPlayerSection.module.css';
 
-const NewPlayerSection = () => {
+const NewTournamentPlayerSection = () => {
   const navigate = useNavigate();
 
   const actions = [
@@ -19,11 +19,11 @@ const NewPlayerSection = () => {
   return (
     <>
       <Section>
-        <PlayerForm />
+        <TournamentPlayerForm />
       </Section>
       <AsideActionsPanel actions={actions} />
     </>
   );
 };
 
-export default NewPlayerSection;
+export default NewTournamentPlayerSection;

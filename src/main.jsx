@@ -23,9 +23,9 @@ import NewMatchPage from './pages/matches/NewMatchPage';
 import MatchDetailPage from './pages/matches/MatchDetailPage';
 import EditMatchPage from './pages/matches/EditMatchPage';
 
-import TournamentPlayersPage from './pages/players/TournamentPlayersPage';
-import NewPlayerPage from './pages/players/NewPlayerPage';
-import EditPlayerPage from './pages/players/EditPlayerPage';
+import TournamentPlayersPage from './pages/tournamentPlayers/TournamentPlayersPage';
+import NewTournamentPlayerPage from './pages/tournamentPlayers/NewTournamentPlayerPage';
+import EditTournamentPlayerPage from './pages/tournamentPlayers/EditTournamentPlayerPage';
 
 // import Test from './components/_testing/Test';
 
@@ -69,10 +69,10 @@ const router = createBrowserRouter([
                 path: 'players',
                 children: [
                   { index: true, element: <TournamentPlayersPage /> },
-                  { path: 'new', element: <NewPlayerPage /> },
+                  { path: 'new', element: <NewTournamentPlayerPage /> },
                   {
                     path: ':playerId/edit',
-                    element: <EditPlayerPage />,
+                    element: <EditTournamentPlayerPage />,
                   },
                 ],
               },
