@@ -6,7 +6,7 @@ import TournamentForm from '../TournamentForm/TournamentForm';
 
 import styles from './EditTournamentSection.module.css';
 
-const EditTournamentSection = ({ tournament }) => {
+const EditTournamentSection = ({ userPlayerProfile, tournament }) => {
   const navigate = useNavigate();
 
   const actions = [
@@ -21,7 +21,7 @@ const EditTournamentSection = ({ tournament }) => {
       <Section>
         <TournamentForm
           isCustomMode={true}
-          isEditMode
+          userPlayerProfile={userPlayerProfile}
           tournament={tournament}
         />
       </Section>

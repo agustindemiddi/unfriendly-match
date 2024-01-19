@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -16,95 +16,55 @@ import {
 
 import trophiesImages from '../../../utils/trophiesImages';
 
-const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
-  const { userPlayerProfile, setUserPlayerProfile } = getUserAuthCtx();
-
+const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
+  const { setUserPlayerProfile } = getUserAuthCtx();
   const nameInputRef = useRef();
+  const [tournamentName, setTournamentName] = useState(
+    tournament?.name
+      ? tournament.name
+      : userPlayerProfile
+      ? `${userPlayerProfile?.displayName}'s Tournament`
+      : ''
+  );
   const defaultAddressInputRef = useRef();
   const descriptionInputRef = useRef();
-
   const [defaultTeamPlayerQuota, setDefaultTeamPlayerQuota] = useState(
-    !isEditMode ? 5 : null
+    tournament?.defaultPlayerQuota ? tournament.defaultPlayerQuota / 2 : 5
   );
-  const [defaultMatchDay, setDefaultMatchDay] = useState('');
-  const [defaultMatchTime, setDefaultMatchTime] = useState('');
+  const [defaultMatchDay, setDefaultMatchDay] = useState(
+    tournament?.defaultMatchDay || ''
+  );
+  const [defaultMatchTime, setDefaultMatchTime] = useState(
+    tournament?.defaultMatchTime || ''
+  );
   const [
     isSubscriptionStartsImmediatelySelected,
     setIsSubscriptionStartsImmediatelySelected,
-  ] = useState(true);
+  ] = useState(tournament?.defaultMatchSubscriptionTime ? false : true);
   const [
     defaultMatchSubscriptionDaysBefore,
     setDefaultMatchSubscriptionDaysBefore,
-  ] = useState('notSet');
+  ] = useState(
+    tournament?.defaultMatchSubscriptionDaysBefore ||
+      tournament?.defaultMatchSubscriptionDaysBefore === 0
+      ? tournament?.defaultMatchSubscriptionDaysBefore
+      : 'notSet'
+  );
   const [defaultMatchSubscriptionTime, setDefaultMatchSubscriptionTime] =
-    useState('');
+    useState(tournament?.defaultMatchSubscriptionTime || '');
   const [tournamentImage, setTournamentImage] = useState(
-    '/trophies/trophy01.jpg'
+    tournament?.image || '/trophies/trophy01.jpg'
   );
   const [terminationDate, setTerminationDate] = useState(
-    getFormattedTerminationDate()
+    tournament?.terminationDate
+      ? getFormattedTerminationDate(tournament.terminationDate)
+      : getFormattedTerminationDate()
   );
   const [pointsPerGameWon, setPointsPerGameWon] = useState(3);
   const hasMvpEnabledInput = useRef();
   const isPublicInput = useRef();
   const { tournamentId } = useParams();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (userPlayerProfile)
-      nameInputRef.current.value =
-        tournament?.name ?? `${userPlayerProfile?.displayName}'s Tournament`;
-  }, [userPlayerProfile, tournament?.name]);
-
-  useEffect(() => {
-    tournament?.defaultPlayerQuota &&
-      setDefaultTeamPlayerQuota(tournament.defaultPlayerQuota / 2);
-
-    tournament?.defaultMatchDay &&
-      setDefaultMatchDay(tournament.defaultMatchDay);
-
-    tournament?.defaultMatchTime &&
-      setDefaultMatchTime(tournament.defaultMatchTime);
-
-    if (
-      tournament?.defaultMatchSubscriptionDaysBefore ||
-      tournament?.defaultMatchSubscriptionDaysBefore === 0
-    ) {
-      setIsSubscriptionStartsImmediatelySelected(false);
-      setDefaultMatchSubscriptionDaysBefore(
-        tournament.defaultMatchSubscriptionDaysBefore
-      );
-    }
-
-    if (tournament?.defaultMatchSubscriptionTime) {
-      setIsSubscriptionStartsImmediatelySelected(false);
-      setDefaultMatchSubscriptionTime(tournament.defaultMatchSubscriptionTime);
-    }
-
-    // this check should be overkill if everything works fine
-    // if (
-    //   tournament?.defaultMatchSubscriptionDaysBefore === 0 &&
-    //   tournament.defaultMatchSubscriptionTime > tournament.defaultMatchTime
-    // ) {
-    //   setIsSubscriptionStartsImmediatelySelected(false);
-    //   setDefaultMatchSubscriptionTime(tournament.defaultMatchTime);
-    // }
-
-    tournament?.image && setTournamentImage(tournament.image);
-
-    tournament?.terminationDate &&
-      setTerminationDate(
-        getFormattedTerminationDate(tournament.terminationDate)
-      );
-  }, [
-    tournament?.defaultPlayerQuota,
-    tournament?.defaultMatchDay,
-    tournament?.defaultMatchTime,
-    tournament?.defaultMatchSubscriptionDaysBefore,
-    tournament?.defaultMatchSubscriptionTime,
-    tournament?.image,
-    tournament?.terminationDate,
-  ]);
 
   const typeOptions = Array.from({ length: 11 }, (_, index) => index + 1);
 
@@ -191,6 +151,17 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (
+      !isSubscriptionStartsImmediatelySelected &&
+      (defaultMatchSubscriptionDaysBefore === 'notSet' ||
+        !defaultMatchSubscriptionTime)
+    ) {
+      alert(
+        'You must specify the default date and time of the subscription or select the subscription to start immediately after match creation!'
+      );
+      return;
+    }
+
     const tournamentData = {
       creationDateTime: tournament?.creationDateTime || new Date(),
       isActive: tournament?.isActive || true,
@@ -221,7 +192,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       players: tournament?.players || [userPlayerProfile?.id],
     };
 
-    if (isEditMode) {
+    if (tournament) {
       await editTournament(tournamentId, tournamentData);
       alert(`You have successfully edited ${tournamentData.name}`);
     } else {
@@ -252,6 +223,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             name='tournament-name'
             placeholder='Tournament name'
             ref={nameInputRef}
+            defaultValue={tournamentName}
             autoFocus
             required
           />
@@ -373,8 +345,8 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
               }
               onClick={handleSubscriptionStartsCustomized}>
               <select
-                onChange={handleDefaultMatchSubscriptionDaysBeforeChange}
                 name='default-match-subscription-days-before'
+                onChange={handleDefaultMatchSubscriptionDaysBeforeChange}
                 value={defaultMatchSubscriptionDaysBefore}>
                 <option value='notSet' disabled>
                   Select days before
@@ -390,8 +362,8 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
               </select>
               <input
                 type='time'
-                onChange={handleDefaultMatchSubscriptionTimeChange}
                 name='default-match-subscription-time'
+                onChange={handleDefaultMatchSubscriptionTimeChange}
                 value={defaultMatchSubscriptionTime}
               />
             </div>
@@ -422,8 +394,8 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
           <legend>Select approximate termination date:</legend>
           <input
             type='date'
-            onChange={handleTerminationDateChange}
             name='termination-date'
+            onChange={handleTerminationDateChange}
             value={terminationDate}
             required
           />
@@ -431,7 +403,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             <legend>Tournament ends around {terminationDate}</legend>
           )}
         </fieldset>
-        {!isEditMode && isCustomMode && (
+        {!tournament && isCustomMode && (
           <fieldset className={styles.pointsPerGameWon}>
             <legend>Points per match won:</legend>
             {pointsPerGameWonOptions.map((points) => (
@@ -449,7 +421,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             ))}
           </fieldset>
         )}
-        {!isEditMode && isCustomMode && (
+        {!tournament && isCustomMode && (
           <fieldset>
             <label>
               <input type='checkbox' name='has-mvp' ref={hasMvpEnabledInput} />

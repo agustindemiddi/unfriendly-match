@@ -6,11 +6,20 @@ import { getUserAuthCtx } from '../../context/authContext';
 
 const EditTournamentPage = () => {
   const { tournamentId } = useParams();
-  const { updatedUserTournaments } = getUserAuthCtx();
+  const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
   const tournament = updatedUserTournaments?.all?.filter(
     (tournament) => tournament.id === tournamentId
   )[0];
 
-  return <EditTournamentSection tournament={tournament} />;
+  return (
+    <>
+      {userPlayerProfile && tournament && (
+        <EditTournamentSection
+          userPlayerProfile={userPlayerProfile}
+          tournament={tournament}
+        />
+      )}
+    </>
+  );
 };
 export default EditTournamentPage;

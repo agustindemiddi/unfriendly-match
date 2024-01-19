@@ -7,7 +7,7 @@ import TournamentForm from '../TournamentForm/TournamentForm';
 
 import styles from './NewTournamentSection.module.css';
 
-const NewTournamentSection = () => {
+const NewTournamentSection = ({ userPlayerProfile }) => {
   const [isCustomMode, setIsCustomMode] = useState(false);
   const navigate = useNavigate();
 
@@ -25,7 +25,12 @@ const NewTournamentSection = () => {
   return (
     <>
       <Section>
-        <TournamentForm isCustomMode={isCustomMode} />
+        {userPlayerProfile && (
+          <TournamentForm
+            isCustomMode={isCustomMode}
+            userPlayerProfile={userPlayerProfile}
+          />
+        )}
       </Section>
       <AsideActionsPanel actions={actions} />
     </>
