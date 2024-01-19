@@ -19,9 +19,9 @@ import trophiesImages from '../../../utils/trophiesImages';
 const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   const { userPlayerProfile, setUserPlayerProfile } = getUserAuthCtx();
 
-  const nameInput = useRef();
-  const defaultAddressInput = useRef();
-  const descriptionInput = useRef();
+  const nameInputRef = useRef();
+  const defaultAddressInputRef = useRef();
+  const descriptionInputRef = useRef();
 
   const [defaultTeamPlayerQuota, setDefaultTeamPlayerQuota] = useState(
     !isEditMode ? 5 : null
@@ -44,10 +44,6 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   const [terminationDate, setTerminationDate] = useState(
     getFormattedTerminationDate()
   );
-  const defaultMatchTimeInput = useRef();
-  const defaultMatchSubscriptionDaysBeforeSelect = useRef();
-  const defaultMatchSubscriptionTimeInput = useRef();
-  const terminationDateInput = useRef();
   const [pointsPerGameWon, setPointsPerGameWon] = useState(3);
   const hasMvpEnabledInput = useRef();
   const isPublicInput = useRef();
@@ -56,7 +52,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
 
   useEffect(() => {
     if (userPlayerProfile)
-      nameInput.current.value =
+      nameInputRef.current.value =
         tournament?.name ?? `${userPlayerProfile?.displayName}'s Tournament`;
   }, [userPlayerProfile, tournament?.name]);
 
@@ -195,48 +191,46 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const tournamentTerminationDate = terminationDateInput.current.value;
-    const tournamentTerminationTime = '23:59:59';
-    const tournamentCombinedTerminationDateTime = `${tournamentTerminationDate}T${tournamentTerminationTime}`;
-    const terminationDate = new Date(tournamentCombinedTerminationDateTime);
-
     const tournamentData = {
-      creationDateTime: new Date(),
-      isActive: true,
+      creationDateTime: tournament?.creationDateTime || new Date(),
+      isActive: tournament?.isActive || true,
 
-      name: nameInput.current.value,
-      defaultAddress: defaultAddressInput?.current?.value || '',
-      description: descriptionInput?.current?.value || '',
+      name:
+        nameInputRef.current.value ||
+        `${userPlayerProfile?.displayName}'s Tournament`,
+      defaultAddress: defaultAddressInputRef?.current?.value || '',
+      description: descriptionInputRef?.current?.value || '',
       defaultPlayerQuota: defaultTeamPlayerQuota
         ? defaultTeamPlayerQuota * 2
         : null,
       defaultMatchDay: defaultMatchDay || null,
-      defaultMatchTime: defaultMatchTimeInput?.current?.value || '',
+      defaultMatchTime: defaultMatchTime || '',
       defaultMatchSubscriptionDaysBefore:
         defaultMatchSubscriptionDaysBefore === 'notSet'
           ? null
           : defaultMatchSubscriptionDaysBefore,
       defaultMatchSubscriptionTime: defaultMatchSubscriptionTime || '',
-      image: tournamentImage,
-      terminationDate: terminationDate,
-      pointsPerGameWon: pointsPerGameWon,
+      image: tournamentImage || '',
+      terminationDate: new Date(`${terminationDate}T23:59:59`),
+      pointsPerGameWon: tournament?.pointsPerGameWon || pointsPerGameWon,
       hasMvpEnabled: hasMvpEnabledInput?.current?.checked || false,
-      isPublic: isPublicInput.current.checked,
+      isPublic: isPublicInput.current.checked || false,
 
-      creator: userPlayerProfile?.id,
-      admins: [userPlayerProfile?.id],
-      players: [userPlayerProfile?.id],
+      creator: tournament?.creator || userPlayerProfile?.id,
+      admins: tournament?.admins || [userPlayerProfile?.id],
+      players: tournament?.players || [userPlayerProfile?.id],
     };
 
-    if (!isEditMode) {
+    if (isEditMode) {
+      await editTournament(tournamentId, tournamentData);
+      alert(`You have successfully edited ${tournamentData.name}`);
+    } else {
       const newTournamentId = uuidv4();
-
       await addTournament(
         userPlayerProfile.id,
         tournamentData,
         newTournamentId
       );
-
       setUserPlayerProfile((prevState) => ({
         ...prevState,
         tournaments: {
@@ -244,13 +238,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
           active: [...prevState.tournaments.active, newTournamentId],
         },
       }));
-
       alert(`You have successfully created ${tournamentData.name}`);
-    }
-    if (isEditMode) {
-      await editTournament(tournamentId, tournamentData);
-
-      alert(`You have successfully edited ${tournamentData.name}`);
     }
     navigate('..');
   };
@@ -263,7 +251,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             type='text'
             name='tournament-name'
             placeholder='Tournament name'
-            ref={nameInput}
+            ref={nameInputRef}
             autoFocus
             required
           />
@@ -275,7 +263,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
               name='default-address'
               placeholder='Tournament default address'
               defaultValue={tournament?.defaultAddress}
-              ref={defaultAddressInput}
+              ref={defaultAddressInputRef}
             />
           </fieldset>
         )}
@@ -286,7 +274,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
               rows='3'
               placeholder='Description (optional)'
               defaultValue={tournament?.description}
-              ref={descriptionInput}></textarea>
+              ref={descriptionInputRef}></textarea>
           </fieldset>
         )}
         <fieldset className={styles.type}>
@@ -351,7 +339,6 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
               name='default-match-time'
               onChange={handleDefaultMatchTimeChange}
               value={defaultMatchTime}
-              ref={defaultMatchTimeInput}
             />
             <legend>
               {defaultMatchTime
@@ -388,8 +375,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
               <select
                 onChange={handleDefaultMatchSubscriptionDaysBeforeChange}
                 name='default-match-subscription-days-before'
-                value={defaultMatchSubscriptionDaysBefore}
-                ref={defaultMatchSubscriptionDaysBeforeSelect}>
+                value={defaultMatchSubscriptionDaysBefore}>
                 <option value='notSet' disabled>
                   Select days before
                 </option>
@@ -407,7 +393,6 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
                 onChange={handleDefaultMatchSubscriptionTimeChange}
                 name='default-match-subscription-time'
                 value={defaultMatchSubscriptionTime}
-                ref={defaultMatchSubscriptionTimeInput}
               />
             </div>
           </fieldset>
@@ -440,7 +425,6 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             onChange={handleTerminationDateChange}
             name='termination-date'
             value={terminationDate}
-            ref={terminationDateInput}
             required
           />
           {terminationDate && (
