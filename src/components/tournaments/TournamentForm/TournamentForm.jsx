@@ -9,7 +9,10 @@ import {
   addTournament,
   editTournament,
 } from '../../../utils//firebase/firestore/firestoreActions';
-import { getFormattedTerminationDate } from '../../../utils/getTerminationDate';
+import {
+  getFormattedTerminationDate,
+  getFormattedMaxTerminationDate,
+} from '../../../utils/getTerminationDates';
 
 import trophiesImages from '../../../utils/trophiesImages';
 
@@ -154,6 +157,18 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       setDefaultMatchSubscriptionTime(maxTime);
     } else {
       setDefaultMatchSubscriptionTime(inputTime);
+    }
+  };
+
+  const handleTerminationDateChange = (event) => {
+    const initialDate = tournament?.creationDateTime || new Date();
+    const maxDate = getFormattedMaxTerminationDate(initialDate);
+
+    const inputDate = event.target.value;
+    if (inputDate > maxDate) {
+      setTerminationDate(maxDate);
+    } else {
+      setTerminationDate(inputDate);
     }
   };
 
@@ -413,7 +428,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
           <legend>Select approximate termination date:</legend>
           <input
             type='date'
-            onChange={(event) => setTerminationDate(event.target.value)}
+            onChange={handleTerminationDateChange}
             name='termination-date'
             value={terminationDate}
             // defaultValue={getFormattedTerminationDate()}
