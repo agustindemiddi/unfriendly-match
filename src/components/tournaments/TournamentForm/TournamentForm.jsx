@@ -174,7 +174,6 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       defaultMatchTime && defaultMatchSubscriptionDaysBefore === 0
         ? defaultMatchTime
         : inputTime;
-
     if (inputTime > maxTime) {
       setDefaultMatchSubscriptionTime(maxTime);
     } else {
@@ -185,7 +184,6 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
   const handleTerminationDateChange = (event) => {
     const initialDate = tournament?.creationDateTime || new Date();
     const maxDate = getFormattedMaxTerminationDate(initialDate);
-
     const inputDate = event.target.value;
     if (inputDate > maxDate) {
       setTerminationDate(maxDate);
