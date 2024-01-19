@@ -32,11 +32,7 @@ const MatchForm = () => {
   );
   const [typeOfMatch, setTypeOfMatch] = useState(null);
 
-  const matchDateInputRef = useRef();
-  const matchTimeInputRef = useRef();
   const matchAddressInputRef = useRef();
-  const matchSubscriptionDateInputRef = useRef();
-  const matchSubscriptionTimeInputRef = useRef();
 
   const tournament = updatedUserTournaments?.all?.filter(
     (tournament) => tournament.id === tournamentId
@@ -179,18 +175,29 @@ const MatchForm = () => {
       return;
     }
 
-    const date = matchDateInputRef.current.value;
-    const time = matchTimeInputRef.current.value;
-    const combinedDateTime = `${date}T${time}`;
-    const dateTime = new Date(combinedDateTime);
+    if (
+      // later add conditional if (!isMatchEnded &&)
+      !isSubscriptionStartsImmediatelySelected &&
+      (!matchSubscriptionDate || !matchSubscriptionTime)
+    ) {
+      alert(
+        'You must specify the date and time of the subscription or select the subscription to start immediately!'
+      );
+      return;
+    }
 
     let subscriptionDateTime;
-    if (isSubscriptionStartsImmediatelySelected) {
+    // later add conditional if (isMatchEnded) {
+    // subscriptionDateTime = null
+    // } else if...
+    if (
+      // later add conditional if (!isMatchEnded &&)
+      isSubscriptionStartsImmediatelySelected
+    ) {
       subscriptionDateTime = new Date();
+      // maybe I need an else if if adding isMatchEnded conditional
     } else {
-      // const subscriptionDate = matchSubscriptionDateInputRef.current.value;
       const subscriptionDate = matchSubscriptionDate || matchDate;
-      // const subscriptionTime = matchSubscriptionTimeInputRef.current.value;
       const subscriptionTime = matchSubscriptionTime || '00:00';
       const subscriptionCombinedDateTime = `${subscriptionDate}T${subscriptionTime}`;
       subscriptionDateTime = new Date(subscriptionCombinedDateTime);
@@ -202,7 +209,7 @@ const MatchForm = () => {
       admins: tournament.admins,
       creationDateTime: new Date(),
       subscriptionDateTime: subscriptionDateTime,
-      dateTime: dateTime,
+      dateTime: new Date(`${matchDate}T${matchTime}`),
       address: matchAddressInputRef.current.value || '',
       playerQuota: typeOfMatch * 2,
       teamA: [],
@@ -233,7 +240,6 @@ const MatchForm = () => {
             onChange={handleMatchDateChange}
             name='match-date'
             value={matchDate}
-            ref={matchDateInputRef}
             required
           />
         </div>
@@ -245,7 +251,6 @@ const MatchForm = () => {
             onChange={handleMatchTimeChange}
             name='match-time'
             value={matchTime}
-            ref={matchTimeInputRef}
             required
           />
         </div>
@@ -308,7 +313,6 @@ const MatchForm = () => {
               name='match-subscription-date'
               value={matchSubscriptionDate}
               max={matchDate}
-              ref={matchSubscriptionDateInputRef}
             />
 
             <input
@@ -316,7 +320,6 @@ const MatchForm = () => {
               onChange={handleMatchSubscriptionTimeChange}
               name='match-subscription-time'
               value={matchSubscriptionTime}
-              ref={matchSubscriptionTimeInputRef}
             />
           </div>
         </div>

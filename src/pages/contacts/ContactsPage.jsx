@@ -12,8 +12,6 @@ const ContactsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [userContacts, setUserContacts] = useState([]);
 
-  console.log(updatedUserTournaments);
-
   useEffect(() => {
     if (updatedUserTournaments?.length > 0 && userPlayerProfile) {
       setIsLoading(true);
