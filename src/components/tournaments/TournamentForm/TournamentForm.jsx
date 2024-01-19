@@ -85,20 +85,17 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
       setDefaultMatchSubscriptionTime(tournament.defaultMatchSubscriptionTime);
     }
 
-    if (
-      tournament?.defaultMatchSubscriptionDaysBefore === 0 &&
-      tournament.defaultMatchSubscriptionTime > tournament.defaultMatchTime
-    ) {
-      setIsSubscriptionStartsImmediatelySelected(false);
-      setDefaultMatchSubscriptionTime(tournament.defaultMatchSubscriptionTime);
-    }
+    // this check should be overkill if everything works fine
+    // if (
+    //   tournament?.defaultMatchSubscriptionDaysBefore === 0 &&
+    //   tournament.defaultMatchSubscriptionTime > tournament.defaultMatchTime
+    // ) {
+    //   setIsSubscriptionStartsImmediatelySelected(false);
+    //   setDefaultMatchSubscriptionTime(tournament.defaultMatchTime);
+    // }
 
     tournament?.image && setTournamentImage(tournament.image);
 
-    // const updatedTerminationDate = tournament?.terminationDate
-    //   ? getFormattedTerminationDate(tournament.terminationDate)
-    //   : getFormattedTerminationDate();
-    // terminationDateInput.current.value = updatedTerminationDate;
     tournament?.terminationDate &&
       setTerminationDate(
         getFormattedTerminationDate(tournament.terminationDate)
@@ -133,20 +130,45 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
 
   const pointsPerGameWonOptions = [2, 3];
 
-  const handleSelectSubscriptionStartsImmediately = () => {
+  const handleDefaultMatchTimeChange = (event) => {
+    const inputTime = event.target.value;
+    setDefaultMatchTime(inputTime);
+    if (
+      defaultMatchSubscriptionDaysBefore === 0 &&
+      defaultMatchSubscriptionTime > inputTime
+    ) {
+      setDefaultMatchSubscriptionTime(inputTime);
+    }
+  };
+
+  const handleSubscriptionStartsImmediately = () => {
     setIsSubscriptionStartsImmediatelySelected(true);
     setDefaultMatchSubscriptionDaysBefore('notSet');
     setDefaultMatchSubscriptionTime('');
   };
 
-  const handleDefaultMatchSubscriptionTimeChange = (event) => {
-    if (defaultMatchSubscriptionDaysBefore === 0 && !defaultMatchTime) {
+  const handleSubscriptionStartsCustomized = () => {
+    if (!defaultMatchDay || !defaultMatchTime) {
       alert(
-        'If you select the subscription to start the same day as the matches, you must also specify the time when the matches will normally be played'
+        'If you want to customize the subscription start, you must first specify the day and time when the matches will normally be played'
       );
       return;
     }
+    setIsSubscriptionStartsImmediatelySelected(false);
+  };
 
+  const handleDefaultMatchSubscriptionDaysBeforeChange = (event) => {
+    const inputDaysBefore = parseInt(event.target.value);
+    setDefaultMatchSubscriptionDaysBefore(inputDaysBefore);
+    if (
+      inputDaysBefore === 0 &&
+      defaultMatchSubscriptionTime > defaultMatchTime
+    ) {
+      setDefaultMatchSubscriptionTime(defaultMatchTime);
+    }
+  };
+
+  const handleDefaultMatchSubscriptionTimeChange = (event) => {
     const inputTime = event.target.value;
     const maxTime =
       defaultMatchTime && defaultMatchSubscriptionDaysBefore === 0
@@ -174,13 +196,6 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    if (defaultMatchSubscriptionDaysBefore !== 'notSet' && !defaultMatchDay) {
-      alert(
-        'If you customize the subscription start day, you must also specify the day of the week the matches are usually played'
-      );
-      return;
-    }
 
     const tournamentTerminationDate = terminationDateInput.current.value;
     const tournamentTerminationTime = '23:59:59';
@@ -324,7 +339,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
               ))}
             </div>
             <legend>
-              {defaultMatchDay
+              {defaultMatchDay || defaultMatchDay === 0
                 ? `Normally, matches are played on ${selectedWeekDay}s`
                 : 'You have not selected the default day of the week for the matches of this tournament'}
             </legend>
@@ -336,7 +351,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             <input
               type='time'
               name='default-match-time'
-              onChange={(event) => setDefaultMatchTime(event.target.value)}
+              onChange={handleDefaultMatchTimeChange}
               value={defaultMatchTime}
               ref={defaultMatchTimeInput}
             />
@@ -357,7 +372,7 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
                   ? styles.selectedSubscriptionDateTime
                   : ''
               }
-              onClick={handleSelectSubscriptionStartsImmediately}>
+              onClick={handleSubscriptionStartsImmediately}>
               <span>
                 Subscripton starts immediately
                 <br />
@@ -371,13 +386,9 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
                   ? styles.selectedSubscriptionDateTime
                   : ''
               }
-              onClick={() => setIsSubscriptionStartsImmediatelySelected(false)}>
+              onClick={handleSubscriptionStartsCustomized}>
               <select
-                onChange={(event) =>
-                  setDefaultMatchSubscriptionDaysBefore(
-                    parseInt(event.target.value)
-                  )
-                }
+                onChange={handleDefaultMatchSubscriptionDaysBeforeChange}
                 name='default-match-subscription-days-before'
                 value={defaultMatchSubscriptionDaysBefore}
                 ref={defaultMatchSubscriptionDaysBeforeSelect}>
@@ -431,7 +442,6 @@ const TournamentForm = ({ isCustomMode, isEditMode, tournament }) => {
             onChange={handleTerminationDateChange}
             name='termination-date'
             value={terminationDate}
-            // defaultValue={getFormattedTerminationDate()}
             ref={terminationDateInput}
             required
           />

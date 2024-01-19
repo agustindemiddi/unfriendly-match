@@ -110,20 +110,23 @@ const MatchForm = () => {
 
   const typeOptions = Array.from({ length: 11 }, (_, index) => index + 1);
 
-  const handleSelectSubscriptionStartsImmediately = () => {
+  const handleSubscriptionStartsImmediately = () => {
     setIsSubscriptionStartsImmediatelySelected(true);
     setMatchSubscriptionDate('');
     setMatchSubscriptionTime('');
   };
 
-  const handleMatchSubscriptionTimeChange = (event) => {
-    if (matchSubscriptionDate === matchDate && !matchTime) {
+  const handleSubscriptionStartsCustomized = () => {
+    if (!matchDate || !matchTime) {
       alert(
-        'If subscription starts the same day of the match, you must specify the match starting time before setting the time for the subscription!'
+        'If you want to customize the subscription start, you must first specify the date and time of the match!'
       );
       return;
     }
+    setIsSubscriptionStartsImmediatelySelected(false);
+  };
 
+  const handleMatchSubscriptionTimeChange = (event) => {
     const inputTime = event.target.value;
     const maxTime = matchSubscriptionDate === matchDate ? matchTime : inputTime;
 
@@ -161,20 +164,6 @@ const MatchForm = () => {
       return;
     }
 
-    if (matchSubscriptionTime && !matchSubscriptionDate) {
-      alert(
-        'If you select a custom time for the subscription to start, you must specify the day too!'
-      );
-      return;
-    }
-
-    // if (matchSubscriptionDate && !matchSubscriptionTime) {
-    //   alert(
-    //     'If you select a custom date for the subscription to start, you must specify the time too!'
-    //   );
-    //   return;
-    // }
-
     const date = matchDateInputRef.current.value;
     const time = matchTimeInputRef.current.value;
     const combinedDateTime = `${date}T${time}`;
@@ -187,8 +176,7 @@ const MatchForm = () => {
       // const subscriptionDate = matchSubscriptionDateInputRef.current.value;
       const subscriptionDate = matchSubscriptionDate || matchDate;
       // const subscriptionTime = matchSubscriptionTimeInputRef.current.value;
-      const subscriptionTime =
-        matchDate && !matchSubscriptionTime ? '00:00' : matchSubscriptionTime;
+      const subscriptionTime = matchSubscriptionTime || '00:00';
       const subscriptionCombinedDateTime = `${subscriptionDate}T${subscriptionTime}`;
       subscriptionDateTime = new Date(subscriptionCombinedDateTime);
     }
@@ -208,16 +196,17 @@ const MatchForm = () => {
       mvps: [],
     };
 
-    const matchId = uuidv4();
-    await addMatch(tournamentId, matchId, matchData);
+    // const matchId = uuidv4();
+    // await addMatch(tournamentId, matchId, matchData);
 
-    await Promise.all(
-      matchPlayers.map((player) =>
-        subscribeToMatch(tournamentId, matchId, player)
-      )
-    );
+    // await Promise.all(
+    //   matchPlayers.map((player) =>
+    //     subscribeToMatch(tournamentId, matchId, player)
+    //   )
+    // );
 
-    console.log('match added!');
+    // console.log('match added!');
+    console.log(matchData);
   };
 
   return (
@@ -290,7 +279,7 @@ const MatchForm = () => {
                 ? styles.selectedSubscriptionDateTime
                 : ''
             }
-            onClick={handleSelectSubscriptionStartsImmediately}>
+            onClick={handleSubscriptionStartsImmediately}>
             <span>Immediately</span>
           </div>
 
@@ -300,7 +289,7 @@ const MatchForm = () => {
                 ? styles.selectedSubscriptionDateTime
                 : ''
             }
-            onClick={() => setIsSubscriptionStartsImmediatelySelected(false)}>
+            onClick={handleSubscriptionStartsCustomized}>
             <input
               type='date'
               onChange={(event) => setMatchSubscriptionDate(event.target.value)}
