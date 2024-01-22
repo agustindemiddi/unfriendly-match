@@ -7,9 +7,9 @@ import { getUserAuthCtx } from '../../context/authContext';
 const EditTournamentPage = () => {
   const { tournamentId } = useParams();
   const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
-  const tournament = updatedUserTournaments?.all?.filter(
+  const tournament = updatedUserTournaments?.all?.find(
     (tournament) => tournament.id === tournamentId
-  )[0];
+  );
 
   return (
     <>

@@ -361,6 +361,23 @@ export const getTeams = async (teamAPlayersIdsArray, teamBPlayersIdsArray) => {
 };
 
 // LISTENERS
+// add listener to multiple playersDocs:
+export const addMultiplePlayersListener = (
+  playersIdsArray,
+  setUpdatedPlayers
+) => {
+  const playersQuery = query(
+    getPlayersColRef(),
+    where(documentId(), 'in', playersIdsArray)
+  );
+  return onSnapshot(playersQuery, (querySnapshot) => {
+    const playersArray = [];
+    querySnapshot.forEach((playerDoc) => {
+      playersArray.push(createPlayerObjectFromFirestore(playerDoc));
+    });
+    setUpdatedPlayers(playersArray);
+  });
+};
 
 // add listener to tournamentDoc:
 const addTournamentListener = (tournamentId, setUpdatedTournament) =>

@@ -9,6 +9,7 @@ import {
   logout,
 } from '../utils/firebase/firebaseAuthActions';
 import {
+  addMultiplePlayersListener,
   addMultipleTournamentsListener,
   getTournamentMatches,
   addMultipleMatchesListener,
@@ -20,20 +21,22 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userPlayerProfile, setUserPlayerProfile] = useState(null);
   const [updatedUserTournaments, setUpdatedUserTournaments] = useState(null);
+  const [updatedUserTournamentsPlayers, setUpdatedUserTournamentsPlayers] =
+    useState(null);
   const [updatedTournamentMatches, setUpdatedTournamentMatches] =
     useState(null);
   const { tournamentId } = useParams();
   const navigate = useNavigate();
 
+  // add listener to user auth:
   useEffect(() => {
-    // add listener to user auth:
     const unsubscribe = authListener(setUser, setUserPlayerProfile);
     return () => unsubscribe();
   }, []);
 
+  // add listener to user tournaments:
   useEffect(() => {
     if (userPlayerProfile && userPlayerProfile.tournaments.all.length > 0) {
-      // add listener to user tournaments:
       const unsubscribe = addMultipleTournamentsListener(
         userPlayerProfile.tournaments.all,
         setUpdatedUserTournaments
@@ -44,6 +47,27 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [userPlayerProfile?.tournaments.all]);
 
+  // // add listener to user contacts:
+  // useEffect(() => {
+  //   if (userPlayerProfile && updatedUserTournaments?.all.length > 0) {
+  //     const tournamentPlayersIds = updatedUserTournaments.all.map(
+  //       (tournament) => tournament.players
+  //     );
+  //     const allContactsIds = Array.from(
+  //       new Set(tournamentPlayersIds.flat())
+  //     ).filter((playerId) => playerId !== userPlayerProfile.id);
+
+  //     const unsubscribe = addMultiplePlayersListener(
+  //       allContactsIds,
+  //       setUpdatedUserTournamentsPlayers
+  //     );
+  //     return () => unsubscribe();
+  //   } else {
+  //     setUpdatedUserTournamentsPlayers([]);
+  //   }
+  // }, [updatedUserTournaments?.all]);
+
+  // add listener to tournament matches:
   useEffect(() => {
     if (location.pathname.startsWith(`/tournaments/${tournamentId}`)) {
       // fetch tournament matches:
@@ -51,7 +75,7 @@ export const AuthContextProvider = ({ children }) => {
         const fetchedMatches = await getTournamentMatches(tournamentId);
         if (fetchedMatches.length > 0) {
           const MatchesIdsArray = fetchedMatches.map((match) => match.id);
-          // add listener to tournament matches:
+          // add listener:
           const unsubscribe = addMultipleMatchesListener(
             tournamentId,
             MatchesIdsArray,
@@ -65,6 +89,10 @@ export const AuthContextProvider = ({ children }) => {
       fetchTournamentMatches();
     }
   }, [tournamentId]);
+
+  const userContacts = updatedUserTournamentsPlayers?.filter(
+    (player) => player.isVerified
+  );
 
   // auth.useDeviceLanguage(); // test how it works
 
@@ -87,6 +115,7 @@ export const AuthContextProvider = ({ children }) => {
         userPlayerProfile,
         updatedUserTournaments,
         updatedTournamentMatches,
+        userContacts,
         setUserPlayerProfile,
         handleGoogleSignIn,
         handleEmailSignIn,

@@ -11,9 +11,9 @@ const MatchesPage = () => {
   const { updatedUserTournaments, updatedTournamentMatches } = getUserAuthCtx();
   const [unsubscribedTournament, setUnsubscribedTournament] = useState([]);
 
-  const tournament = updatedUserTournaments?.all?.filter(
+  const tournament = updatedUserTournaments?.all?.find(
     (tournament) => tournament.id === tournamentId
-  )[0];
+  );
 
   useEffect(() => {
     if (!tournament) {

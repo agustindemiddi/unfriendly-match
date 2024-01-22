@@ -8,12 +8,13 @@ import { getPlayers } from '../../utils/firebase/firestore/firestoreActions';
 import bouncingBall from '../../assets/bouncing-ball.json';
 
 const ContactsPage = () => {
+  // const { userPlayerProfile, updatedUserTournaments, userContacts } = getUserAuthCtx();
   const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
   const [isLoading, setIsLoading] = useState(true);
   const [userContacts, setUserContacts] = useState([]);
 
   useEffect(() => {
-    if (updatedUserTournaments?.length > 0 && userPlayerProfile) {
+    if (updatedUserTournaments?.all?.length > 0 && userPlayerProfile) {
       setIsLoading(true);
       const fetchContacts = async () => {
         const tournamentPlayersIds = updatedUserTournaments.all.map(
