@@ -8,7 +8,7 @@ import { getTournament } from '../../utils/firebase/firestore/firestoreActions';
 
 const TournamentDetailPage = () => {
   const { tournamentId } = useParams();
-  const { updatedUserTournaments, tournamentMatches } = getUserAuthCtx();
+  const { updatedUserTournaments, updatedTournamentMatches } = getUserAuthCtx();
   const [unsubscribedTournament, setUnsubscribedTournament] = useState([]);
 
   const tournament = updatedUserTournaments?.all?.filter(
@@ -27,10 +27,10 @@ const TournamentDetailPage = () => {
 
   return (
     <>
-      {updatedUserTournaments && tournamentMatches && (
+      {updatedUserTournaments && updatedTournamentMatches && (
         <TournamentDetailSection
           tournament={tournament || unsubscribedTournament}
-          matches={tournamentMatches}
+          matches={updatedTournamentMatches}
         />
       )}
     </>

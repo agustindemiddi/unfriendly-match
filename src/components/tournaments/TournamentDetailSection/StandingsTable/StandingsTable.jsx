@@ -9,8 +9,10 @@ import { calculateTournamentStats } from '../../../../utils/calculateTournamentS
 
 const StandingsTable = () => {
   const { tournamentId } = useParams();
-  const { updatedUserTournaments, tournamentMatches } = getUserAuthCtx();
+  const { updatedUserTournaments, updatedTournamentMatches } = getUserAuthCtx();
   const [tournamentPlayers, setTournamentPlayers] = useState([]);
+
+
 
   const tournament = updatedUserTournaments?.all?.filter(
     (tournament) => tournament.id === tournamentId
@@ -26,12 +28,15 @@ const StandingsTable = () => {
     }
   }, [tournament?.players]);
 
-  const finishedMatches = tournamentMatches.filter(
+  const finishedMatches = updatedTournamentMatches.filter(
     (match) => Object.keys(match.result).length > 0
   );
 
+  
   const tournamentStats = calculateTournamentStats(finishedMatches);
-
+  
+  console.log(tournamentStats);
+  
   return (
     <table className={styles.standingsTable}>
       <thead>

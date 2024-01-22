@@ -361,6 +361,40 @@ export const getTeams = async (teamAPlayersIdsArray, teamBPlayersIdsArray) => {
 };
 
 // LISTENERS
+
+// add listener to tournamentDoc:
+const addTournamentListener = (tournamentId, setUpdatedTournament) =>
+  onSnapshot(
+    getTournamentDocRef(tournamentId),
+    (tournamentDoc) => {
+      const tournament = createTournamentObjectFromFirestore(tournamentDoc);
+      setUpdatedTournament(tournament);
+    },
+    (error) => console.log(error)
+  );
+
+// add listener to multiple tournamentsDocs:
+export const addMultipleTournamentsListener = (
+  tournamentsIdsArray,
+  setUpdatedTournaments
+) => {
+  const tournamentsQuery = query(
+    getTournamentsColRef(),
+    where(documentId(), 'in', tournamentsIdsArray)
+  );
+  return onSnapshot(tournamentsQuery, (querySnapshot) => {
+    const tournamentsArray = [];
+    querySnapshot.forEach((tournamentDoc) => {
+      tournamentsArray.push(createTournamentObjectFromFirestore(tournamentDoc));
+    });
+    setUpdatedTournaments({
+      all: tournamentsArray,
+      active: tournamentsArray.filter((tournament) => tournament.isActive),
+      finished: tournamentsArray.filter((tournament) => !tournament.isActive),
+    });
+  });
+};
+
 // add listener to matchDoc:
 const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
   onSnapshot(
@@ -371,6 +405,25 @@ const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
     },
     (error) => console.log(error)
   );
+
+// add listener to multiple matchesDocs:
+export const addMultipleMatchesListener = (
+  tournamentId,
+  MatchesIdsArray,
+  setUpdatedMatches
+) => {
+  const matchesQuery = query(
+    getTournamentMatchesColRef(tournamentId),
+    where(documentId(), 'in', MatchesIdsArray)
+  );
+  return onSnapshot(matchesQuery, (querySnapshot) => {
+    const matchesArray = [];
+    querySnapshot.forEach((matchDoc) => {
+      matchesArray.push(createMatchObjectFromFirestore(matchDoc));
+    });
+    setUpdatedMatches(matchesArray);
+  });
+};
 
 // add listener to multiple matchPlayersDocs:
 export const addMultipleMatchPlayersListener = (
@@ -389,39 +442,6 @@ export const addMultipleMatchPlayersListener = (
       matchPlayersArray.push(createPlayerObjectFromFirestore(matchPlayerDoc));
     });
     setUpdatedMatchPlayers(matchPlayersArray);
-  });
-};
-
-// add listener to tournamentDoc: // estoy escuchando a un tournament especifico y tambien a todos. chequear si puedo obviar este listener
-export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
-  onSnapshot(
-    getTournamentDocRef(tournamentId),
-    (tournamentDoc) => {
-      const tournament = createTournamentObjectFromFirestore(tournamentDoc);
-      setUpdatedTournament(tournament);
-    },
-    (error) => console.log(error)
-  );
-
-// add listener to multiple tournamentsDocs:
-export const addMultipleTournamentsListener = (
-  tournamentsIdsArray,
-  setTournaments
-) => {
-  const tournamentsQuery = query(
-    getTournamentsColRef(),
-    where(documentId(), 'in', tournamentsIdsArray)
-  );
-  return onSnapshot(tournamentsQuery, (querySnapshot) => {
-    const tournamentsArray = [];
-    querySnapshot.forEach((tournamentDoc) => {
-      tournamentsArray.push(createTournamentObjectFromFirestore(tournamentDoc));
-    });
-    setTournaments({
-      all: tournamentsArray,
-      active: tournamentsArray.filter((tournament) => tournament.isActive),
-      finished: tournamentsArray.filter((tournament) => !tournament.isActive),
-    });
   });
 };
 

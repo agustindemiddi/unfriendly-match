@@ -11,6 +11,7 @@ import {
 import {
   addMultipleTournamentsListener,
   getTournamentMatches,
+  addMultipleMatchesListener,
 } from '../utils/firebase/firestore/firestoreActions';
 
 const authContext = createContext();
@@ -19,7 +20,8 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userPlayerProfile, setUserPlayerProfile] = useState(null);
   const [updatedUserTournaments, setUpdatedUserTournaments] = useState(null);
-  const [tournamentMatches, setTournamentMatches] = useState(null);
+  const [updatedTournamentMatches, setUpdatedTournamentMatches] =
+    useState(null);
   const { tournamentId } = useParams();
   const navigate = useNavigate();
 
@@ -31,7 +33,7 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (userPlayerProfile && userPlayerProfile.tournaments.all.length > 0) {
-      // add listener to user tournamentDocs:
+      // add listener to user tournaments:
       const unsubscribe = addMultipleTournamentsListener(
         userPlayerProfile.tournaments.all,
         setUpdatedUserTournaments
@@ -43,15 +45,26 @@ export const AuthContextProvider = ({ children }) => {
   }, [userPlayerProfile?.tournaments.all]);
 
   useEffect(() => {
-    // get tournament matches:
     if (location.pathname.startsWith(`/tournaments/${tournamentId}`)) {
+      // fetch tournament matches:
       const fetchTournamentMatches = async () => {
-        const matches = await getTournamentMatches(tournamentId);
-        setTournamentMatches(matches);
+        const fetchedMatches = await getTournamentMatches(tournamentId);
+        if (fetchedMatches.length > 0) {
+          const MatchesIdsArray = fetchedMatches.map((match) => match.id);
+          // add listener to tournament matches:
+          const unsubscribe = addMultipleMatchesListener(
+            tournamentId,
+            MatchesIdsArray,
+            setUpdatedTournamentMatches
+          );
+          return () => unsubscribe();
+        } else {
+          setUpdatedTournamentMatches([]);
+        }
       };
       fetchTournamentMatches();
     }
-  }, [location.pathname, tournamentId]);
+  }, [tournamentId]);
 
   // auth.useDeviceLanguage(); // test how it works
 
@@ -73,7 +86,7 @@ export const AuthContextProvider = ({ children }) => {
         user,
         userPlayerProfile,
         updatedUserTournaments,
-        tournamentMatches,
+        updatedTournamentMatches,
         setUserPlayerProfile,
         handleGoogleSignIn,
         handleEmailSignIn,
