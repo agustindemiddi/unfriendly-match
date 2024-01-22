@@ -25,7 +25,12 @@ const PlayerIconContainer = ({
   ) => {
     if (!isTournamentPlayer) alert('You must join the tournament first!');
     if (isTournamentPlayer && isSubscriptionOpen && !isUserSubscribed)
-      await subscribeToMatch(tournamentId, matchId, userPlayerProfile);
+      await subscribeToMatch(
+        tournamentId,
+        matchId,
+        userPlayerProfile,
+        userPlayerProfile.id
+      );
   };
 
   const handleUnsubscribeFromMatch = async (tournamentId, matchId, userId) => {
@@ -44,7 +49,12 @@ const PlayerIconContainer = ({
       matchId={matchId}
       userId={userPlayerProfile.id}
       handleSubscribeToMatch={() =>
-        handleSubscribeToMatch(tournamentId, matchId, userPlayerProfile)
+        handleSubscribeToMatch(
+          tournamentId,
+          matchId,
+          userPlayerProfile,
+          userPlayerProfile.id
+        )
       }
       handleUnsubscribeFromMatch={() =>
         handleUnsubscribeFromMatch(tournamentId, matchId, userPlayerProfile.id)

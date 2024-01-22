@@ -232,7 +232,7 @@ const MatchForm = ({
       );
       await Promise.all(
         newPlayersToSubscribe.map((player) =>
-          addMatchPlayer(tournamentId, match.id, player)
+          addMatchPlayer(tournamentId, match.id, player, userPlayerProfile.id)
         )
       );
       await Promise.all(
@@ -247,7 +247,7 @@ const MatchForm = ({
       await addMatch(tournamentId, newMatchId, matchData);
       await Promise.all(
         playersToSubscribe.map((player) =>
-          addMatchPlayer(tournamentId, newMatchId, player)
+          addMatchPlayer(tournamentId, newMatchId, player, userPlayerProfile.id)
         )
       );
       alert(`You have successfully created the match ${matchDate}`);

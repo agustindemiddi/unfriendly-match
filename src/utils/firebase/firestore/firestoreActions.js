@@ -75,7 +75,12 @@ export const createMatchObjectFromFirestore = (matchDoc) => ({
   dateTime: matchDoc.data().dateTime?.toDate(),
 });
 
-const createMatchPlayerObjectFromPlayer = (tournamentId, matchId, player) => ({
+const createMatchPlayerObjectFromPlayer = (
+  tournamentId,
+  matchId,
+  player,
+  userId
+) => ({
   displayName: player.displayName,
   username: player.username,
   image: player.image,
@@ -83,7 +88,7 @@ const createMatchPlayerObjectFromPlayer = (tournamentId, matchId, player) => ({
   // isVerified: player.isVerified,
 
   matchSubscriptionDateTime: new Date(),
-  matchSubscribedBy: player.id, // creo que está mal. no cubre el caso cuando es anotado por el admin
+  matchSubscribedBy: userId,
   match: matchId, // quizas innecesario
   tournament: tournamentId, // quizas innecesario
 });
@@ -255,11 +260,12 @@ export const getMatchPlayer = async (tournamentId, matchId, playerId) => {
 };
 
 // add match player:
-export const addMatchPlayer = async (tournamentId, matchId, player) => {
+export const addMatchPlayer = async (tournamentId, matchId, player, userId) => {
   const playerData = createMatchPlayerObjectFromPlayer(
     tournamentId,
     matchId,
-    player
+    player,
+    userId
   );
   await setDoc(
     getMatchPlayerDocRef(tournamentId, matchId, player.id),
@@ -447,8 +453,13 @@ export const unsubscribeFromTournament = async (tournamentId, userId) => {
 };
 
 // subscribe user to match:
-export const subscribeToMatch = async (tournamentId, matchId, player) => {
-  await addMatchPlayer(tournamentId, matchId, player);
+export const subscribeToMatch = async (
+  tournamentId,
+  matchId,
+  player,
+  userId
+) => {
+  await addMatchPlayer(tournamentId, matchId, player, userId);
   await updateDoc(getMatchDocRef(tournamentId, matchId), {
     players: arrayUnion(player.id),
   });
