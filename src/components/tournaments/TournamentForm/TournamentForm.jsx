@@ -271,7 +271,9 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
             ))}
           </div>
           <legend>
-            {defaultTeamPlayerQuota
+            {defaultTeamPlayerQuota === 1
+              ? `${defaultTeamPlayerQuota} player per team`
+              : defaultTeamPlayerQuota
               ? `${defaultTeamPlayerQuota} players per team`
               : 'You have not selected the default type of match for this tournament'}
           </legend>
@@ -440,7 +442,9 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
             <span>This is a public tournament.</span>
           </label>
         </fieldset>
-        <button type='submit'>Confirm</button>
+        <button type='submit'>
+          {tournament ? 'Update Tournament' : 'Create Tournament'}
+        </button>
       </form>
 
       {/* <article>

@@ -6,7 +6,12 @@ import MatchForm from '../MatchForm/MatchForm';
 
 import styles from './NewMatchSection.module.css';
 
-const NewMatchSection = () => {
+const NewMatchSection = ({
+  userPlayerProfile,
+  tournament,
+  tournamentPlayers,
+  availablePlayers,
+}) => {
   const navigate = useNavigate();
 
   const actions = [
@@ -19,7 +24,12 @@ const NewMatchSection = () => {
   return (
     <>
       <Section>
-        <MatchForm />
+        <MatchForm
+          userPlayerProfile={userPlayerProfile}
+          tournament={tournament}
+          tournamentPlayers={tournamentPlayers}
+          availablePlayers={availablePlayers}
+        />
       </Section>
       <AsideActionsPanel actions={actions} />
     </>

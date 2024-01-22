@@ -6,7 +6,14 @@ import MatchForm from '../MatchForm/MatchForm';
 
 import styles from './EditMatchSection.module.css';
 
-const EditMatchSection = () => {
+const EditMatchSection = ({
+  userPlayerProfile,
+  tournament,
+  tournamentPlayers,
+  match,
+  matchPlayers,
+  availablePlayers,
+}) => {
   const navigate = useNavigate();
 
   const actions = [
@@ -19,7 +26,14 @@ const EditMatchSection = () => {
   return (
     <>
       <Section>
-        <MatchForm />
+        <MatchForm
+          userPlayerProfile={userPlayerProfile}
+          tournament={tournament}
+          tournamentPlayers={tournamentPlayers}
+          match={match}
+          matchPlayers={matchPlayers}
+          availablePlayers={availablePlayers}
+        />
       </Section>
       <AsideActionsPanel actions={actions} />
     </>

@@ -76,7 +76,6 @@ export const createMatchObjectFromFirestore = (matchDoc) => ({
 });
 
 const createMatchPlayerObjectFromPlayer = (tournamentId, matchId, player) => ({
-  // id: player.id,
   displayName: player.displayName,
   username: player.username,
   image: player.image,
@@ -84,7 +83,7 @@ const createMatchPlayerObjectFromPlayer = (tournamentId, matchId, player) => ({
   // isVerified: player.isVerified,
 
   matchSubscriptionDateTime: new Date(),
-  matchSubscribedBy: player.id,
+  matchSubscribedBy: player.id, // creo que está mal. no cubre el caso cuando es anotado por el admin
   match: matchId, // quizas innecesario
   tournament: tournamentId, // quizas innecesario
 });
@@ -204,16 +203,12 @@ export const getTournament = async (tournamentId) => {
 };
 
 // add tournament:
-export const addTournament = async (
-  userId,
-  tournamentData,
-  newTournamentId
-) => {
-  await setDoc(getTournamentDocRef(newTournamentId), tournamentData);
+export const addTournament = async (userId, tournamentData, tournamentId) => {
+  await setDoc(getTournamentDocRef(tournamentId), tournamentData);
 
   await updateDoc(getPlayerDocRef(userId), {
-    'tournaments.all': arrayUnion(newTournamentId),
-    'tournaments.active': arrayUnion(newTournamentId),
+    'tournaments.all': arrayUnion(tournamentId),
+    'tournaments.active': arrayUnion(tournamentId),
   });
 };
 
@@ -246,6 +241,10 @@ export const addMatch = async (tournamentId, matchId, matchData) => {
   await setDoc(getMatchDocRef(tournamentId, matchId), matchData);
 };
 
+// edit match:
+export const editMatch = async (tournamentId, matchId, matchData) =>
+  await updateDoc(getMatchDocRef(tournamentId, matchId), matchData);
+
 // get match player:
 export const getMatchPlayer = async (tournamentId, matchId, playerId) => {
   const matchPlayerDoc = await getDocument(
@@ -253,6 +252,24 @@ export const getMatchPlayer = async (tournamentId, matchId, playerId) => {
   );
   const matchPlayer = createMatchPlayerObjectFromFirestore(matchPlayerDoc);
   return matchPlayer;
+};
+
+// add match player:
+export const addMatchPlayer = async (tournamentId, matchId, player) => {
+  const playerData = createMatchPlayerObjectFromPlayer(
+    tournamentId,
+    matchId,
+    player
+  );
+  await setDoc(
+    getMatchPlayerDocRef(tournamentId, matchId, player.id),
+    playerData
+  );
+};
+
+// delete match player:
+export const deleteMatchPlayer = async (tournamentId, matchId, playerId) => {
+  await deleteDoc(getMatchPlayerDocRef(tournamentId, matchId, playerId));
 };
 
 // get multiple players:
@@ -431,15 +448,7 @@ export const unsubscribeFromTournament = async (tournamentId, userId) => {
 
 // subscribe user to match:
 export const subscribeToMatch = async (tournamentId, matchId, player) => {
-  const playerData = createMatchPlayerObjectFromPlayer(
-    tournamentId,
-    matchId,
-    player
-  );
-  await setDoc(
-    getMatchPlayerDocRef(tournamentId, matchId, player.id),
-    playerData
-  );
+  await addMatchPlayer(tournamentId, matchId, player);
   await updateDoc(getMatchDocRef(tournamentId, matchId), {
     players: arrayUnion(player.id),
   });
