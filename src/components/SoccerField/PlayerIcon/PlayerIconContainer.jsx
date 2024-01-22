@@ -47,7 +47,7 @@ const PlayerIconContainer = ({
       playerId={playerId}
       tournamentId={tournamentId}
       matchId={matchId}
-      userId={userPlayerProfile.id}
+      userId={userPlayerProfile?.id}
       handleSubscribeToMatch={() =>
         handleSubscribeToMatch(
           tournamentId,

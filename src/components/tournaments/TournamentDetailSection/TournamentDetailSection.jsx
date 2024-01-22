@@ -15,28 +15,32 @@ import {
 } from '../../../utils/firebase/firestore/firestoreActions';
 import copyUrlToClipboard from '../../../utils/copyUrlToClipboard';
 
-const TournamentDetailSection = ({ tournament, matches }) => {
-  const { userPlayerProfile, setUserPlayerProfile } = getUserAuthCtx();
+const TournamentDetailSection = ({
+  userPlayerProfile,
+  tournament,
+  matches,
+}) => {
+  // const { setUserPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
 
   const isTournamentPlayer = tournament?.players?.includes(
     userPlayerProfile?.id
   );
 
-  const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
+  const isAdmin = tournament?.admins?.includes(userPlayerProfile.id);
 
   const { nextMatch, lastMatch } = separateMatches(matches);
 
   const handleSubscribeToTournament = async () => {
     await subscribeToTournament(tournament.id, userPlayerProfile.id);
 
-    setUserPlayerProfile((prevState) => ({
-      ...prevState,
-      tournaments: {
-        all: [...prevState.tournaments.all, tournament.id],
-        active: [...prevState.tournaments.active, tournament.id],
-      },
-    }));
+    // setUserPlayerProfile((prevState) => ({
+    //   ...prevState,
+    //   tournaments: {
+    //     all: [...prevState.tournaments.all, tournament.id],
+    //     active: [...prevState.tournaments.active, tournament.id],
+    //   },
+    // }));
 
     alert(`You have successfully joined ${tournament.name}`);
   };
@@ -44,17 +48,17 @@ const TournamentDetailSection = ({ tournament, matches }) => {
   const handleUnsubscribeFromTournament = async () => {
     await unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
 
-    setUserPlayerProfile((prevState) => ({
-      ...prevState,
-      tournaments: {
-        all: prevState.tournaments.all.filter(
-          (tournamentId) => tournamentId !== tournament.id
-        ),
-        active: prevState.tournaments.active.filter(
-          (tournamentId) => tournamentId !== tournament.id
-        ),
-      },
-    }));
+    // setUserPlayerProfile((prevState) => ({
+    //   ...prevState,
+    //   tournaments: {
+    //     all: prevState.tournaments.all.filter(
+    //       (tournamentId) => tournamentId !== tournament.id
+    //     ),
+    //     active: prevState.tournaments.active.filter(
+    //       (tournamentId) => tournamentId !== tournament.id
+    //     ),
+    //   },
+    // }));
 
     if (tournament.players.length > 1) {
       alert(`You have successfully abandoned ${tournament.name}.`);

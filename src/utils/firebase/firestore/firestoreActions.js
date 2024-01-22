@@ -361,6 +361,17 @@ export const getTeams = async (teamAPlayersIdsArray, teamBPlayersIdsArray) => {
 };
 
 // LISTENERS
+// add listener to playerDoc:
+export const addPlayerListener = (playerId, setUpdatedUserProfile) =>
+  onSnapshot(
+    getPlayerDocRef(playerId),
+    (playerDoc) => {
+      const player = createPlayerObjectFromFirestore(playerDoc);
+      setUpdatedUserProfile(player);
+    },
+    (error) => console.log(error)
+  );
+
 // add listener to multiple playersDocs:
 export const addMultiplePlayersListener = (
   playersIdsArray,

@@ -9,6 +9,7 @@ import {
   logout,
 } from '../utils/firebase/firebaseAuthActions';
 import {
+  addPlayerListener,
   addMultiplePlayersListener,
   addMultipleTournamentsListener,
   getTournamentMatches,
@@ -30,9 +31,18 @@ export const AuthContextProvider = ({ children }) => {
 
   // add listener to user auth:
   useEffect(() => {
-    const unsubscribe = authListener(setUser, setUserPlayerProfile);
+    // const unsubscribe = authListener(setUser, setUserPlayerProfile);
+    const unsubscribe = authListener(setUser);
     return () => unsubscribe();
   }, []);
+
+  // add listener to user player:
+  useEffect(() => {
+    if (user) {
+      const unsubscribe = addPlayerListener(user.uid, setUserPlayerProfile);
+      return () => unsubscribe();
+    }
+  }, [user]);
 
   // add listener to user tournaments:
   useEffect(() => {
@@ -47,25 +57,25 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [userPlayerProfile?.tournaments.all]);
 
-  // // add listener to user contacts:
-  // useEffect(() => {
-  //   if (userPlayerProfile && updatedUserTournaments?.all.length > 0) {
-  //     const tournamentPlayersIds = updatedUserTournaments.all.map(
-  //       (tournament) => tournament.players
-  //     );
-  //     const allContactsIds = Array.from(
-  //       new Set(tournamentPlayersIds.flat())
-  //     ).filter((playerId) => playerId !== userPlayerProfile.id);
+  // add listener to user contacts:
+  useEffect(() => {
+    if (userPlayerProfile && updatedUserTournaments?.all?.length > 0) {
+      const tournamentPlayersIds = updatedUserTournaments.all.map(
+        (tournament) => tournament.players
+      );
+      const allContactsIds = Array.from(
+        new Set(tournamentPlayersIds.flat())
+      ).filter((playerId) => playerId !== userPlayerProfile.id);
 
-  //     const unsubscribe = addMultiplePlayersListener(
-  //       allContactsIds,
-  //       setUpdatedUserTournamentsPlayers
-  //     );
-  //     return () => unsubscribe();
-  //   } else {
-  //     setUpdatedUserTournamentsPlayers([]);
-  //   }
-  // }, [updatedUserTournaments?.all]);
+      const unsubscribe = addMultiplePlayersListener(
+        allContactsIds,
+        setUpdatedUserTournamentsPlayers
+      );
+      return () => unsubscribe();
+    } else {
+      setUpdatedUserTournamentsPlayers([]);
+    }
+  }, [updatedUserTournaments?.all]);
 
   // add listener to tournament matches:
   useEffect(() => {

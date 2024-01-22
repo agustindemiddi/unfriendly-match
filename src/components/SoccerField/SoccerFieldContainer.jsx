@@ -12,7 +12,7 @@ import getMatchStatus from '../../utils/getMatchStatus';
 import formatDate from '../../utils/formatDate';
 import calculateCountdown from '../../utils/calculateCountdownToMatchSubscription';
 
-const SoccerFieldContainer = ({ match }) => {
+const SoccerFieldContainer = ({ userPlayerProfile, match }) => {
   const { user, updatedUserTournaments } = getUserAuthCtx();
   const [updatedMatchPlayers, setUpdatedMatchPlayers] = useState([]);
   const [teams, setTeams] = useState({ teamA: [], teamB: [] });
@@ -20,6 +20,7 @@ const SoccerFieldContainer = ({ match }) => {
     useState('');
 
   const { uid: userId } = user;
+  // const userId = userPlayerProfile.id;
 
   const tournament = updatedUserTournaments?.all?.filter(
     (tournament) => tournament.id === match.tournament

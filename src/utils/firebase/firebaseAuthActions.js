@@ -9,15 +9,16 @@ import {
 import { auth } from './firebaseConfig';
 import { getPlayerProfileFromUser } from './firestore/firestoreActions';
 
-export const authListener = (setUser, setUserPlayerProfile) => {
+// export const authListener = (setUser, setUserPlayerProfile) => {
+export const authListener = (setUser) => {
   const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
     if (currentUser) {
       setUser(currentUser);
-      const playerProfile = await getPlayerProfileFromUser(currentUser);
-      setUserPlayerProfile(playerProfile);
+      // const playerProfile = await getPlayerProfileFromUser(currentUser);
+      // setUserPlayerProfile(playerProfile);
     } else {
       setUser(null);
-      setUserPlayerProfile(null);
+      // setUserPlayerProfile(null);
     }
   });
   return () => unsubscribe();

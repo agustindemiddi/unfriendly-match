@@ -8,7 +8,11 @@ import { getTournament } from '../../utils/firebase/firestore/firestoreActions';
 
 const TournamentDetailPage = () => {
   const { tournamentId } = useParams();
-  const { updatedUserTournaments, updatedTournamentMatches } = getUserAuthCtx();
+  const {
+    userPlayerProfile,
+    updatedUserTournaments,
+    updatedTournamentMatches,
+  } = getUserAuthCtx();
   const [unsubscribedTournament, setUnsubscribedTournament] = useState([]);
 
   const tournament = updatedUserTournaments?.all?.find(
@@ -27,12 +31,15 @@ const TournamentDetailPage = () => {
 
   return (
     <>
-      {updatedUserTournaments && updatedTournamentMatches && (
-        <TournamentDetailSection
-          tournament={tournament || unsubscribedTournament}
-          matches={updatedTournamentMatches}
-        />
-      )}
+      {userPlayerProfile &&
+        updatedUserTournaments &&
+        updatedTournamentMatches && (
+          <TournamentDetailSection
+            tournament={tournament || unsubscribedTournament}
+            matches={updatedTournamentMatches}
+            userPlayerProfile={userPlayerProfile}
+          />
+        )}
     </>
   );
 };
