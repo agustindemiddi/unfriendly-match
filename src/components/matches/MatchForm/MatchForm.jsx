@@ -33,14 +33,14 @@ const MatchForm = ({
       ? getInputFormattedDate(match.dateTime)
       : tournament?.defaultMatchDay
       ? getNextMatchDate(tournament.defaultMatchDay)
-      : ''
+      : getInputFormattedDate(new Date())
   );
   const [matchTime, setMatchTime] = useState(
     match?.dateTime
       ? getInputFormattedTime(match.dateTime)
       : tournament?.defaultMatchTime
       ? tournament.defaultMatchTime
-      : ''
+      : getInputFormattedTime(new Date())
   );
   const matchAddressInputRef = useRef();
   const [teamPlayerQuota, setTeamPlayerQuota] = useState(
