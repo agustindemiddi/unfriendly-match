@@ -59,15 +59,15 @@ export const AuthContextProvider = ({ children }) => {
   // add listener to user contacts:
   useEffect(() => {
     if (userPlayerProfile && updatedUserTournaments?.all?.length > 0) {
-      const tournamentPlayersIds = updatedUserTournaments.all.map(
-        (tournament) => tournament.players
+      const tournamentPlayersIds = Array.from(
+        new Set(
+          updatedUserTournaments?.all
+            ?.map((tournament) => tournament.players)
+            .flat()
+        )
       );
-      const allContactsIds = Array.from(
-        new Set(tournamentPlayersIds.flat())
-      ).filter((playerId) => playerId !== userPlayerProfile.id);
-
       const unsubscribe = addMultiplePlayersListener(
-        allContactsIds,
+        tournamentPlayersIds,
         setUpdatedUserTournamentsPlayers
       );
       return () => unsubscribe();
@@ -99,9 +99,9 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [tournamentId]);
 
-  const userContacts = updatedUserTournamentsPlayers?.filter(
-    (player) => player.isVerified
-  );
+  const userContacts = updatedUserTournamentsPlayers
+    ?.filter((player) => player.isVerified)
+    .filter((player) => player.id !== userPlayerProfile.id);
 
   // auth.useDeviceLanguage(); // test how it works
 
@@ -124,6 +124,7 @@ export const AuthContextProvider = ({ children }) => {
         userPlayerProfile,
         updatedUserTournaments,
         updatedTournamentMatches,
+        updatedUserTournamentsPlayers,
         userContacts,
         handleGoogleSignIn,
         handleEmailSignIn,

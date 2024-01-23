@@ -12,6 +12,7 @@ import separateMatches from '../../../utils/separateMatches';
 import {
   subscribeToTournament,
   unsubscribeFromTournament,
+  deleteTournament,
 } from '../../../utils/firebase/firestore/firestoreActions';
 import copyUrlToClipboard from '../../../utils/copyUrlToClipboard';
 
@@ -20,7 +21,8 @@ const TournamentDetailSection = ({
   tournament,
   matches,
 }) => {
-  // const { setUserPlayerProfile } = getUserAuthCtx();
+  const { updatedUserTournamentsPlayers, updatedUserTournaments } =
+    getUserAuthCtx();
   const navigate = useNavigate();
 
   const isTournamentPlayer = tournament?.players?.includes(
@@ -33,19 +35,34 @@ const TournamentDetailSection = ({
 
   const handleSubscribeToTournament = async () => {
     await subscribeToTournament(tournament.id, userPlayerProfile.id);
-
     alert(`You have successfully joined ${tournament.name}`);
   };
 
   const handleUnsubscribeFromTournament = async () => {
-    await unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
-
-    if (tournament.players.length > 1) { // !verifPlayers left => delete nonVerifPlayersDocs and delete tournament
-      alert(`You have successfully abandoned ${tournament.name}.`);
-    } else {
-      alert(
-        `You have successfully abandoned the tournament. You were the last player of ${tournament.name}, so the tournament was deleted from the database.`
+    if (tournament.isActive) {
+      const tournamentPlayers = updatedUserTournamentsPlayers.filter((player) =>
+        tournament.players.includes(player.id)
       );
+
+      const tournamentVerifiedPlayers = tournamentPlayers.filter(
+        (player) => player.isVerified
+      );
+
+      const nonVerifiedPlayersIds = tournamentPlayers
+        .filter((player) => !player.isVerified)
+        .map((player) => player.id);
+
+      if (tournamentVerifiedPlayers.length > 1) {
+        await unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
+        alert(`You have successfully abandoned ${tournament.name}.`);
+      } else {
+        deleteTournament(tournament.id, userPlayerProfile.id, nonVerifiedPlayersIds);
+        alert(
+          `You have successfully abandoned the tournament. You were the last player of ${tournament.name}, so the tournament was deleted from the database.`
+        );
+      }
+    } else {
+      alert(`You cannot unsubscribe from finished tournaments. Contact ${tournament.creator} and ask to delete the tournament.`);
     }
 
     navigate('..');

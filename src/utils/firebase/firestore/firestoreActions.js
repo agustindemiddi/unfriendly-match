@@ -43,14 +43,14 @@ export const createPlayerObjectFromFirestore = (playerDoc) => {
   const playerData = {
     ...playerDoc.data(),
     id: playerDoc.id,
-    creationDateTime: playerDoc.data().creationDateTime?.toDate(),
+    creationDateTime: playerDoc.data()?.creationDateTime?.toDate(),
     image: playerDoc.data()?.image || '/default-user.svg',
   };
-  if (playerDoc.data().matchSubscriptionDateTime) {
-    playerData.matchSubscriptionDateTime = playerDoc
-      .data()
-      .matchSubscriptionDateTime.toDate();
-  }
+  // if (playerDoc.data().matchSubscriptionDateTime) {
+  //   playerData.matchSubscriptionDateTime = playerDoc
+  //     .data()
+  //     .matchSubscriptionDateTime.toDate();
+  // }
   if (playerDoc.data().previousNonVerifiedPlayerProfile) {
     playerData.previousNonVerifiedPlayerProfile = {
       ...playerDoc.data().previousNonVerifiedPlayerProfile,
@@ -340,7 +340,7 @@ export const getMatchPlayers = async (tournamentId, matchId) => {
     getMatchPlayersColRef(tournamentId, matchId)
   );
   const playersArray = querySnapshot.docs.map((playerdDoc) =>
-    createPlayerObjectFromFirestore(playerdDoc)
+    createMatchPlayerObjectFromFirestore(playerdDoc)
   );
   return playersArray;
 };
@@ -493,11 +493,35 @@ export const unsubscribeFromTournament = async (tournamentId, userId) => {
   await updateDoc(getPlayerDocRef(userId), {
     'tournaments.all': arrayRemove(tournamentId),
     'tournaments.active': arrayRemove(tournamentId),
+    'tournaments.finished': arrayRemove(tournamentId),
   });
-  // if last player unsubscribes from tournament, delete tournament:
-  const tournament = await getTournament(tournamentId);
-  if (tournament.players.length === 0)
-    await deleteDoc(getTournamentDocRef(tournamentId));
+};
+
+// delete tournament:
+export const deleteTournament = async (tournamentId, userId, playersIds) => {
+  await updateDoc(getPlayerDocRef(userId), {
+    'tournaments.all': arrayRemove(tournamentId),
+    'tournaments.active': arrayRemove(tournamentId),
+    'tournaments.finished': arrayRemove(tournamentId),
+  });
+  playersIds.forEach(
+    async (playerId) =>
+      await updateDoc(getPlayerDocRef(playerId), {
+        'tournaments.all': arrayRemove(tournamentId),
+        'tournaments.active': arrayRemove(tournamentId),
+        'tournaments.finished': arrayRemove(tournamentId),
+      })
+  );
+  const matches = await getTournamentMatches(tournamentId);
+  matches.forEach(async (match) => {
+    const matchPlayers = await getMatchPlayers(tournamentId, match.id);
+    matchPlayers.forEach(
+      async (player) =>
+        await deleteDoc(getMatchPlayerDocRef(tournamentId, match.id, player.id))
+    );
+    await deleteDoc(getMatchDocRef(tournamentId, match.id));
+  });
+  await deleteDoc(getTournamentDocRef(tournamentId));
 };
 
 // subscribe user to match:
