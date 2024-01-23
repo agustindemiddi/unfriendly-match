@@ -202,13 +202,6 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
         tournamentData,
         newTournamentId
       );
-      setUserPlayerProfile((prevState) => ({
-        ...prevState,
-        tournaments: {
-          all: [...prevState.tournaments.all, newTournamentId],
-          active: [...prevState.tournaments.active, newTournamentId],
-        },
-      }));
       alert(`You have successfully created ${tournamentData.name}`);
     }
     navigate('..');

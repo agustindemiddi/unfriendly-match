@@ -14,10 +14,6 @@ const ErrorPage = () => {
           <p>Something went wrong!</p>
         </Section>
       </main>
-      <footer>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur
-        nulla praesentium atque ipsa quasi iste nam harum accusamus obcaecati.
-      </footer>
     </>
   );
 };

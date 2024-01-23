@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
-  authListener,
+  addAuthListener,
   signInWithGoogle,
   signInWithEmail,
   signUpWithEmail,
@@ -31,8 +31,7 @@ export const AuthContextProvider = ({ children }) => {
 
   // add listener to user auth:
   useEffect(() => {
-    // const unsubscribe = authListener(setUser, setUserPlayerProfile);
-    const unsubscribe = authListener(setUser);
+    const unsubscribe = addAuthListener(setUser);
     return () => unsubscribe();
   }, []);
 
@@ -126,7 +125,6 @@ export const AuthContextProvider = ({ children }) => {
         updatedUserTournaments,
         updatedTournamentMatches,
         userContacts,
-        setUserPlayerProfile,
         handleGoogleSignIn,
         handleEmailSignIn,
         handleSignOut,

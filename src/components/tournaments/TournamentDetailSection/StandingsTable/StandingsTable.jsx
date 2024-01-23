@@ -12,11 +12,9 @@ const StandingsTable = () => {
   const { updatedUserTournaments, updatedTournamentMatches } = getUserAuthCtx();
   const [tournamentPlayers, setTournamentPlayers] = useState([]);
 
-
-
-  const tournament = updatedUserTournaments?.all?.filter(
+  const tournament = updatedUserTournaments?.all?.find(
     (tournament) => tournament.id === tournamentId
-  )[0];
+  );
 
   useEffect(() => {
     if (tournament) {
@@ -32,11 +30,8 @@ const StandingsTable = () => {
     (match) => Object.keys(match.result).length > 0
   );
 
-  
   const tournamentStats = calculateTournamentStats(finishedMatches);
-  
-  console.log(tournamentStats);
-  
+
   return (
     <table className={styles.standingsTable}>
       <thead>

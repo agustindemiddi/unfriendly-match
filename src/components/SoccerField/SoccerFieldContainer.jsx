@@ -22,9 +22,9 @@ const SoccerFieldContainer = ({ userPlayerProfile, match }) => {
   const { uid: userId } = user;
   // const userId = userPlayerProfile.id;
 
-  const tournament = updatedUserTournaments?.all?.filter(
+  const tournament = updatedUserTournaments?.all?.find(
     (tournament) => tournament.id === match.tournament
-  )[[0]];
+  );
 
   const tournamentImage = tournament?.image;
 

@@ -34,33 +34,13 @@ const TournamentDetailSection = ({
   const handleSubscribeToTournament = async () => {
     await subscribeToTournament(tournament.id, userPlayerProfile.id);
 
-    // setUserPlayerProfile((prevState) => ({
-    //   ...prevState,
-    //   tournaments: {
-    //     all: [...prevState.tournaments.all, tournament.id],
-    //     active: [...prevState.tournaments.active, tournament.id],
-    //   },
-    // }));
-
     alert(`You have successfully joined ${tournament.name}`);
   };
 
   const handleUnsubscribeFromTournament = async () => {
     await unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
 
-    // setUserPlayerProfile((prevState) => ({
-    //   ...prevState,
-    //   tournaments: {
-    //     all: prevState.tournaments.all.filter(
-    //       (tournamentId) => tournamentId !== tournament.id
-    //     ),
-    //     active: prevState.tournaments.active.filter(
-    //       (tournamentId) => tournamentId !== tournament.id
-    //     ),
-    //   },
-    // }));
-
-    if (tournament.players.length > 1) {
+    if (tournament.players.length > 1) { // !verifPlayers left => delete nonVerifPlayersDocs and delete tournament
       alert(`You have successfully abandoned ${tournament.name}.`);
     } else {
       alert(

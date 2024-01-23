@@ -30,12 +30,7 @@ const ContactDetailPage = () => {
 
   // missing fallback if !player.isPublic
 
-  return (
-    <>
-      {contact ||
-        (player && <ContactDetailSection player={contact || player} />)}
-    </>
-  );
+  return <>{contact && <ContactDetailSection player={contact || player} />}</>;
 };
 
 export default ContactDetailPage;
