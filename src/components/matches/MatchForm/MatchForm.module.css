@@ -130,14 +130,26 @@
   opacity: 100% !important;
 }
 
-.subscribePlayersToMatch {
+.matchForm fieldset.subscribePlayersToMatch {
   display: flex;
 }
 
-.subscribePlayersToMatch div {
+.matchForm fieldset.subscribePlayersToMatch div {
   flex: 1;
 }
 
-.subscribePlayersToMatch ul li {
+.matchForm fieldset.subscribePlayersToMatch ul li {
   cursor: pointer;
+}
+
+.matchForm fieldset.finishedMatch {
+  flex-direction: column;
+}
+
+.matchForm fieldset.finishedMatch .teams {
+  display: flex;
+}
+
+.matchForm fieldset.finishedMatch .teams div {
+  flex: 1;
 }

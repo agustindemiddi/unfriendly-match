@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -20,7 +20,7 @@ import {
 const MatchForm = ({
   userPlayerProfile,
   tournament,
-  // tournamentPlayers,
+  tournamentPlayers,
   match,
   matchPlayers,
   availablePlayers,
@@ -80,6 +80,31 @@ const MatchForm = ({
   );
   const [tournamentAvailablePlayers, setTournamentAvailablePlayers] =
     useState(availablePlayers);
+  const [isFinishedMatch, setIsFinishedMatch] = useState(
+    match?.result.teamA ? true : false
+  );
+  const [currentMatchPlayers, setCurrentMatchPlayers] =
+    useState(playersToSubscribe);
+  const teamAResultInputRef = useRef();
+  const teamAPlayers = match
+    ? tournamentPlayers.filter((player) =>
+        match.teamA.find((teamAPlayerId) => teamAPlayerId === player.id)
+      )
+    : [];
+  const [teamA, setTeamA] = useState(match ? teamAPlayers : []);
+  const teamBResultInputRef = useRef();
+  const teamBPlayers = match
+    ? tournamentPlayers.filter((player) =>
+        match.teamB.find((teamBPlayerId) => teamBPlayerId === player.id)
+      )
+    : [];
+  const [teamB, setTeamB] = useState(match ? teamBPlayers : []);
+
+  useEffect(() => {
+    if (isFinishedMatch) {
+      setCurrentMatchPlayers(playersToSubscribe);
+    }
+  }, [isFinishedMatch, playersToSubscribe]);
 
   const navigate = useNavigate();
 
@@ -164,6 +189,22 @@ const MatchForm = ({
     );
   };
 
+  const handleAddTeamAPlayer = (player) => {
+    if (teamB.find((teamplayer) => teamplayer.id === player.id))
+      setTeamB((prevState) =>
+        prevState.filter((teamplayer) => teamplayer.id !== player.id)
+      );
+    setTeamA((prevState) => Array.from(new Set([...prevState, player])));
+  };
+
+  const handleAddTeamBPlayer = (player) => {
+    if (teamA.find((teamplayer) => teamplayer.id === player.id))
+      setTeamA((prevState) =>
+        prevState.filter((teamplayer) => teamplayer.id !== player.id)
+      );
+    setTeamB((prevState) => Array.from(new Set([...prevState, player])));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -173,7 +214,7 @@ const MatchForm = ({
     }
 
     if (
-      // later add conditional if (!isMatchEnded &&)
+      !isFinishedMatch &&
       !isSubscriptionStartsImmediatelySelected &&
       (!matchSubscriptionDate || !matchSubscriptionTime)
     ) {
@@ -183,16 +224,21 @@ const MatchForm = ({
       return;
     }
 
-    let subscriptionDateTime;
-    // later add conditional if (isMatchEnded) {
-    // subscriptionDateTime = null
-    // } else if...
     if (
-      // later add conditional if (!isMatchEnded &&)
-      isSubscriptionStartsImmediatelySelected
+      isFinishedMatch &&
+      (!teamAResultInputRef.current.value ||
+        !teamBResultInputRef.current.value ||
+        teamA.length === 0 ||
+        teamB.length === 0)
     ) {
+      alert(
+        'If you are creating or editing a finished match, you must specify the result and the players for both teams!'
+      );
+    }
+
+    let subscriptionDateTime;
+    if (isSubscriptionStartsImmediatelySelected) {
       subscriptionDateTime = new Date();
-      // maybe I need an else if if adding isMatchEnded conditional
     } else {
       const subscriptionDate = matchSubscriptionDate || matchDate;
       const subscriptionTime = matchSubscriptionTime || '00:00';
@@ -206,6 +252,7 @@ const MatchForm = ({
       creationDateTime: match?.creationDateTime || new Date(),
       creator: match?.creator || userPlayerProfile.id,
       tournament: tournamentId,
+      mvps: match?.mvps || [],
 
       dateTime: new Date(`${matchDate}T${matchTime}`),
       subscriptionDateTime: subscriptionDateTime,
@@ -213,10 +260,14 @@ const MatchForm = ({
       playerQuota: teamPlayerQuota * 2,
       players: playersIdsToSubscribe,
 
-      teamA: [],
-      teamB: [],
-      result: {},
-      mvps: [],
+      teamA: isFinishedMatch ? teamA.map((player) => player.id) : [],
+      teamB: isFinishedMatch ? teamB.map((player) => player.id) : [],
+      result: isFinishedMatch
+        ? {
+            teamA: teamAResultInputRef.current.value,
+            teamB: teamBResultInputRef.current.value,
+          }
+        : {},
     };
 
     if (match) {
@@ -250,7 +301,7 @@ const MatchForm = ({
       );
       alert(`You have successfully created the match ${matchDate}`);
     }
-    console.log('matchData:', matchData);
+
     navigate('..');
   };
 
@@ -357,6 +408,21 @@ const MatchForm = ({
 
       <fieldset className={styles.subscribePlayersToMatch}>
         <div>
+          <legend>Tournament available players:</legend>
+          {tournamentAvailablePlayers.length > 0 && (
+            <ul>
+              {tournamentAvailablePlayers.map((player) => (
+                <li
+                  key={player.id}
+                  onClick={() => handleAddPlayerToThisMatch(player)}>
+                  {player.displayName}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div>
           <legend>Players to subscribe:</legend>
           {playersToSubscribe.length > 0 && (
             <ul>
@@ -370,21 +436,78 @@ const MatchForm = ({
             </ul>
           )}
         </div>
+      </fieldset>
 
-        <div>
-          <legend> Available players:</legend>
-          {tournamentAvailablePlayers.length > 0 && (
-            <ul>
-              {tournamentAvailablePlayers.map((player) => (
-                <li
-                  key={player.id}
-                  onClick={() => handleAddPlayerToThisMatch(player)}>
-                  {player.displayName}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+      <fieldset className={styles.finishedMatch}>
+        <button
+          type='button'
+          onClick={() => setIsFinishedMatch((prevState) => !prevState)}>
+          {isFinishedMatch
+            ? 'This match has not been played yet'
+            : 'Add result and teams'}
+        </button>
+        {isFinishedMatch && (
+          <>
+            <div>
+              <legend>Match players:</legend>
+              {currentMatchPlayers.length > 0 && (
+                <ul>
+                  {currentMatchPlayers.map((player) => (
+                    <li key={player.id}>
+                      {player.displayName}
+                      <button
+                        type='button'
+                        onClick={() => handleAddTeamAPlayer(player)}>
+                        Team A
+                      </button>
+                      <button
+                        type='button'
+                        onClick={() => handleAddTeamBPlayer(player)}>
+                        Team B
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className={styles.teams}>
+              <div>
+                <legend>Team A:</legend>
+                <input
+                  type='number'
+                  name='result-team-a'
+                  defaultValue={match?.result.teamA}
+                  ref={teamAResultInputRef}
+                />
+                {teamA.length > 0 && (
+                  <ul>
+                    {teamA.map((player) => (
+                      <li key={player.id}>{player.displayName}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div>
+                <legend>Team B:</legend>
+                <input
+                  type='number'
+                  name='result-team-b'
+                  defaultValue={match?.result.teamB}
+                  ref={teamBResultInputRef}
+                />
+                {teamB.length > 0 && (
+                  <ul>
+                    {teamB.map((player) => (
+                      <li key={player.id}>{player.displayName}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </fieldset>
 
       <button type='submit'>{match ? 'Update Match' : 'Create Match'}</button>

@@ -46,11 +46,6 @@ export const createPlayerObjectFromFirestore = (playerDoc) => {
     creationDateTime: playerDoc.data()?.creationDateTime?.toDate(),
     image: playerDoc.data()?.image || '/default-user.svg',
   };
-  // if (playerDoc.data().matchSubscriptionDateTime) {
-  //   playerData.matchSubscriptionDateTime = playerDoc
-  //     .data()
-  //     .matchSubscriptionDateTime.toDate();
-  // }
   if (playerDoc.data().previousNonVerifiedPlayerProfile) {
     playerData.previousNonVerifiedPlayerProfile = {
       ...playerDoc.data().previousNonVerifiedPlayerProfile,
