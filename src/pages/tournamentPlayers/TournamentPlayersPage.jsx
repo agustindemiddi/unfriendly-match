@@ -11,44 +11,33 @@ import {
 
 const TournamentPlayersPage = () => {
   const { tournamentId } = useParams();
-  const { updatedUserTournaments } = getUserAuthCtx();
-  const [unsubscribedTournament, setUnsubscribedTournament] = useState([]);
-  const [tournamentPlayers, setTournamentPlayers] = useState([]);
-
-  const tournament = updatedUserTournaments?.all?.find(
-    (tournament) => tournament.id === tournamentId
-  );
+  const { userPlayerProfile } = getUserAuthCtx();
+  const [tournament, setTournament] = useState(null);
+  const [players, setPlayers] = useState([]);
 
   useEffect(() => {
-    if (tournament) {
-      const fetchTournamentPlayers = async () => {
-        const players = await getPlayers(tournament.players);
-        setTournamentPlayers(players);
-      };
-      fetchTournamentPlayers();
-    }
-  }, [tournament?.players]);
+    const fetchTournamentAndPlayers = async () => {
+      const fetchedTournament = await getTournament(tournamentId);
+      setTournament(fetchedTournament);
 
-  useEffect(() => {
-    if (!tournament) {
-      const fetchTournamentAndPlayers = async () => {
-        const fetchedTournament = await getTournament(tournamentId);
-        setUnsubscribedTournament(fetchedTournament);
-
-        const players = await getPlayers(fetchedTournament.players);
-        setTournamentPlayers(players);
-      };
-      fetchTournamentAndPlayers();
-    }
+      const fetchedPlayers = await getPlayers(fetchedTournament.players);
+      setPlayers(fetchedPlayers);
+    };
+    fetchTournamentAndPlayers();
   }, [tournamentId]);
+
+  const isUserSubscribedToTournament =
+    userPlayerProfile?.tournaments?.all?.includes(tournamentId);
+
+  const showContent =
+    tournament &&
+    players.length > 0 &&
+    (isUserSubscribedToTournament || tournament.isPublic);
 
   return (
     <>
-      {tournamentPlayers.length > 0 && (
-        <TournamentPlayersSection
-          tournament={tournament || unsubscribedTournament}
-          players={tournamentPlayers}
-        />
+      {showContent && (
+        <TournamentPlayersSection tournament={tournament} players={players} />
       )}
     </>
   );

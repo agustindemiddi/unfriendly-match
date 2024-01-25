@@ -11,13 +11,11 @@ import {
   deleteMatchPlayer,
 } from '../../../utils/firebase/firestore/firestoreActions';
 import {
-  getNextMatchDate,
-  getNextMatchSubscriptionDate,
-} from '../../../utils/getNextMatchDates';
-import {
   getInputFormattedDate,
   getInputFormattedTime,
-} from '../../../utils/getTerminationDates';
+  getInputFormattedNextMatchDate,
+  getInputFormattedNextMatchSubscriptionDate,
+} from '../../../utils/getDates';
 
 const MatchForm = ({
   userPlayerProfile,
@@ -32,7 +30,7 @@ const MatchForm = ({
     match?.dateTime
       ? getInputFormattedDate(match.dateTime)
       : tournament?.defaultMatchDay
-      ? getNextMatchDate(tournament.defaultMatchDay)
+      ? getInputFormattedNextMatchDate(tournament.defaultMatchDay)
       : getInputFormattedDate(new Date())
   );
   const [matchTime, setMatchTime] = useState(
@@ -64,7 +62,7 @@ const MatchForm = ({
       : tournament?.defaultMatchDay &&
         (tournament.defaultMatchSubscriptionDaysBefore ||
           tournament?.defaultMatchSubscriptionDaysBefore === 0)
-      ? getNextMatchSubscriptionDate(
+      ? getInputFormattedNextMatchSubscriptionDate(
           tournament.defaultMatchDay,
           tournament.defaultMatchSubscriptionDaysBefore
         )

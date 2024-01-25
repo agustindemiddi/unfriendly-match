@@ -2,16 +2,22 @@ import { Link } from 'react-router-dom';
 
 import styles from './MatchItem.module.css';
 
-import formatDate from '../../../../../utils/formatDate';
+import { getStringFormattedLongDateTime } from '../../../../../utils/getDates';
 
 const MatchItem = ({ match }) => {
   return (
     <div style={{ border: '1px solid white' }}>
-      <p>matchDateTime: {formatDate(match.dateTime)}</p>
+      <p>matchDateTime: {getStringFormattedLongDateTime(match.dateTime)}</p>
       <p>address: {match.address}</p>
-      <p>matchRegistryDateTime: {formatDate(match.registryDateTime)}</p>
+      <p>
+        matchSubscriptionDateTime:
+        {getStringFormattedLongDateTime(match.subscriptionDateTime)}
+      </p>
       {/* <p>players: {match.players[0] || 'no players subscribed to this match'}</p> */}
-      <p>matchCreationDateTime: {formatDate(match.creationDateTime)}</p>
+      <p>
+        matchCreationDateTime:
+        {getStringFormattedLongDateTime(match.creationDateTime)}
+      </p>
       <Link to={`${match.id}`}>
         <button>Entrar</button>
       </Link>

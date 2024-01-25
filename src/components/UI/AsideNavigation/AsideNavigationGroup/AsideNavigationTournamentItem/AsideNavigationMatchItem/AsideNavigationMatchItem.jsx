@@ -2,7 +2,7 @@ import { NavLink, useParams } from 'react-router-dom';
 
 import styles from './AsideNavigationMatchItem.module.css';
 
-import { asideNavFormatDate } from '../../../../../../utils/formatDate';
+import { getStringFormattedShortDate } from '../../../../../../utils/getDates';
 
 const AsideNavigationMatchItem = ({ navItem, index, previousMatches }) => {
   const { tournamentId } = useParams();
@@ -20,7 +20,7 @@ const AsideNavigationMatchItem = ({ navItem, index, previousMatches }) => {
             : `${styles.navItem} ${isPreviousMatch ? styles.previousMatch : ''}`
         }
         to={`/tournaments/${tournamentId}/matches/${navItem.id}`}>
-        Match {index} · {asideNavFormatDate(navItem.dateTime)}
+        Match {index} · {getStringFormattedShortDate(navItem.dateTime)}
       </NavLink>
     </>
   );

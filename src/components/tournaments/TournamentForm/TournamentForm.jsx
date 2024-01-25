@@ -4,20 +4,18 @@ import { v4 as uuidv4 } from 'uuid';
 
 import styles from './TournamentForm.module.css';
 
-import { getUserAuthCtx } from '../../../context/authContext';
 import {
   addTournament,
   editTournament,
 } from '../../../utils//firebase/firestore/firestoreActions';
 import {
-  getFormattedTerminationDate,
-  getFormattedMaxTerminationDate,
-} from '../../../utils/getTerminationDates';
+  getInputFormattedTerminationDate,
+  getInputFormattedMaxTerminationDate,
+} from '../../../utils/getDates';
 
 import trophiesImages from '../../../utils/trophiesImages';
 
 const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
-  const { setUserPlayerProfile } = getUserAuthCtx();
   const nameInputRef = useRef();
   const [tournamentName, setTournamentName] = useState(
     tournament?.name
@@ -57,8 +55,8 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
   );
   const [terminationDate, setTerminationDate] = useState(
     tournament?.terminationDate
-      ? getFormattedTerminationDate(tournament.terminationDate)
-      : getFormattedTerminationDate()
+      ? getInputFormattedTerminationDate(tournament.terminationDate)
+      : getInputFormattedTerminationDate()
   );
   const [pointsPerGameWon, setPointsPerGameWon] = useState(3);
   const hasMvpEnabledInput = useRef();
@@ -139,7 +137,7 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
 
   const handleTerminationDateChange = (event) => {
     const initialDate = tournament?.creationDateTime || new Date();
-    const maxDate = getFormattedMaxTerminationDate(initialDate);
+    const maxDate = getInputFormattedMaxTerminationDate(initialDate);
     const inputDate = event.target.value;
     if (inputDate > maxDate) {
       setTerminationDate(maxDate);

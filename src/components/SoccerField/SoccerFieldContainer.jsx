@@ -9,7 +9,8 @@ import {
   getTeams,
 } from '../../utils/firebase/firestore/firestoreActions';
 import getMatchStatus from '../../utils/getMatchStatus';
-import formatDate from '../../utils/formatDate';
+// import formatDate from '../../utils/formatDate';
+import { getStringFormattedLongDateTime } from '../../utils/getDates';
 import calculateCountdown from '../../utils/calculateCountdownToMatchSubscription';
 
 const SoccerFieldContainer = ({ userPlayerProfile, match }) => {
@@ -115,8 +116,9 @@ const SoccerFieldContainer = ({ userPlayerProfile, match }) => {
     userId,
   });
 
-  const formattedSubscriptionDateTime = formatDate(subscriptionDateTime);
-  const formattedDateTime = formatDate(dateTime);
+  const formattedDateTime = getStringFormattedLongDateTime(dateTime);
+  const formattedSubscriptionDateTime =
+    getStringFormattedLongDateTime(subscriptionDateTime);
 
   return (
     <SoccerField
@@ -138,8 +140,8 @@ const SoccerFieldContainer = ({ userPlayerProfile, match }) => {
         tournamentImage,
         sortedUpdatedMatchPlayers,
         teams,
-        formattedSubscriptionDateTime,
         formattedDateTime,
+        formattedSubscriptionDateTime,
         matchSubscriptionCountdown,
         isUserSubscribed,
         matchId,
