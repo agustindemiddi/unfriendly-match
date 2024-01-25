@@ -1,7 +1,7 @@
 export const getInputFormattedDate = (date) => {
-  const year = date.getUTCFullYear();
-  let month = date.getUTCMonth() + 1;
-  let day = date.getUTCDate();
+  const year = date.getFullYear();
+  let month = date.getMonth() + 1;
+  let day = date.getDate();
   // Ensure month and day are two digits:
   month = month < 10 ? '0' + month : month;
   day = day < 10 ? '0' + day : day;
@@ -9,8 +9,8 @@ export const getInputFormattedDate = (date) => {
 };
 
 export const getInputFormattedTime = (date) => {
-  const hours = date.getUTCHours();
-  let minutes = date.getUTCMinutes();
+  const hours = date.getHours();
+  let minutes = date.getMinutes();
   // Ensure minutes is two digits:
   minutes = minutes < 10 ? '0' + minutes : minutes;
   return `${hours}:${minutes}`;
@@ -20,15 +20,15 @@ export const getInputFormattedTime = (date) => {
 
 const getTerminationDate = () => {
   const terminationDate = new Date();
-  const currentMonth = terminationDate.getUTCMonth();
+  const currentMonth = terminationDate.getMonth();
   if (currentMonth >= 2 && currentMonth < 8) {
-    terminationDate.setUTCMonth(11);
-    terminationDate.setUTCDate(31);
+    terminationDate.setMonth(11);
+    terminationDate.setDate(31);
   } else {
     if (currentMonth >= 8)
-      terminationDate.setUTCFullYear(terminationDate.getUTCFullYear() + 1);
-    terminationDate.setUTCMonth(5);
-    terminationDate.setUTCDate(30);
+      terminationDate.setFullYear(terminationDate.getFullYear() + 1);
+    terminationDate.setMonth(5);
+    terminationDate.setDate(30);
   }
   return terminationDate;
 };
@@ -41,7 +41,7 @@ export const getInputFormattedTerminationDate = (
 
 export const getInputFormattedMaxTerminationDate = (date) => {
   const maxTerminationDate = new Date(date);
-  maxTerminationDate.setUTCMonth(maxTerminationDate.getUTCMonth() + 18);
+  maxTerminationDate.setMonth(maxTerminationDate.getMonth() + 18);
   return getInputFormattedTerminationDate(maxTerminationDate);
 };
 
@@ -50,12 +50,12 @@ export const getInputFormattedMaxTerminationDate = (date) => {
 const currentDate = new Date();
 
 const getDaysUntilNextMatch = (defaultMatchDay) =>
-  (defaultMatchDay + 7 - currentDate.getUTCDay()) % 7;
+  (defaultMatchDay + 7 - currentDate.getDay()) % 7;
 
 export const getInputFormattedNextMatchDate = (defaultMatchDay) => {
   const daysUntilNextMatch = getDaysUntilNextMatch(defaultMatchDay);
   const nextMatchDate = new Date(currentDate);
-  nextMatchDate.setUTCDate(nextMatchDate.getUTCDate() + daysUntilNextMatch);
+  nextMatchDate.setDate(nextMatchDate.getDate() + daysUntilNextMatch);
   return getInputFormattedDate(nextMatchDate);
 };
 
@@ -65,8 +65,8 @@ export const getInputFormattedNextMatchSubscriptionDate = (
 ) => {
   const daysUntilNextMatch = getDaysUntilNextMatch(defaultMatchDay);
   const nextMatchSubscriptionDate = new Date(currentDate);
-  nextMatchSubscriptionDate.setUTCDate(
-    currentDate.getUTCDate() +
+  nextMatchSubscriptionDate.setDate(
+    currentDate.getDate() +
       daysUntilNextMatch -
       defaultMatchSubscriptionDaysBefore
   );

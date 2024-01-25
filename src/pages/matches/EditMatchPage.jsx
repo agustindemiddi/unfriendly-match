@@ -8,13 +8,15 @@ import { getPlayers } from '../../utils/firebase/firestore/firestoreActions';
 
 const EditMatchPage = () => {
   const { tournamentId, matchId } = useParams();
-  const { userPlayerProfile, updatedUserTournaments, tournamentMatches } =
-    getUserAuthCtx();
+  const {
+    userPlayerProfile,
+    updatedUserTournaments,
+    updatedTournamentMatches,
+  } = getUserAuthCtx();
   const [tournamentPlayers, setTournamentPlayers] = useState(null);
   const tournament = updatedUserTournaments?.all?.find(
     (tournament) => tournament.id === tournamentId
   );
-  const match = tournamentMatches?.find((match) => match.id === matchId);
 
   useEffect(() => {
     if (tournament?.players) {
@@ -26,12 +28,14 @@ const EditMatchPage = () => {
     }
   }, [tournament?.players]);
 
+  const match = updatedTournamentMatches?.find((match) => match.id === matchId);
+
   const matchPlayers = tournamentPlayers?.filter((player) =>
-    match.players?.includes(player.id)
+    match?.players.includes(player.id)
   );
 
   const availablePlayers = tournamentPlayers?.filter(
-    (player) => !match.players?.includes(player.id)
+    (player) => !match?.players.includes(player.id)
   );
 
   return (
