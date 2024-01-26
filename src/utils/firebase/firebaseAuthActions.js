@@ -7,11 +7,17 @@ import {
   signOut,
 } from 'firebase/auth';
 import { auth } from './firebaseConfig';
+import { checkAndAddPlayer } from './firestore/firestoreActions';
 
 export const addAuthListener = (setUser) => {
-  const unsubscribe = onAuthStateChanged(auth, async (currentUser) =>
-    currentUser ? setUser(currentUser) : setUser(null)
-  );
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    if (currentUser) {
+      await checkAndAddPlayer(currentUser);
+      setUser(currentUser);
+    } else {
+      setUser(null);
+    }
+  });
   return () => unsubscribe();
 };
 

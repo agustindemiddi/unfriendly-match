@@ -40,12 +40,14 @@ export const AuthContextProvider = ({ children }) => {
     if (user) {
       const unsubscribe = addPlayerListener(user.uid, setUserPlayerProfile);
       return () => unsubscribe();
+    } else {
+      setUserPlayerProfile(null);
     }
   }, [user]);
 
   // add listener to user tournaments:
   useEffect(() => {
-    if (userPlayerProfile && userPlayerProfile.tournaments.all.length > 0) {
+    if (userPlayerProfile?.tournaments.all.length > 0) {
       const unsubscribe = addMultipleTournamentsListener(
         userPlayerProfile.tournaments.all,
         setUpdatedUserTournaments
@@ -99,9 +101,12 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [tournamentId]);
 
-  const userContacts = updatedUserTournamentsPlayers
-    ?.filter((player) => player.isVerified)
-    .filter((player) => player.id !== userPlayerProfile.id);
+  const userContacts =
+    userPlayerProfile && updatedUserTournamentsPlayers
+      ? updatedUserTournamentsPlayers
+          ?.filter((player) => player.isVerified)
+          .filter((player) => player.id !== userPlayerProfile.id)
+      : [];
 
   // auth.useDeviceLanguage(); // test how it works
 

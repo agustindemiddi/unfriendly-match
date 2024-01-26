@@ -13,13 +13,17 @@ import UserIcon from '../../user/UserIcon/UserIcon';
 
 import styles from './MainNavigation.module.css';
 
+import { getUserAuthCtx } from '../../../context/authContext';
+
 const sections = [
   { url: '/', icon: <HomeOutlined />, label: 'Home' },
   { url: '/tournaments', icon: <SkinOutlined />, label: 'Tournaments' },
   { url: '/contacts', icon: <FileSearchOutlined />, label: 'Contacts' },
 ];
 
-const MainNavigation = ({ user, handleSignOut }) => {
+const MainNavigation = () => {
+  const { user, handleSignOut } = getUserAuthCtx();
+
   return (
     <>
       <nav className={styles.mainNav}>
