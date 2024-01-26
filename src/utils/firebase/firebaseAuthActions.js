@@ -10,7 +10,7 @@ import { auth } from './firebaseConfig';
 import { checkAndAddPlayer } from './firestore/firestoreActions';
 
 export const addAuthListener = (setUser) => {
-  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+  onAuthStateChanged(auth, async (currentUser) => {
     if (currentUser) {
       await checkAndAddPlayer(currentUser);
       setUser(currentUser);
@@ -18,7 +18,6 @@ export const addAuthListener = (setUser) => {
       setUser(null);
     }
   });
-  return () => unsubscribe();
 };
 
 export const signInWithGoogle = async () => {

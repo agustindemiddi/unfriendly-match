@@ -30,10 +30,7 @@ export const AuthContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
   // add listener to user auth:
-  useEffect(() => {
-    const unsubscribe = addAuthListener(setUser);
-    return () => unsubscribe();
-  }, []);
+  useEffect(() => addAuthListener(setUser), []);
 
   // add listener to user player:
   useEffect(() => {
