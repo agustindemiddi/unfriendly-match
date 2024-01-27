@@ -4,15 +4,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 import styles from './TournamentPlayerForm.module.css';
 
-import { getUserAuthCtx } from '../../../context/authContext';
 import { addNonVerifiedPlayerToTournament } from '../../../utils/firebase/firestore/firestoreActions';
 
-const TournamentPlayerForm = () => {
+const TournamentPlayerForm = ({ userPlayerProfile }) => {
   const { tournamentId } = useParams();
-  const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
-  const tournament = updatedUserTournaments?.all?.filter(
-    (tournament) => tournament.id === tournamentId
-  )[0];
   const nameInput = useRef();
   // const navigate = useNavigate();
 
@@ -57,16 +52,6 @@ const TournamentPlayerForm = () => {
         <input type='text' placeholder='Player name' ref={nameInput} required />
         <button type='submit'>Add</button>
       </form>
-      {tournament?.nonVerifiedPlayers?.length > 0 && (
-        <div>
-          <h2>Added players:</h2>
-          <ul>
-            {tournament.nonVerifiedPlayers.map((player) => (
-              <li key={player.id}>{player.displayName}</li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 };
