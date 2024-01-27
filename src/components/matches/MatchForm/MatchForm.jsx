@@ -234,6 +234,7 @@ const MatchForm = ({
       alert(
         'If you are creating or editing a finished match, you must specify the result and the players for both teams!'
       );
+      return;
     }
 
     let subscriptionDateTime;

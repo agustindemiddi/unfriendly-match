@@ -94,8 +94,7 @@ const createMatchPlayerObjectFromPlayer = (
   displayName: player.displayName,
   username: player.username,
   image: player.image,
-  // isPublic: player.isPublic,
-  // isVerified: player.isVerified,
+  isPublic: player.isPublic, // quizas innecesario
 
   matchSubscriptionDateTime: new Date(),
   matchSubscribedBy: userId,
@@ -113,39 +112,19 @@ const createMatchPlayerObjectFromFirestore = (matchPlayerDoc) => {
   };
 };
 
-const createMatchPlayerObjectFromMerge = (
-  matchId,
-  user,
-  nonVerifiedMatchPlayer
-) => {
+const createMatchPlayerObjectFromMerge = (user, nonVerifiedMatchPlayer) => {
   return {
-    // id: user.id,
     displayName: user.displayName,
     username: user.username,
     image: user.image,
-    // isPublic: user.isPublic,
-    // isVerified: user.isVerified,
+    isPublic: user.isPublic, // quizas innecesario
 
     matchSubscriptionDateTime: nonVerifiedMatchPlayer.matchSubscriptionDateTime,
     matchSubscribedBy: nonVerifiedMatchPlayer.matchSubscribedBy,
-    match: matchId, // quizas innecesario
+    match: nonVerifiedMatchPlayer.match, // quizas innecesario
+    tournament: nonVerifiedMatchPlayer.tournament, // quizas innecesario
   };
 };
-
-// const createMatchPlayerObjectFromMergeFallback = (matchId, user) => {
-//   return {
-//     // id: user.id,
-//     displayName: user.displayName,
-//     username: user.username,
-//     image: user.image,
-//     // isPublic: user.isPublic,
-//     // isVerified: user.isVerified,
-
-//     matchSubscriptionDateTime: new Date(),
-//     matchSubscribedBy: user.id,
-//     match: matchId, // quizas innecesario
-//   };
-// };
 
 // FIRESTORE GENERIC ACTIONS
 // get a document:
@@ -537,12 +516,12 @@ export const mergePlayers = async (user, nonVerifiedPlayer) => {
     try {
       await Promise.all(
         nonVerifiedPlayer.tournaments.all.map(async (tournamentId) => {
-          // updateDoc(getTournamentDocRef(tournamentId), {
-          //   players: arrayRemove(nonVerifiedPlayer.id),
-          // });
-          // updateDoc(getTournamentDocRef(tournamentId), {
-          //   players: arrayUnion(user.id),
-          // });
+          await updateDoc(getTournamentDocRef(tournamentId), {
+            players: arrayRemove(nonVerifiedPlayer.id),
+          });
+          await updateDoc(getTournamentDocRef(tournamentId), {
+            players: arrayUnion(user.id),
+          });
 
           const tournamentMatches = await getTournamentMatches(tournamentId);
           await Promise.all(
@@ -554,61 +533,47 @@ export const mergePlayers = async (user, nonVerifiedPlayer) => {
                   nonVerifiedPlayer.id
                 );
 
-                // const userMatchPlayer = nonVerifiedMatchPlayer
-                //   ? createMatchPlayerObjectFromMerge(
-                //       match.id,
-                //       user,
-                //       nonVerifiedMatchPlayer
-                //     )
-                //   : createMatchPlayerObjectFromMergeFallback(match.id, user);
-
                 const userMatchPlayer = createMatchPlayerObjectFromMerge(
-                  match.id,
                   user,
                   nonVerifiedMatchPlayer
                 );
-                console.log(
-                  'ex nonverif, now merged userMatchPlayer:',
+                await deleteDoc(
+                  getMatchPlayerDocRef(
+                    match.tournament,
+                    match.id,
+                    nonVerifiedPlayer.id
+                  )
+                );
+                await setDoc(
+                  getMatchPlayerDocRef(match.tournament, match.id, user.id),
                   userMatchPlayer
                 );
 
-                // deleteDoc(
-                //   getMatchPlayerDocRef(
-                //     match.tournament,
-                //     match.id,
-                //     nonVerifiedPlayer.id
-                //   )
-                // );
-                // setDoc(
-                //   getMatchPlayerDocRef(match.tournament, match.id, user.id),
-                //   userMatchPlayer
-                // );
-
-                // updateDoc(getMatchDocRef(match.tournament, match.id), {
-                //   players: arrayRemove(nonVerifiedPlayer.id),
-                // });
-                // updateDoc(getMatchDocRef(match.tournament, match.id), {
-                //   players: arrayUnion(user.id),
-                // });
+                await updateDoc(getMatchDocRef(match.tournament, match.id), {
+                  players: arrayRemove(nonVerifiedPlayer.id),
+                });
+                await updateDoc(getMatchDocRef(match.tournament, match.id), {
+                  players: arrayUnion(user.id),
+                });
               }
 
-              // if (match.teamA.includes(nonVerifiedPlayer.id)) {
-              //   updateDoc(getMatchDocRef(match.tournament, match.id), {
-              //     teamA: arrayRemove(nonVerifiedPlayer.id),
-              //   });
-              //   updateDoc(getMatchDocRef(match.tournament, match.id), {
-              //     teamA: arrayUnion(user.id),
-              //   });
-              // }
+              if (match.teamA.includes(nonVerifiedPlayer.id)) {
+                await updateDoc(getMatchDocRef(match.tournament, match.id), {
+                  teamA: arrayRemove(nonVerifiedPlayer.id),
+                });
+                await updateDoc(getMatchDocRef(match.tournament, match.id), {
+                  teamA: arrayUnion(user.id),
+                });
+              }
 
-              // if (match.teamB.includes(nonVerifiedPlayer.id)) {
-              //   updateDoc(getMatchDocRef(match.tournament, match.id), {
-              //     teamB: arrayRemove(nonVerifiedPlayer.id),
-              //   });
-              //   updateDoc(getMatchDocRef(match.tournament, match.id), {
-              //     teamB: arrayUnion(user.id),
-              //   });
-              // }
+              if (match.teamB.includes(nonVerifiedPlayer.id)) {
+                await updateDoc(getMatchDocRef(match.tournament, match.id), {
+                  teamB: arrayRemove(nonVerifiedPlayer.id),
+                });
+                await updateDoc(getMatchDocRef(match.tournament, match.id), {
+                  teamB: arrayUnion(user.id),
+                });
+              }
             })
           );
         })
@@ -643,18 +608,18 @@ export const mergePlayers = async (user, nonVerifiedPlayer) => {
         },
       };
 
-      // await updateDoc(getPlayerDocRef(user.id), {
-      //   'tournaments.all': mergedUser.tournaments.all,
-      //   'tournaments.active': mergedUser.tournaments.active,
-      //   'tournaments.finished': mergedUser.tournaments.finished,
-      //   'previousNonVerifiedPlayerProfile.id':
-      //     mergedUser.previousNonVerifiedPlayerProfile.id,
-      //   'previousNonVerifiedPlayerProfile.creationDateTime':
-      //     mergedUser.previousNonVerifiedPlayerProfile.creationDateTime,
-      //   'previousNonVerifiedPlayerProfile.createdBy':
-      //     mergedUser.previousNonVerifiedPlayerProfile.createdBy,
-      // });
-      // deleteDoc(getPlayerDocRef(nonVerifiedPlayer.id));
+      await updateDoc(getPlayerDocRef(user.id), {
+        'tournaments.all': mergedUser.tournaments.all,
+        'tournaments.active': mergedUser.tournaments.active,
+        'tournaments.finished': mergedUser.tournaments.finished,
+        'previousNonVerifiedPlayerProfile.id':
+          mergedUser.previousNonVerifiedPlayerProfile.id,
+        'previousNonVerifiedPlayerProfile.creationDateTime':
+          mergedUser.previousNonVerifiedPlayerProfile.creationDateTime,
+        'previousNonVerifiedPlayerProfile.createdBy':
+          mergedUser.previousNonVerifiedPlayerProfile.createdBy,
+      });
+      await deleteDoc(getPlayerDocRef(nonVerifiedPlayer.id));
 
       console.log('updated user mergedUser player:', mergedUser);
       console.log('MERGE SUCCESSFUL!');
