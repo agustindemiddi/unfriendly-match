@@ -11,14 +11,26 @@ import {
 
 const TournamentPlayersPage = () => {
   const { tournamentId } = useParams();
-  const { userPlayerProfile } = getUserAuthCtx();
-  const [tournament, setTournament] = useState(null);
+  const {
+    userPlayerProfile,
+    updatedUserTournaments,
+    updatedUserTournamentsPlayers,
+  } = getUserAuthCtx();
+  const [unsubscribedTournament, setUnsubscribedTournament] = useState(null);
   const [players, setPlayers] = useState([]);
+
+  const tournament = updatedUserTournaments?.all?.find(
+    (tournament) => tournament.id === tournamentId
+  );
+
+  const updatedTournamentPlayers = updatedUserTournamentsPlayers?.filter(
+    (player) => tournament.players.includes(player.id)
+  );
 
   useEffect(() => {
     const fetchTournamentAndPlayers = async () => {
       const fetchedTournament = await getTournament(tournamentId);
-      setTournament(fetchedTournament);
+      setUnsubscribedTournament(fetchedTournament);
 
       const fetchedPlayers = await getPlayers(fetchedTournament.players);
       setPlayers(fetchedPlayers);
@@ -26,18 +38,20 @@ const TournamentPlayersPage = () => {
     fetchTournamentAndPlayers();
   }, [tournamentId]);
 
-  const isUserSubscribedToTournament =
-    userPlayerProfile?.tournaments?.all?.includes(tournamentId);
+  // const isUserSubscribedToTournament =
+  //   userPlayerProfile?.tournaments?.all?.includes(tournamentId);
 
   const showContent =
-    tournament &&
-    players.length > 0 &&
-    (isUserSubscribedToTournament || tournament.isPublic);
+    (tournament || unsubscribedTournament?.isPublic) &&
+    (updatedTournamentPlayers.length > 0 || players.length > 0);
 
   return (
     <>
       {showContent && (
-        <TournamentPlayersSection tournament={tournament} players={players} />
+        <TournamentPlayersSection
+          tournament={tournament || unsubscribedTournament}
+          players={updatedTournamentPlayers || players}
+        />
       )}
     </>
   );

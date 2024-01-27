@@ -64,7 +64,10 @@ const createPlayerObjectFromFirestore = (playerDoc) => {
   if (playerDoc.data()?.previousNonVerifiedPlayerProfile) {
     playerData.previousNonVerifiedPlayerProfile = {
       ...playerDoc.data().previousNonVerifiedPlayerProfile,
-      creationDateTime: playerDoc.data().creationDateTime?.toDate(),
+      // creationDateTime: playerDoc.data().creationDateTime?.toDate(), // this should have saved the same date for playerDoc.data().creationDateTime and playerDoc.data().previousNonVerifiedPlayerProfile.creationDateTime, but somehow it seemed to save the correct (different) dates. review with new code below
+      creationDateTime: playerDoc
+        .data()
+        .previousNonVerifiedPlayerProfile.creationDateTime.toDate(),
     };
   }
   return playerData;
@@ -163,6 +166,10 @@ export const getPlayer = async (playerId) => {
   const player = createPlayerObjectFromFirestore(playerDoc);
   return player;
 };
+
+// edit player:
+const editPlayer = async (playerId, playerData) =>
+  await updateDoc(getPlayerDocRef(playerId), playerData);
 
 // get tournament:
 export const getTournament = async (tournamentId) => {
@@ -510,7 +517,47 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, playerId) => {
 };
 
 // MERGING
-// merge non-verified player into user
+// request merge:
+export const requestMerge = async (player, nonVerifiedPlayer) => {
+  if (
+    nonVerifiedPlayer.mergeRequests?.some(
+      (mergeRequest) => mergeRequest.requestedBy === player.id
+    )
+  ) {
+    alert('Request already done! Wait for an admin to approve or reject it!');
+  } else {
+    const nonVerifiedPlayerData = {
+      ...nonVerifiedPlayer,
+      mergeRequests: [
+        {
+          requestedBy: player.id,
+          requestDateTime: new Date(),
+          status: 'pending',
+        },
+        ...(nonVerifiedPlayer.mergeRequests || []),
+      ],
+    };
+    await editPlayer(nonVerifiedPlayer.id, nonVerifiedPlayerData);
+    alert(
+      'Merge request done successfully! Wait for an admin to approve (or reject) it!'
+    );
+  }
+};
+
+// cancel merge request:
+export const cancelMergeRequest = async (player, nonVerifiedPlayer) => {
+  const request = nonVerifiedPlayer.mergeRequests?.find(
+    (mergeRequest) => mergeRequest.requestedBy === player.id
+  );
+  if (request) {
+    await updateDoc(getPlayerDocRef(nonVerifiedPlayer.id), {
+      'mergeRequests': arrayRemove(request),
+    });
+    alert('Request cancelled!');
+  }
+};
+
+// merge non-verified player into user:
 export const mergePlayers = async (user, nonVerifiedPlayer) => {
   if (user.isVerified && !nonVerifiedPlayer.isVerified) {
     try {
