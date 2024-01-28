@@ -9,6 +9,7 @@ import ErrorPage from './pages/ErrorPage';
 
 import SignInPage from './pages/SignInPage';
 import HomePage from './pages/HomePage';
+import AdminPage from './pages/AdminPage';
 
 import ContactsPage from './pages/contacts/ContactsPage';
 import ContactDetailPage from './pages/contacts/ContactDetailPage';
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       { path: 'signin', element: <SignInPage /> },
+      { path: 'admin', element: <AdminPage /> },
       // { path: 'test', element: <Test /> },
       {
         path: ':playerId',

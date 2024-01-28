@@ -61,6 +61,14 @@ const createPlayerObjectFromFirestore = (playerDoc) => {
     creationDateTime: playerDoc.data()?.creationDateTime?.toDate(),
     image: playerDoc.data()?.image || '/default-user.svg',
   };
+  if (playerDoc.data()?.mergeRequests?.length > 0) {
+    playerData.mergeRequests = playerDoc
+      .data()
+      .mergeRequests.map((mergeRequest) => ({
+        ...mergeRequest,
+        requestDateTime: mergeRequest.requestDateTime.toDate(),
+      }));
+  }
   if (playerDoc.data()?.previousNonVerifiedPlayerProfile) {
     playerData.previousNonVerifiedPlayerProfile = {
       ...playerDoc.data().previousNonVerifiedPlayerProfile,
@@ -649,9 +657,11 @@ export const mergePlayers = async (user, nonVerifiedPlayer) => {
           ),
         },
         previousNonVerifiedPlayerProfile: {
-          id: nonVerifiedPlayer.id,
+          // id: nonVerifiedPlayer.id,
           creationDateTime: nonVerifiedPlayer.creationDateTime,
           createdBy: nonVerifiedPlayer.createdBy,
+          mergeDateTime: new Date(),
+          mergeApprovedBy: 'ADMIN',
         },
       };
 
