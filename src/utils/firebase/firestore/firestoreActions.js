@@ -69,18 +69,6 @@ const createPlayerObjectFromFirestore = (playerDoc) => {
         requestDateTime: mergeRequest.requestDateTime.toDate(),
       }));
   }
-  // if (playerDoc.data()?.previousNonVerifiedPlayerProfile) {
-  //   playerData.previousNonVerifiedPlayerProfile = {
-  //     ...playerDoc.data().previousNonVerifiedPlayerProfile,
-  //     // creationDateTime: playerDoc.data().creationDateTime?.toDate(), // this should have saved the same date for playerDoc.data().creationDateTime and playerDoc.data().previousNonVerifiedPlayerProfile.creationDateTime, but somehow it seemed to save the correct (different) dates. review with new code below
-  //     creationDateTime: playerDoc
-  //       .data()
-  //       .previousNonVerifiedPlayerProfile.creationDateTime.toDate(),
-  //     mergeDateTime: playerDoc
-  //       .data()
-  //       .previousNonVerifiedPlayerProfile.mergeDateTime.toDate(),
-  //   };
-  // }
   if (playerDoc.data()?.previousNonVerifiedPlayerProfiles?.length > 0) {
     playerData.previousNonVerifiedPlayerProfiles = playerDoc
       .data()
@@ -542,10 +530,14 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, playerId) => {
 
 // MERGING
 // request merge:
-export const requestMerge = async (player, nonVerifiedPlayer) => {
+export const requestMerge = async (
+  verifiedPlayer,
+  nonVerifiedPlayer,
+  tournamentId
+) => {
   if (
     nonVerifiedPlayer.mergeRequests?.some(
-      (mergeRequest) => mergeRequest.requestedBy === player.id
+      (mergeRequest) => mergeRequest.requestedBy === verifiedPlayer.id
     )
   ) {
     alert('Request already done! Wait for an admin to approve or reject it!');
@@ -554,8 +546,9 @@ export const requestMerge = async (player, nonVerifiedPlayer) => {
       ...nonVerifiedPlayer,
       mergeRequests: [
         {
-          requestedBy: player.id,
           requestDateTime: new Date(),
+          requestedBy: verifiedPlayer.id,
+          tournament: tournamentId,
           status: 'pending',
         },
         ...(nonVerifiedPlayer.mergeRequests || []),
@@ -581,17 +574,21 @@ export const cancelMergeRequest = async (player, nonVerifiedPlayer) => {
   }
 };
 
-// merge non-verified player into user:
-export const mergePlayers = async (user, nonVerifiedPlayer, adminId) => {
-  if (user.isVerified && !nonVerifiedPlayer.isVerified) {
+// merge non-verified player into verifiedPlayer:
+export const mergePlayers = async (
+  verifiedPlayer,
+  nonVerifiedPlayer,
+  adminId
+) => {
+  if (verifiedPlayer.isVerified && !nonVerifiedPlayer.isVerified) {
     try {
       await Promise.all(
         nonVerifiedPlayer.tournaments.all.map(async (tournamentId) => {
           await updateDoc(getTournamentDocRef(tournamentId), {
-            players: arrayRemove(nonVerifiedPlayer.id), // bien
+            players: arrayRemove(nonVerifiedPlayer.id),
           });
           await updateDoc(getTournamentDocRef(tournamentId), {
-            players: arrayUnion(user.id), // bien
+            players: arrayUnion(verifiedPlayer.id),
           });
 
           const tournamentMatches = await getTournamentMatches(tournamentId);
@@ -604,8 +601,8 @@ export const mergePlayers = async (user, nonVerifiedPlayer, adminId) => {
                   nonVerifiedPlayer.id
                 );
 
-                const userMatchPlayer = createMatchPlayerObjectFromMerge(
-                  user,
+                const mergedMatchPlayer = createMatchPlayerObjectFromMerge(
+                  verifiedPlayer,
                   nonVerifiedMatchPlayer
                 );
                 await deleteDoc(
@@ -616,15 +613,19 @@ export const mergePlayers = async (user, nonVerifiedPlayer, adminId) => {
                   )
                 );
                 await setDoc(
-                  getMatchPlayerDocRef(match.tournament, match.id, user.id),
-                  userMatchPlayer
+                  getMatchPlayerDocRef(
+                    match.tournament,
+                    match.id,
+                    verifiedPlayer.id
+                  ),
+                  mergedMatchPlayer
                 );
 
                 await updateDoc(getMatchDocRef(match.tournament, match.id), {
                   players: arrayRemove(nonVerifiedPlayer.id),
                 });
                 await updateDoc(getMatchDocRef(match.tournament, match.id), {
-                  players: arrayUnion(user.id),
+                  players: arrayUnion(verifiedPlayer.id),
                 });
               }
 
@@ -633,7 +634,7 @@ export const mergePlayers = async (user, nonVerifiedPlayer, adminId) => {
                   teamA: arrayRemove(nonVerifiedPlayer.id),
                 });
                 await updateDoc(getMatchDocRef(match.tournament, match.id), {
-                  teamA: arrayUnion(user.id),
+                  teamA: arrayUnion(verifiedPlayer.id),
                 });
               }
 
@@ -642,7 +643,7 @@ export const mergePlayers = async (user, nonVerifiedPlayer, adminId) => {
                   teamB: arrayRemove(nonVerifiedPlayer.id),
                 });
                 await updateDoc(getMatchDocRef(match.tournament, match.id), {
-                  teamB: arrayUnion(user.id),
+                  teamB: arrayUnion(verifiedPlayer.id),
                 });
               }
             })
@@ -650,31 +651,24 @@ export const mergePlayers = async (user, nonVerifiedPlayer, adminId) => {
         })
       );
 
-      // // const previousNonVerifiedPlayerProfile = {
-      // //   creationDateTime: nonVerifiedPlayer.creationDateTime,
-      // //   createdBy: nonVerifiedPlayer.createdBy,
-      // //   mergeDateTime: new Date(),
-      // //   mergeApprovedBy: adminId,
-      // // }
-
       const mergedUser = {
-        ...user,
+        ...verifiedPlayer,
         tournaments: {
           all: Array.from(
             new Set([
-              ...user.tournaments.all,
+              ...verifiedPlayer.tournaments.all,
               ...nonVerifiedPlayer.tournaments.all,
             ])
           ),
           active: Array.from(
             new Set([
-              ...user.tournaments.active,
+              ...verifiedPlayer.tournaments.active,
               ...nonVerifiedPlayer.tournaments.active,
             ])
           ),
           finished: Array.from(
             new Set([
-              ...user.tournaments.finished,
+              ...verifiedPlayer.tournaments.finished,
               ...nonVerifiedPlayer.tournaments.finished,
             ])
           ),
@@ -686,27 +680,20 @@ export const mergePlayers = async (user, nonVerifiedPlayer, adminId) => {
             mergeDateTime: new Date(),
             mergeApprovedBy: adminId,
           },
-          ...(user.previousNonVerifiedPlayerProfiles || []),
+          ...(verifiedPlayer.previousNonVerifiedPlayerProfiles || []),
         ],
       };
 
-      await updateDoc(getPlayerDocRef(user.id), {
+      await updateDoc(getPlayerDocRef(verifiedPlayer.id), {
         'tournaments.all': mergedUser.tournaments.all,
         'tournaments.active': mergedUser.tournaments.active,
         'tournaments.finished': mergedUser.tournaments.finished,
-        // 'previousNonVerifiedPlayerProfiles': arrayUnion({
-        //   creationDateTime: nonVerifiedPlayer.creationDateTime,
-        //   createdBy: nonVerifiedPlayer.createdBy,
-        //   mergeDateTime: new Date(),
-        //   mergeApprovedBy: adminId,
-        // }),
         'previousNonVerifiedPlayerProfiles':
           mergedUser.previousNonVerifiedPlayerProfiles,
       });
       await deleteDoc(getPlayerDocRef(nonVerifiedPlayer.id));
 
-      console.log('updated user mergedUser player:', mergedUser);
-      console.log('MERGE SUCCESSFUL!');
+      console.log('Merge successful!');
     } catch (error) {
       console.log('error:', error);
       console.log('error.message:', error.message);

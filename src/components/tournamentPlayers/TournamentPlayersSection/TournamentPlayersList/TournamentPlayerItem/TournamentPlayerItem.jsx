@@ -1,3 +1,5 @@
+import { useParams } from 'react-router-dom';
+
 import styles from './TournamentPlayerItem.module.css';
 
 import { getUserAuthCtx } from '../../../../../context/authContext';
@@ -8,6 +10,7 @@ import {
 } from '../../../../../utils/firebase/firestore/firestoreActions';
 
 const TournamentPlayerItem = ({ player }) => {
+  const { tournamentId } = useParams();
   const { userPlayerProfile } = getUserAuthCtx();
 
   const isRequestDone = player?.mergeRequests?.some(
@@ -18,12 +21,12 @@ const TournamentPlayerItem = ({ player }) => {
     <div style={{ border: '1px solid' }}>
       <p>{player.displayName}</p>
       <button onClick={() => console.log(player)}>LOG PLAYER INFO</button>
-      {!player.isVerified && (
+      {!player.isVerified && player.createdBy !== userPlayerProfile.id && (
         <button
           onClick={
             isRequestDone
               ? () => cancelMergeRequest(userPlayerProfile, player)
-              : () => requestMerge(userPlayerProfile, player)
+              : () => requestMerge(userPlayerProfile, player, tournamentId)
           }>
           {isRequestDone ? 'CANCEL MERGE REQUEST' : 'REQUEST MERGE'}
         </button>

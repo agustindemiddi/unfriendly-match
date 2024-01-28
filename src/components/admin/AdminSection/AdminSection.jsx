@@ -12,6 +12,8 @@ const AdminSection = ({ userPlayerProfile, mergeRequestedPlayers }) => {
 
   const declineMergeHandler = () => {};
 
+  console.log(mergeRequestedPlayers);
+
   return (
     <Section>
       {mergeRequestedPlayers?.length > 0 && (
