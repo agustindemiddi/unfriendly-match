@@ -14,6 +14,7 @@ const ContactDetail = ({ player }) => {
           <h2>name: {player.displayName}</h2>
           <p>id: {player.id}</p>
           <img className={styles.image} src={player.image} alt='' />
+          <button onClick={() => console.log(player)}>LOG PLAYER DATA</button>
         </>
       )}
       {!player.displayName && (

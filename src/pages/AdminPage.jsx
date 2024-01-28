@@ -38,8 +38,11 @@ const AdminPage = () => {
 
   return (
     <>
-      {convertedMergeRequestedPlayers && (
-        <AdminSection mergeRequestedPlayers={convertedMergeRequestedPlayers} />
+      {userPlayerProfile && convertedMergeRequestedPlayers && (
+        <AdminSection
+          userPlayerProfile={userPlayerProfile}
+          mergeRequestedPlayers={convertedMergeRequestedPlayers}
+        />
       )}
     </>
   );

@@ -69,14 +69,30 @@ const createPlayerObjectFromFirestore = (playerDoc) => {
         requestDateTime: mergeRequest.requestDateTime.toDate(),
       }));
   }
-  if (playerDoc.data()?.previousNonVerifiedPlayerProfile) {
-    playerData.previousNonVerifiedPlayerProfile = {
-      ...playerDoc.data().previousNonVerifiedPlayerProfile,
-      // creationDateTime: playerDoc.data().creationDateTime?.toDate(), // this should have saved the same date for playerDoc.data().creationDateTime and playerDoc.data().previousNonVerifiedPlayerProfile.creationDateTime, but somehow it seemed to save the correct (different) dates. review with new code below
-      creationDateTime: playerDoc
-        .data()
-        .previousNonVerifiedPlayerProfile.creationDateTime.toDate(),
-    };
+  // if (playerDoc.data()?.previousNonVerifiedPlayerProfile) {
+  //   playerData.previousNonVerifiedPlayerProfile = {
+  //     ...playerDoc.data().previousNonVerifiedPlayerProfile,
+  //     // creationDateTime: playerDoc.data().creationDateTime?.toDate(), // this should have saved the same date for playerDoc.data().creationDateTime and playerDoc.data().previousNonVerifiedPlayerProfile.creationDateTime, but somehow it seemed to save the correct (different) dates. review with new code below
+  //     creationDateTime: playerDoc
+  //       .data()
+  //       .previousNonVerifiedPlayerProfile.creationDateTime.toDate(),
+  //     mergeDateTime: playerDoc
+  //       .data()
+  //       .previousNonVerifiedPlayerProfile.mergeDateTime.toDate(),
+  //   };
+  // }
+  if (playerDoc.data()?.previousNonVerifiedPlayerProfiles?.length > 0) {
+    playerData.previousNonVerifiedPlayerProfiles = playerDoc
+      .data()
+      .previousNonVerifiedPlayerProfiles.map(
+        (previousNonVerifiedPlayerProfile) => ({
+          ...previousNonVerifiedPlayerProfile,
+          creationDateTime:
+            previousNonVerifiedPlayerProfile.creationDateTime.toDate(),
+          mergeDateTime:
+            previousNonVerifiedPlayerProfile.mergeDateTime.toDate(),
+        })
+      );
   }
   return playerData;
 };
@@ -566,16 +582,16 @@ export const cancelMergeRequest = async (player, nonVerifiedPlayer) => {
 };
 
 // merge non-verified player into user:
-export const mergePlayers = async (user, nonVerifiedPlayer) => {
+export const mergePlayers = async (user, nonVerifiedPlayer, adminId) => {
   if (user.isVerified && !nonVerifiedPlayer.isVerified) {
     try {
       await Promise.all(
         nonVerifiedPlayer.tournaments.all.map(async (tournamentId) => {
           await updateDoc(getTournamentDocRef(tournamentId), {
-            players: arrayRemove(nonVerifiedPlayer.id),
+            players: arrayRemove(nonVerifiedPlayer.id), // bien
           });
           await updateDoc(getTournamentDocRef(tournamentId), {
-            players: arrayUnion(user.id),
+            players: arrayUnion(user.id), // bien
           });
 
           const tournamentMatches = await getTournamentMatches(tournamentId);
@@ -634,6 +650,13 @@ export const mergePlayers = async (user, nonVerifiedPlayer) => {
         })
       );
 
+      // // const previousNonVerifiedPlayerProfile = {
+      // //   creationDateTime: nonVerifiedPlayer.creationDateTime,
+      // //   createdBy: nonVerifiedPlayer.createdBy,
+      // //   mergeDateTime: new Date(),
+      // //   mergeApprovedBy: adminId,
+      // // }
+
       const mergedUser = {
         ...user,
         tournaments: {
@@ -656,25 +679,29 @@ export const mergePlayers = async (user, nonVerifiedPlayer) => {
             ])
           ),
         },
-        previousNonVerifiedPlayerProfile: {
-          // id: nonVerifiedPlayer.id,
-          creationDateTime: nonVerifiedPlayer.creationDateTime,
-          createdBy: nonVerifiedPlayer.createdBy,
-          mergeDateTime: new Date(),
-          mergeApprovedBy: 'ADMIN',
-        },
+        previousNonVerifiedPlayerProfiles: [
+          {
+            creationDateTime: nonVerifiedPlayer.creationDateTime,
+            createdBy: nonVerifiedPlayer.createdBy,
+            mergeDateTime: new Date(),
+            mergeApprovedBy: adminId,
+          },
+          ...(user.previousNonVerifiedPlayerProfiles || []),
+        ],
       };
 
       await updateDoc(getPlayerDocRef(user.id), {
         'tournaments.all': mergedUser.tournaments.all,
         'tournaments.active': mergedUser.tournaments.active,
         'tournaments.finished': mergedUser.tournaments.finished,
-        'previousNonVerifiedPlayerProfile.id':
-          mergedUser.previousNonVerifiedPlayerProfile.id,
-        'previousNonVerifiedPlayerProfile.creationDateTime':
-          mergedUser.previousNonVerifiedPlayerProfile.creationDateTime,
-        'previousNonVerifiedPlayerProfile.createdBy':
-          mergedUser.previousNonVerifiedPlayerProfile.createdBy,
+        // 'previousNonVerifiedPlayerProfiles': arrayUnion({
+        //   creationDateTime: nonVerifiedPlayer.creationDateTime,
+        //   createdBy: nonVerifiedPlayer.createdBy,
+        //   mergeDateTime: new Date(),
+        //   mergeApprovedBy: adminId,
+        // }),
+        'previousNonVerifiedPlayerProfiles':
+          mergedUser.previousNonVerifiedPlayerProfiles,
       });
       await deleteDoc(getPlayerDocRef(nonVerifiedPlayer.id));
 
