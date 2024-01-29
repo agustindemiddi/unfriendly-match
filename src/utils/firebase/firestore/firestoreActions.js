@@ -611,6 +611,7 @@ export const declineMergeRequest = async (
 //               ].every((playerId) => match?.players?.includes(playerId));
 //               if (bothPlayersInSameMatch) {
 //                 mergePrevented = true;
+//                 return;
 //               }
 //             })
 //           );
@@ -748,36 +749,25 @@ export const mergePlayers = async (
 ) => {
   if (verifiedPlayer.isVerified && !nonVerifiedPlayer.isVerified) {
     try {
-      let mergePrevented = false;
+      let matchesWithConflict = [];
 
       await Promise.all(
         nonVerifiedPlayer.tournaments.all.map(async (tournamentId) => {
           const tournamentMatches = await getTournamentMatches(tournamentId);
           await Promise.all(
             tournamentMatches.map(async (match) => {
-              const bothPlayersInSameMatch = [
+              const hasConflict = [
                 verifiedPlayer.id,
                 nonVerifiedPlayer.id,
               ].every((playerId) => match?.players?.includes(playerId));
-              if (bothPlayersInSameMatch) {
-                mergePrevented = true;
+              if (hasConflict) {
+                matchesWithConflict.push(match);
               }
-            })
-          );
-        })
-      );
 
-      if (mergePrevented) {
-        console.log('Conflict found, merge prevented: both players participate at least in one match');
-        return;
-      }
-
-      await Promise.all(
-        nonVerifiedPlayer.tournaments.all.map(async (tournamentId) => {
-          const tournamentMatches = await getTournamentMatches(tournamentId);
-          await Promise.all(
-            tournamentMatches.map(async (match) => {
-              if (match?.players?.includes(nonVerifiedPlayer.id)) {
+              if (
+                !hasConflict &&
+                match?.players?.includes(nonVerifiedPlayer.id)
+              ) {
                 const nonVerifiedMatchPlayer = await getMatchPlayer(
                   match.tournament,
                   match.id,
@@ -810,7 +800,7 @@ export const mergePlayers = async (
                 });
               }
 
-              if (match.teamA.includes(nonVerifiedPlayer.id)) {
+              if (!hasConflict && match.teamA.includes(nonVerifiedPlayer.id)) {
                 await updateDoc(getMatchDocRef(match.tournament, match.id), {
                   teamA: arrayRemove(nonVerifiedPlayer.id),
                 });
@@ -819,7 +809,7 @@ export const mergePlayers = async (
                 });
               }
 
-              if (match.teamB.includes(nonVerifiedPlayer.id)) {
+              if (!hasConflict && match.teamB.includes(nonVerifiedPlayer.id)) {
                 await updateDoc(getMatchDocRef(match.tournament, match.id), {
                   teamB: arrayRemove(nonVerifiedPlayer.id),
                 });
@@ -830,59 +820,68 @@ export const mergePlayers = async (
             })
           );
 
-          await updateDoc(getTournamentDocRef(tournamentId), {
-            players: arrayRemove(nonVerifiedPlayer.id),
-          });
-          await updateDoc(getTournamentDocRef(tournamentId), {
-            players: arrayUnion(verifiedPlayer.id),
-          });
+          if (matchesWithConflict.length === 0) {
+            await updateDoc(getTournamentDocRef(tournamentId), {
+              players: arrayRemove(nonVerifiedPlayer.id),
+            });
+            await updateDoc(getTournamentDocRef(tournamentId), {
+              players: arrayUnion(verifiedPlayer.id),
+            });
+          }
         })
       );
 
-      const mergedUser = {
-        ...verifiedPlayer,
-        tournaments: {
-          all: Array.from(
-            new Set([
-              ...verifiedPlayer.tournaments.all,
-              ...nonVerifiedPlayer.tournaments.all,
-            ])
-          ),
-          active: Array.from(
-            new Set([
-              ...verifiedPlayer.tournaments.active,
-              ...nonVerifiedPlayer.tournaments.active,
-            ])
-          ),
-          finished: Array.from(
-            new Set([
-              ...verifiedPlayer.tournaments.finished,
-              ...nonVerifiedPlayer.tournaments.finished,
-            ])
-          ),
-        },
-        previousNonVerifiedPlayerProfiles: [
-          {
-            creationDateTime: nonVerifiedPlayer.creationDateTime,
-            createdBy: nonVerifiedPlayer.createdBy,
-            mergeDateTime: new Date(),
-            mergeApprovedBy: adminId,
+      if (matchesWithConflict.length === 0) {
+        const mergedUser = {
+          ...verifiedPlayer,
+          tournaments: {
+            all: Array.from(
+              new Set([
+                ...verifiedPlayer.tournaments.all,
+                ...nonVerifiedPlayer.tournaments.all,
+              ])
+            ),
+            active: Array.from(
+              new Set([
+                ...verifiedPlayer.tournaments.active,
+                ...nonVerifiedPlayer.tournaments.active,
+              ])
+            ),
+            finished: Array.from(
+              new Set([
+                ...verifiedPlayer.tournaments.finished,
+                ...nonVerifiedPlayer.tournaments.finished,
+              ])
+            ),
           },
-          ...(verifiedPlayer.previousNonVerifiedPlayerProfiles || []),
-        ],
-      };
+          previousNonVerifiedPlayerProfiles: [
+            {
+              creationDateTime: nonVerifiedPlayer.creationDateTime,
+              createdBy: nonVerifiedPlayer.createdBy,
+              mergeDateTime: new Date(),
+              mergeApprovedBy: adminId,
+            },
+            ...(verifiedPlayer.previousNonVerifiedPlayerProfiles || []),
+          ],
+        };
 
-      await updateDoc(getPlayerDocRef(verifiedPlayer.id), {
-        'tournaments.all': mergedUser.tournaments.all,
-        'tournaments.active': mergedUser.tournaments.active,
-        'tournaments.finished': mergedUser.tournaments.finished,
-        'previousNonVerifiedPlayerProfiles':
-          mergedUser.previousNonVerifiedPlayerProfiles,
-      });
-      await deleteDoc(getPlayerDocRef(nonVerifiedPlayer.id));
+        await updateDoc(getPlayerDocRef(verifiedPlayer.id), {
+          'tournaments.all': mergedUser.tournaments.all,
+          'tournaments.active': mergedUser.tournaments.active,
+          'tournaments.finished': mergedUser.tournaments.finished,
+          'previousNonVerifiedPlayerProfiles':
+            mergedUser.previousNonVerifiedPlayerProfiles,
+        });
+        await deleteDoc(getPlayerDocRef(nonVerifiedPlayer.id));
 
-      console.log('mergedUser:', mergedUser);
-      console.log('Merge successful!');
+        console.log('Merge successful!');
+        console.log('mergedUser:', mergedUser);
+      } else {
+        console.log(
+          'Conflict found, merge prevented: both players participate in the same match in at least one case.'
+        );
+        return matchesWithConflict;
+      }
     } catch (error) {
       console.log('error:', error);
       console.log('error.message:', error.message);

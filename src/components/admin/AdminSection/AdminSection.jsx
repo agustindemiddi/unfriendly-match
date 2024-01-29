@@ -7,8 +7,34 @@ import {
   declineMergeRequest,
 } from '../../../utils/firebase/firestore/firestoreActions';
 import { getStringFormattedLongDateTime } from '../../../utils/getDates';
+import { getStringFormattedShortDate } from '../../../utils/getDates';
 
 const AdminSection = ({ userPlayerProfile, mergeRequestedPlayers }) => {
+  const handleApproveMerge = async (verifiedUser, nonVerifiedUser) => {
+    const matchesWithConflict = await mergePlayers(
+      verifiedUser,
+      nonVerifiedUser,
+      userPlayerProfile.id
+    );
+    if (matchesWithConflict) {
+      matchesWithConflict.sort((a, b) => a.dateTime - b.dateTime);
+      const matchesWithConflictDateTimes = Array.from(
+        new Set(
+          matchesWithConflict?.map((match) =>
+            getStringFormattedShortDate(match.dateTime)
+          )
+        )
+      );
+      alert(
+        `Conflict found, merge prevented: both players participate in the same match in at least one case. Please check matches played on ${matchesWithConflictDateTimes
+          .join(', ')
+          .toLocaleString()}`
+      );
+    } else {
+      alert('Merge successful!');
+    }
+  };
+
   return (
     <Section>
       {mergeRequestedPlayers?.length > 0 && (
@@ -40,11 +66,7 @@ const AdminSection = ({ userPlayerProfile, mergeRequestedPlayers }) => {
                       />
                       <button
                         onClick={() =>
-                          mergePlayers(
-                            mergeRequest.requestedBy,
-                            player,
-                            userPlayerProfile.id
-                          )
+                          handleApproveMerge(mergeRequest.requestedBy, player)
                         }>
                         Approve
                       </button>
