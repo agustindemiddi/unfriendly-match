@@ -6,7 +6,6 @@ import { getUserAuthCtx } from '../../../../../context/authContext';
 import {
   requestMerge,
   cancelMergeRequest,
-  // mergePlayers,
 } from '../../../../../utils/firebase/firestore/firestoreActions';
 
 const TournamentPlayerItem = ({ player }) => {

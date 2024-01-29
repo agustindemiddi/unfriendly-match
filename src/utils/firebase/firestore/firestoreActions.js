@@ -562,16 +562,32 @@ export const requestMerge = async (
 };
 
 // cancel merge request:
-export const cancelMergeRequest = async (player, nonVerifiedPlayer) => {
+export const cancelMergeRequest = async (verifiedPlayer, nonVerifiedPlayer) => {
   const request = nonVerifiedPlayer.mergeRequests?.find(
-    (mergeRequest) => mergeRequest.requestedBy === player.id
+    (mergeRequest) => mergeRequest.requestedBy === verifiedPlayer.id
   );
-  if (request) {
-    await updateDoc(getPlayerDocRef(nonVerifiedPlayer.id), {
-      'mergeRequests': arrayRemove(request),
-    });
-    alert('Request cancelled!');
-  }
+  await updateDoc(getPlayerDocRef(nonVerifiedPlayer.id), {
+    'mergeRequests': arrayRemove(request),
+  });
+  alert('Request cancelled!');
+};
+
+// decline merge request (admin):
+export const declineMergeRequest = async (
+  verifiedPlayer,
+  nonVerifiedPlayer
+) => {
+  const request = nonVerifiedPlayer.mergeRequests?.find(
+    (mergeRequest) => mergeRequest.requestedBy.id === verifiedPlayer.id
+  );
+  const declinedRequest = {
+    ...request,
+    requestedBy: request.requestedBy.id,
+  };
+  await updateDoc(getPlayerDocRef(nonVerifiedPlayer.id), {
+    'mergeRequests': arrayRemove(declinedRequest),
+  });
+  alert('Request cancelled!');
 };
 
 // merge non-verified player into verifiedPlayer:

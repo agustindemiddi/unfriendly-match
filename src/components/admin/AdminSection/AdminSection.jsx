@@ -2,18 +2,13 @@ import Section from '../../UI/Section/Section';
 
 import styles from './AdminSection.module.css';
 
-import { mergePlayers } from '../../../utils/firebase/firestore/firestoreActions';
+import {
+  mergePlayers,
+  declineMergeRequest,
+} from '../../../utils/firebase/firestore/firestoreActions';
 import { getStringFormattedLongDateTime } from '../../../utils/getDates';
 
 const AdminSection = ({ userPlayerProfile, mergeRequestedPlayers }) => {
-  const approveMergeHandler = (verifiedPlayer, nonVerifiedPlayer) => {
-    mergePlayers(verifiedPlayer, nonVerifiedPlayer, userPlayerProfile.id);
-  };
-
-  const declineMergeHandler = () => {};
-
-  console.log(mergeRequestedPlayers);
-
   return (
     <Section>
       {mergeRequestedPlayers?.length > 0 && (
@@ -43,8 +38,22 @@ const AdminSection = ({ userPlayerProfile, mergeRequestedPlayers }) => {
                         alt=''
                         style={{ width: '40px' }}
                       />
-                      <button onClick={()=>approveMergeHandler(mergeRequest.requestedBy, player)}>Approve</button>
-                      <button>Decline</button>
+                      <button
+                        onClick={() =>
+                          mergePlayers(
+                            mergeRequest.requestedBy,
+                            player,
+                            userPlayerProfile.id
+                          )
+                        }>
+                        Approve
+                      </button>
+                      <button
+                        onClick={() =>
+                          declineMergeRequest(mergeRequest.requestedBy, player)
+                        }>
+                        Decline
+                      </button>
                     </li>
                   ))}
                 </ul>
