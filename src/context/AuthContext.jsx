@@ -75,7 +75,13 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [updatedUserTournaments?.all]);
 
+  console.log(updatedUserTournaments);
+
   // add listener to tournament matches:
+
+  // agregar tournament.matches: [match1Id, match2Id, ...]
+  // agregar updatedUserTournaments?.all a dependencies array
+
   useEffect(() => {
     if (location.pathname.startsWith(`/tournaments/${tournamentId}`)) {
       // fetch tournament matches:
@@ -96,7 +102,7 @@ export const AuthContextProvider = ({ children }) => {
       };
       fetchTournamentMatches();
     }
-  }, [tournamentId]);
+  }, [tournamentId, updatedUserTournaments?.all]);
 
   const userContacts =
     userPlayerProfile && updatedUserTournamentsPlayers

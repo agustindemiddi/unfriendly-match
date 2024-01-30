@@ -211,7 +211,6 @@ export const addNonVerifiedPlayerToTournament = async (
   playerData
 ) => {
   await setDoc(getPlayerDocRef(playerId), playerData);
-
   await updateDoc(getTournamentDocRef(tournamentId), {
     players: arrayUnion(playerId),
   });
@@ -227,6 +226,10 @@ export const getMatch = async (tournamentId, matchId) => {
 // add match:
 export const addMatch = async (tournamentId, matchId, matchData) => {
   await setDoc(getMatchDocRef(tournamentId, matchId), matchData);
+  
+  await updateDoc(getTournamentDocRef(tournamentId), {
+    'matches': arrayUnion(matchId),
+  });
 };
 
 // edit match:
