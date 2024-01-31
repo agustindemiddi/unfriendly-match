@@ -188,6 +188,7 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
       creator: tournament?.creator || userPlayerProfile?.id,
       admins: tournament?.admins || [userPlayerProfile?.id],
       players: tournament?.players || [userPlayerProfile?.id],
+      matches: tournament?.matches || [],
     };
 
     if (tournament) {

@@ -8,7 +8,7 @@ import { getUserAuthCtx } from '../../context/authContext';
 
 const MatchDetailPage = () => {
   const { tournamentId, matchId } = useParams();
-  const { updatedUserTournaments, updatedTournamentMatches } = getUserAuthCtx();
+  const { updatedUserTournaments, updatedActiveTournamentsMatches } = getUserAuthCtx();
   // const [matchFromUnsubscribedTournament, setMatchFromUnsubscribedTournament] =
   //   useState([]);
 
@@ -27,7 +27,7 @@ const MatchDetailPage = () => {
   //   (tournament) => tournament.id === tournamentId
   // )[0];
 
-  const match = updatedTournamentMatches?.find((match) => match.id === matchId);
+  const match = updatedActiveTournamentsMatches?.find((match) => match.id === matchId);
 
   // return (
   //   <>

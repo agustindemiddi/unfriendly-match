@@ -11,7 +11,7 @@ const TournamentDetailPage = () => {
   const {
     userPlayerProfile,
     updatedUserTournaments,
-    updatedTournamentMatches,
+    updatedActiveTournamentsMatches,
   } = getUserAuthCtx();
   const [unsubscribedTournament, setUnsubscribedTournament] = useState([]);
 
@@ -33,10 +33,10 @@ const TournamentDetailPage = () => {
     <>
       {userPlayerProfile &&
         updatedUserTournaments &&
-        updatedTournamentMatches && (
+        updatedActiveTournamentsMatches && (
           <TournamentDetailSection
             tournament={tournament || unsubscribedTournament}
-            matches={updatedTournamentMatches}
+            matches={updatedActiveTournamentsMatches}
             userPlayerProfile={userPlayerProfile}
           />
         )}

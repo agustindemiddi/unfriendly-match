@@ -11,7 +11,7 @@ const EditMatchPage = () => {
   const {
     userPlayerProfile,
     updatedUserTournaments,
-    updatedTournamentMatches,
+    updatedActiveTournamentsMatches,
   } = getUserAuthCtx();
   const [tournamentPlayers, setTournamentPlayers] = useState(null);
   const tournament = updatedUserTournaments?.all?.find(
@@ -28,7 +28,7 @@ const EditMatchPage = () => {
     }
   }, [tournament?.players]);
 
-  const match = updatedTournamentMatches?.find((match) => match.id === matchId);
+  const match = updatedActiveTournamentsMatches?.find((match) => match.id === matchId);
 
   const matchPlayers = tournamentPlayers?.filter((player) =>
     match?.players.includes(player.id)

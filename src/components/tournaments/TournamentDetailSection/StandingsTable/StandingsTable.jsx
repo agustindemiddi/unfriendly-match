@@ -9,7 +9,8 @@ import { calculateTournamentStats } from '../../../../utils/calculateTournamentS
 
 const StandingsTable = () => {
   const { tournamentId } = useParams();
-  const { updatedUserTournaments, updatedTournamentMatches } = getUserAuthCtx();
+  const { updatedUserTournaments, updatedActiveTournamentsMatches } =
+    getUserAuthCtx();
   const [tournamentPlayers, setTournamentPlayers] = useState([]);
 
   const tournament = updatedUserTournaments?.all?.find(
@@ -26,7 +27,7 @@ const StandingsTable = () => {
     }
   }, [tournament?.players]);
 
-  const finishedMatches = updatedTournamentMatches.filter(
+  const finishedMatches = updatedActiveTournamentsMatches.filter(
     (match) => Object.keys(match.result).length > 0
   );
 
