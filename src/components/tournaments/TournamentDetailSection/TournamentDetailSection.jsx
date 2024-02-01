@@ -74,11 +74,11 @@ const TournamentDetailSection = ({
   );
 
   const initialAction = {};
-  if (isJoinTournamentRequestDone) {
+  if (!isTournamentPlayer && isJoinTournamentRequestDone) {
     initialAction.label = 'Cancel request!';
     initialAction.onAction = () =>
       cancelJoinTournamentRequest(userPlayerProfile, tournament);
-  } else {
+  } else if (!isTournamentPlayer) {
     initialAction.label = 'Join!';
     initialAction.onAction = () =>
       requestJoinTournament(userPlayerProfile, tournament);
