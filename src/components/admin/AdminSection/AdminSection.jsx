@@ -41,13 +41,6 @@ const AdminSection = ({
     }
   };
 
-  const handleApproveJoinTournamentRequest = async (
-    tournament,
-    requestingPlayer
-  ) => {
-    await approveJoinTournamentRequest(tournament, requestingPlayer);
-  };
-
   return (
     <Section>
       {mergeRequestedPlayers?.length > 0 && (
@@ -121,7 +114,7 @@ const AdminSection = ({
                       <span>{`${joinRequest.requestedBy.displayName} >`}</span>
                       <button
                         onClick={() =>
-                          handleApproveJoinTournamentRequest(
+                          approveJoinTournamentRequest(
                             tournament,
                             joinRequest.requestedBy
                           )
@@ -131,8 +124,8 @@ const AdminSection = ({
                       <button
                         onClick={() =>
                           declineJoinTournamentRequest(
-                            joinRequest.requestedBy,
-                            tournament
+                            tournament,
+                            joinRequest.requestedBy
                           )
                         }>
                         Decline

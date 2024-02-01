@@ -197,9 +197,9 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
     } else {
       const newTournamentId = uuidv4();
       await addTournament(
+        newTournamentId,
         userPlayerProfile.id,
-        tournamentData,
-        newTournamentId
+        tournamentData
       );
       alert(`You have successfully created ${tournamentData.name}`);
     }

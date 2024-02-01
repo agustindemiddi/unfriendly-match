@@ -8,13 +8,13 @@ import StandingsTable from './StandingsTable/StandingsTable';
 import styles from './TournamentDetailSection.module.css';
 
 import { getUserAuthCtx } from '../../../context/authContext';
-import separateMatches from '../../../utils/separateMatches';
 import {
   requestJoinTournament,
   cancelJoinTournamentRequest,
   unsubscribeFromTournament,
   deleteTournament,
 } from '../../../utils/firebase/firestore/firestoreActions';
+import separateMatches from '../../../utils/separateMatches';
 import copyUrlToClipboard from '../../../utils/copyUrlToClipboard';
 
 const TournamentDetailSection = ({
@@ -25,13 +25,17 @@ const TournamentDetailSection = ({
   const { updatedUserTournamentsPlayers } = getUserAuthCtx();
   const navigate = useNavigate();
 
+  const { nextMatch, lastMatch } = separateMatches(matches);
+
   const isTournamentPlayer = tournament?.players?.includes(
     userPlayerProfile?.id
   );
 
   const isAdmin = tournament?.admins?.includes(userPlayerProfile.id);
 
-  const { nextMatch, lastMatch } = separateMatches(matches);
+  const isJoinTournamentRequestDone = tournament?.joinRequests?.some(
+    (joinRequest) => joinRequest.requestedBy === userPlayerProfile.id
+  );
 
   const handleUnsubscribeFromTournament = async () => {
     if (tournament.isActive) {
@@ -69,19 +73,15 @@ const TournamentDetailSection = ({
     navigate('..');
   };
 
-  const isJoinTournamentRequestDone = tournament?.joinRequests?.some(
-    (joinRequest) => joinRequest.requestedBy === userPlayerProfile.id
-  );
-
   const initialAction = {};
   if (!isTournamentPlayer && isJoinTournamentRequestDone) {
     initialAction.label = 'Cancel request!';
     initialAction.onAction = () =>
-      cancelJoinTournamentRequest(userPlayerProfile, tournament);
+      cancelJoinTournamentRequest(tournament, userPlayerProfile);
   } else if (!isTournamentPlayer) {
     initialAction.label = 'Join!';
     initialAction.onAction = () =>
-      requestJoinTournament(userPlayerProfile, tournament);
+      requestJoinTournament(tournament, userPlayerProfile);
     initialAction.color = 'greenish';
   }
 

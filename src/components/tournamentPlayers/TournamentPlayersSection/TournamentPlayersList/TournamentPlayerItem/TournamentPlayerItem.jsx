@@ -12,7 +12,7 @@ const TournamentPlayerItem = ({ player }) => {
   const { tournamentId } = useParams();
   const { userPlayerProfile } = getUserAuthCtx();
 
-  const isRequestDone = player?.mergeRequests?.some(
+  const isMergeRequestDone = player?.mergeRequests?.some(
     (mergeRequest) => mergeRequest.requestedBy === userPlayerProfile.id
   );
 
@@ -23,11 +23,11 @@ const TournamentPlayerItem = ({ player }) => {
       {!player.isVerified && player.createdBy !== userPlayerProfile.id && (
         <button
           onClick={
-            isRequestDone
+            isMergeRequestDone
               ? () => cancelMergeRequest(userPlayerProfile, player)
               : () => requestMerge(userPlayerProfile, player, tournamentId)
           }>
-          {isRequestDone ? 'CANCEL MERGE REQUEST' : 'REQUEST MERGE'}
+          {isMergeRequestDone ? 'CANCEL MERGE REQUEST' : 'REQUEST MERGE'}
         </button>
       )}
       <img src={player.image} style={{ width: '200px' }} />

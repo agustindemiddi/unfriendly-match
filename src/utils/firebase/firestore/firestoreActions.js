@@ -111,8 +111,8 @@ const createMatchObjectFromFirestore = (matchDoc) => ({
 const createMatchPlayerObjectFromPlayer = (
   tournamentId,
   matchId,
-  player,
-  userId
+  playerSubscriberId,
+  player
 ) => ({
   displayName: player.displayName,
   username: player.username,
@@ -120,7 +120,7 @@ const createMatchPlayerObjectFromPlayer = (
   isPublic: player.isPublic, // quizas innecesario
 
   matchSubscriptionDateTime: new Date(),
-  matchSubscribedBy: userId,
+  matchSubscribedBy: playerSubscriberId,
   match: matchId, // quizas innecesario
   tournament: tournamentId, // quizas innecesario
 });
@@ -133,11 +133,11 @@ const createMatchPlayerObjectFromFirestore = (matchPlayerDoc) => ({
     .matchSubscriptionDateTime?.toDate(),
 });
 
-const createMatchPlayerObjectFromMerge = (user, nonVerifiedMatchPlayer) => ({
-  displayName: user.displayName,
-  username: user.username,
-  image: user.image,
-  isPublic: user.isPublic, // quizas innecesario
+const createMatchPlayerObjectFromMerge = (player, nonVerifiedMatchPlayer) => ({
+  displayName: player.displayName,
+  username: player.username,
+  image: player.image,
+  isPublic: player.isPublic, // quizas innecesario
 
   matchSubscriptionDateTime: nonVerifiedMatchPlayer.matchSubscriptionDateTime,
   matchSubscribedBy: nonVerifiedMatchPlayer.matchSubscribedBy,
@@ -146,13 +146,13 @@ const createMatchPlayerObjectFromMerge = (user, nonVerifiedMatchPlayer) => ({
 });
 
 // FIRESTORE GENERIC ACTIONS
-// get a document:
-export const getDocument = async (docRef) => {
+// get document:
+const getDocument = async (docRef) => {
   const docSnap = await getDoc(docRef);
   return docSnap.exists() ? docSnap : new Error('Document not found!');
 };
 
-// Add a document:
+// Add document:
 const addDocument = async (colRef, data) => {
   const docRef = await addDoc(colRef, data);
 };
@@ -195,10 +195,10 @@ export const getTournament = async (tournamentId) => {
 };
 
 // add tournament:
-export const addTournament = async (userId, tournamentData, tournamentId) => {
+export const addTournament = async (tournamentId, playerId, tournamentData) => {
   await setDoc(getTournamentDocRef(tournamentId), tournamentData);
 
-  await updateDoc(getPlayerDocRef(userId), {
+  await updateDoc(getPlayerDocRef(playerId), {
     'tournaments.all': arrayUnion(tournamentId),
     'tournaments.active': arrayUnion(tournamentId),
   });
@@ -249,12 +249,17 @@ export const getMatchPlayer = async (tournamentId, matchId, playerId) => {
 };
 
 // add match player:
-export const addMatchPlayer = async (tournamentId, matchId, player, userId) => {
+export const addMatchPlayer = async (
+  tournamentId,
+  matchId,
+  playerSubscriberId,
+  player
+) => {
   const playerData = createMatchPlayerObjectFromPlayer(
     tournamentId,
     matchId,
-    player,
-    userId
+    playerSubscriberId,
+    player
   );
   await setDoc(
     getMatchPlayerDocRef(tournamentId, matchId, player.id),
@@ -540,7 +545,7 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, playerId) => {
 
 // REQUESTS
 // request join tournament:
-export const requestJoinTournament = async (player, tournament) => {
+export const requestJoinTournament = async (tournament, player) => {
   if (
     tournament.joinRequests?.some(
       (joinRequest) => joinRequest.requestedBy === player.id
@@ -567,7 +572,7 @@ export const requestJoinTournament = async (player, tournament) => {
 };
 
 // cancel join tournament request:
-export const cancelJoinTournamentRequest = async (player, tournament) => {
+export const cancelJoinTournamentRequest = async (tournament, player) => {
   const request = tournament.joinRequests?.find(
     (joinRequest) => joinRequest.requestedBy === player.id
   );
@@ -578,7 +583,7 @@ export const cancelJoinTournamentRequest = async (player, tournament) => {
 };
 
 // decline join tournament request:
-export const declineJoinTournamentRequest = async (player, tournament) => {
+export const declineJoinTournamentRequest = async (tournament, player) => {
   const request = tournament.joinRequests?.find(
     (joinRequest) => joinRequest.requestedBy.id === player.id
   );
@@ -592,7 +597,7 @@ export const declineJoinTournamentRequest = async (player, tournament) => {
 };
 
 // approve join tournament request:
-export const approveJoinTournamentRequest = async (tournament, player) => { // ser consistente con orden de parametros!
+export const approveJoinTournamentRequest = async (tournament, player) => {
   await subscribeToTournament(tournament.id, player.id);
   await declineJoinTournamentRequest(player, tournament);
 };
@@ -806,53 +811,3 @@ export const mergePlayers = async (
     }
   }
 };
-
-// COMPONENTS AND USED ACTIONS:
-
-// FIREBASE AUTH ACTIONS
-// get player profile (when user signs in)
-
-// AUTH CONTEXT
-// add listener to multiple tournamentsDocs
-// get all matches from tournament
-
-// HOME PAGE
-// get all matches from multiple tournaments
-
-// TOURNAMENT DETAIL PAGE
-// get tournament (as fallback if user is not subscribed)
-
-// TOURNAMENT DETAIL SECTION
-// subscribe user to tournament
-// unsubscribe user from tournament
-
-// TOURNAMENT FORM
-// add tournament
-// edit tournament
-
-// TOURNAMENT PLAYERS PAGE
-// get tournament (as fallback if user is not subscribed)
-// get multiple players
-
-// SOCCERFIELD CONTAINER
-// get all players from match
-// add listener to multiple matchPlayersDocs
-// get teams
-
-// PLAYER ICON CONTAINER
-// subscribe user to match
-// unsubscribe user from match
-
-// CONTACTS PAGE
-// get multiple players
-
-// PLAYER FORM
-// create non-verified player and add to tournament
-
-// MATCH FORM
-// get multiple players
-// add match
-// subscribe user to match
-
-// STANDINGS TABLE
-// get multiple players
