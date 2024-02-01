@@ -10,7 +10,8 @@ import styles from './TournamentDetailSection.module.css';
 import { getUserAuthCtx } from '../../../context/authContext';
 import separateMatches from '../../../utils/separateMatches';
 import {
-  subscribeToTournament,
+  requestJoinTournament,
+  cancelJoinTournamentRequest,
   unsubscribeFromTournament,
   deleteTournament,
 } from '../../../utils/firebase/firestore/firestoreActions';
@@ -21,8 +22,7 @@ const TournamentDetailSection = ({
   tournament,
   matches,
 }) => {
-  const { updatedUserTournamentsPlayers, updatedUserTournaments } =
-    getUserAuthCtx();
+  const { updatedUserTournamentsPlayers } = getUserAuthCtx();
   const navigate = useNavigate();
 
   const isTournamentPlayer = tournament?.players?.includes(
@@ -32,11 +32,6 @@ const TournamentDetailSection = ({
   const isAdmin = tournament?.admins?.includes(userPlayerProfile.id);
 
   const { nextMatch, lastMatch } = separateMatches(matches);
-
-  const handleSubscribeToTournament = async () => {
-    await subscribeToTournament(tournament.id, userPlayerProfile.id);
-    alert(`You have successfully joined ${tournament.name}`);
-  };
 
   const handleUnsubscribeFromTournament = async () => {
     if (tournament.isActive) {
@@ -56,22 +51,37 @@ const TournamentDetailSection = ({
         await unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
         alert(`You have successfully abandoned ${tournament.name}.`);
       } else {
-        deleteTournament(tournament.id, userPlayerProfile.id, nonVerifiedPlayersIds);
+        deleteTournament(
+          tournament.id,
+          userPlayerProfile.id,
+          nonVerifiedPlayersIds
+        );
         alert(
           `You have successfully abandoned the tournament. You were the last player of ${tournament.name}, so the tournament was deleted from the database.`
         );
       }
     } else {
-      alert(`You cannot unsubscribe from finished tournaments. Contact ${tournament.creator} and ask to delete the tournament.`);
+      alert(
+        `You cannot unsubscribe from finished tournaments. Contact ${tournament.creator} and ask to delete the tournament.`
+      );
     }
 
     navigate('..');
   };
 
+  const isJoinTournamentRequestDone = tournament?.joinRequests?.some(
+    (joinRequest) => joinRequest.requestedBy === userPlayerProfile.id
+  );
+
   const initialAction = {};
-  if (!isTournamentPlayer) {
+  if (isJoinTournamentRequestDone) {
+    initialAction.label = 'Cancel request!';
+    initialAction.onAction = () =>
+      cancelJoinTournamentRequest(userPlayerProfile, tournament);
+  } else {
     initialAction.label = 'Join!';
-    initialAction.onAction = handleSubscribeToTournament;
+    initialAction.onAction = () =>
+      requestJoinTournament(userPlayerProfile, tournament);
     initialAction.color = 'greenish';
   }
 

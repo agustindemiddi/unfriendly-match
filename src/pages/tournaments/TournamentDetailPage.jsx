@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import TournamentDetailSection from '../../components/tournaments/TournamentDetailSection/TournamentDetailSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
-import { getTournament } from '../../utils/firebase/firestore/firestoreActions';
+import { addTournamentListener } from '../../utils/firebase/firestore/firestoreActions';
 
 const TournamentDetailPage = () => {
   const { tournamentId } = useParams();
@@ -21,11 +21,13 @@ const TournamentDetailPage = () => {
 
   useEffect(() => {
     if (!tournament) {
-      const fetchTournament = async () => {
-        const fetchedTournament = await getTournament(tournamentId);
-        setUnsubscribedTournament(fetchedTournament);
-      };
-      fetchTournament();
+      const unsubscribe = addTournamentListener(
+        tournamentId,
+        setUnsubscribedTournament
+      );
+      return () => unsubscribe();
+    } else {
+      setUnsubscribedTournament([]);
     }
   }, [tournamentId]);
 

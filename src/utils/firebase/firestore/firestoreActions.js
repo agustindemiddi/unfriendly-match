@@ -61,15 +61,14 @@ const createPlayerObjectFromFirestore = (playerDoc) => {
     creationDateTime: playerDoc.data()?.creationDateTime?.toDate(),
     image: playerDoc.data()?.image || '/default-user.svg',
   };
-  if (playerDoc.data()?.mergeRequests?.length > 0) {
+  if (playerDoc.data()?.mergeRequests?.length > 0)
     playerData.mergeRequests = playerDoc
       .data()
       .mergeRequests.map((mergeRequest) => ({
         ...mergeRequest,
         requestDateTime: mergeRequest.requestDateTime.toDate(),
       }));
-  }
-  if (playerDoc.data()?.previousNonVerifiedPlayerProfiles?.length > 0) {
+  if (playerDoc.data()?.previousNonVerifiedPlayerProfiles?.length > 0)
     playerData.previousNonVerifiedPlayerProfiles = playerDoc
       .data()
       .previousNonVerifiedPlayerProfiles.map(
@@ -81,16 +80,25 @@ const createPlayerObjectFromFirestore = (playerDoc) => {
             previousNonVerifiedPlayerProfile.mergeDateTime.toDate(),
         })
       );
-  }
   return playerData;
 };
 
-const createTournamentObjectFromFirestore = (tournamentDoc) => ({
-  ...tournamentDoc.data(),
-  id: tournamentDoc.id,
-  creationDateTime: tournamentDoc.data().creationDateTime?.toDate(),
-  terminationDate: tournamentDoc.data().terminationDate?.toDate(),
-});
+const createTournamentObjectFromFirestore = (tournamentDoc) => {
+  const tournamentData = {
+    ...tournamentDoc.data(),
+    id: tournamentDoc.id,
+    creationDateTime: tournamentDoc.data().creationDateTime?.toDate(),
+    terminationDate: tournamentDoc.data().terminationDate?.toDate(),
+  };
+  if (tournamentDoc.data()?.joinRequests?.length > 0)
+    tournamentData.joinRequests = tournamentDoc
+      .data()
+      .joinRequests.map((joinRequest) => ({
+        ...joinRequest,
+        requestDateTime: joinRequest.requestDateTime.toDate(),
+      }));
+  return tournamentData;
+};
 
 const createMatchObjectFromFirestore = (matchDoc) => ({
   ...matchDoc.data(),
@@ -117,29 +125,25 @@ const createMatchPlayerObjectFromPlayer = (
   tournament: tournamentId, // quizas innecesario
 });
 
-const createMatchPlayerObjectFromFirestore = (matchPlayerDoc) => {
-  return {
-    ...matchPlayerDoc.data(),
-    id: matchPlayerDoc.id,
-    matchSubscriptionDateTime: matchPlayerDoc
-      .data()
-      .matchSubscriptionDateTime?.toDate(),
-  };
-};
+const createMatchPlayerObjectFromFirestore = (matchPlayerDoc) => ({
+  ...matchPlayerDoc.data(),
+  id: matchPlayerDoc.id,
+  matchSubscriptionDateTime: matchPlayerDoc
+    .data()
+    .matchSubscriptionDateTime?.toDate(),
+});
 
-const createMatchPlayerObjectFromMerge = (user, nonVerifiedMatchPlayer) => {
-  return {
-    displayName: user.displayName,
-    username: user.username,
-    image: user.image,
-    isPublic: user.isPublic, // quizas innecesario
+const createMatchPlayerObjectFromMerge = (user, nonVerifiedMatchPlayer) => ({
+  displayName: user.displayName,
+  username: user.username,
+  image: user.image,
+  isPublic: user.isPublic, // quizas innecesario
 
-    matchSubscriptionDateTime: nonVerifiedMatchPlayer.matchSubscriptionDateTime,
-    matchSubscribedBy: nonVerifiedMatchPlayer.matchSubscribedBy,
-    match: nonVerifiedMatchPlayer.match, // quizas innecesario
-    tournament: nonVerifiedMatchPlayer.tournament, // quizas innecesario
-  };
-};
+  matchSubscriptionDateTime: nonVerifiedMatchPlayer.matchSubscriptionDateTime,
+  matchSubscribedBy: nonVerifiedMatchPlayer.matchSubscribedBy,
+  match: nonVerifiedMatchPlayer.match, // quizas innecesario
+  tournament: nonVerifiedMatchPlayer.tournament, // quizas innecesario
+});
 
 // FIRESTORE GENERIC ACTIONS
 // get a document:
@@ -376,7 +380,7 @@ export const addMultiplePlayersListener = (
 };
 
 // add listener to tournamentDoc:
-const addTournamentListener = (tournamentId, setUpdatedTournament) =>
+export const addTournamentListener = (tournamentId, setUpdatedTournament) =>
   onSnapshot(
     getTournamentDocRef(tournamentId),
     (tournamentDoc) => {
@@ -464,22 +468,22 @@ export const addMultipleMatchPlayersListener = (
 
 // SUBSCRIBERS
 // subscribe user to tournament:
-export const subscribeToTournament = async (tournamentId, userId) => {
+export const subscribeToTournament = async (tournamentId, playerId) => {
   await updateDoc(getTournamentDocRef(tournamentId), {
-    players: arrayUnion(userId),
+    players: arrayUnion(playerId),
   });
-  await updateDoc(getPlayerDocRef(userId), {
+  await updateDoc(getPlayerDocRef(playerId), {
     'tournaments.all': arrayUnion(tournamentId),
     'tournaments.active': arrayUnion(tournamentId),
   });
 };
 
 // unsubscribe user from tournament:
-export const unsubscribeFromTournament = async (tournamentId, userId) => {
+export const unsubscribeFromTournament = async (tournamentId, playerId) => {
   await updateDoc(getTournamentDocRef(tournamentId), {
-    players: arrayRemove(userId),
+    players: arrayRemove(playerId),
   });
-  await updateDoc(getPlayerDocRef(userId), {
+  await updateDoc(getPlayerDocRef(playerId), {
     'tournaments.all': arrayRemove(tournamentId),
     'tournaments.active': arrayRemove(tournamentId),
     'tournaments.finished': arrayRemove(tournamentId),
@@ -532,6 +536,65 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, playerId) => {
   await updateDoc(getMatchDocRef(tournamentId, matchId), {
     players: arrayRemove(playerId),
   });
+};
+
+// REQUESTS
+// request join tournament:
+export const requestJoinTournament = async (player, tournament) => {
+  if (
+    tournament.joinRequests?.some(
+      (joinRequest) => joinRequest.requestedBy === player.id
+    )
+  ) {
+    alert('Request already done! Wait for an admin to approve or reject it!');
+  } else {
+    const tournamentData = {
+      ...tournament,
+      joinRequests: [
+        {
+          requestDateTime: new Date(),
+          requestedBy: player.id,
+          status: 'pending',
+        },
+        ...(tournament.joinRequests || []),
+      ],
+    };
+    await editTournament(tournament.id, tournamentData);
+    alert(
+      'Join tournament request done successfully! Wait for an admin to approve (or reject) it!'
+    );
+  }
+};
+
+// cancel join tournament request:
+export const cancelJoinTournamentRequest = async (player, tournament) => {
+  const request = tournament.joinRequests?.find(
+    (joinRequest) => joinRequest.requestedBy === player.id
+  );
+  await updateDoc(getTournamentDocRef(tournament.id), {
+    'joinRequests': arrayRemove(request),
+  });
+  alert('Request cancelled!');
+};
+
+// decline join tournament request:
+export const declineJoinTournamentRequest = async (player, tournament) => {
+  const request = tournament.joinRequests?.find(
+    (joinRequest) => joinRequest.requestedBy.id === player.id
+  );
+  const declinedRequest = {
+    ...request,
+    requestedBy: request.requestedBy.id,
+  };
+  await updateDoc(getTournamentDocRef(tournament.id), {
+    'joinRequests': arrayRemove(declinedRequest),
+  });
+};
+
+// approve join tournament request:
+export const approveJoinTournamentRequest = async (tournament, player) => { // ser consistente con orden de parametros!
+  await subscribeToTournament(tournament.id, player.id);
+  await declineJoinTournamentRequest(player, tournament);
 };
 
 // MERGING

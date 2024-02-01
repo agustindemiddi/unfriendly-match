@@ -5,11 +5,17 @@ import styles from './AdminSection.module.css';
 import {
   mergePlayers,
   declineMergeRequest,
+  approveJoinTournamentRequest,
+  declineJoinTournamentRequest,
 } from '../../../utils/firebase/firestore/firestoreActions';
 import { getStringFormattedLongDateTime } from '../../../utils/getDates';
 import { getStringFormattedShortDate } from '../../../utils/getDates';
 
-const AdminSection = ({ userPlayerProfile, mergeRequestedPlayers }) => {
+const AdminSection = ({
+  userPlayerProfile,
+  mergeRequestedPlayers,
+  tournamentsWithJoinRequests,
+}) => {
   const handleApproveMerge = async (verifiedUser, nonVerifiedUser) => {
     const matchesWithConflict = await mergePlayers(
       verifiedUser,
@@ -33,6 +39,13 @@ const AdminSection = ({ userPlayerProfile, mergeRequestedPlayers }) => {
     } else {
       alert('Merge successful!');
     }
+  };
+
+  const handleApproveJoinTournamentRequest = async (
+    tournament,
+    requestingPlayer
+  ) => {
+    await approveJoinTournamentRequest(tournament, requestingPlayer);
   };
 
   return (
@@ -73,6 +86,54 @@ const AdminSection = ({ userPlayerProfile, mergeRequestedPlayers }) => {
                       <button
                         onClick={() =>
                           declineMergeRequest(mergeRequest.requestedBy, player)
+                        }>
+                        Decline
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {tournamentsWithJoinRequests?.length > 0 && (
+        <div>
+          <h2>Join Tournament Requests</h2>
+          <ul>
+            {tournamentsWithJoinRequests.map((tournament) => (
+              <li key={tournament.id}>
+                <h3>{tournament.name}</h3>
+                <ul>
+                  {tournament.joinRequests.map((joinRequest) => (
+                    <li key={joinRequest.requestedBy.id}>
+                      <span>
+                        Requested on{' '}
+                        {getStringFormattedLongDateTime(
+                          joinRequest.requestDateTime
+                        )}
+                      </span>
+                      <img
+                        src={joinRequest.requestedBy.image}
+                        alt=''
+                        style={{ width: '40px' }}
+                      />
+                      <span>{`${joinRequest.requestedBy.displayName} >`}</span>
+                      <button
+                        onClick={() =>
+                          handleApproveJoinTournamentRequest(
+                            tournament,
+                            joinRequest.requestedBy
+                          )
+                        }>
+                        Approve
+                      </button>
+                      <button
+                        onClick={() =>
+                          declineJoinTournamentRequest(
+                            joinRequest.requestedBy,
+                            tournament
+                          )
                         }>
                         Decline
                       </button>
