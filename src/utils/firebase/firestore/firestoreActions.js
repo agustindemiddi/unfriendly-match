@@ -111,7 +111,7 @@ const createMatchObjectFromFirestore = (matchDoc) => ({
 const createMatchPlayerObjectFromPlayer = (
   tournamentId,
   matchId,
-  playerSubscriberId,
+  subscriberPlayerId,
   player
 ) => ({
   displayName: player.displayName,
@@ -120,7 +120,7 @@ const createMatchPlayerObjectFromPlayer = (
   isPublic: player.isPublic, // quizas innecesario
 
   matchSubscriptionDateTime: new Date(),
-  matchSubscribedBy: playerSubscriberId,
+  matchSubscribedBy: subscriberPlayerId,
   match: matchId, // quizas innecesario
   tournament: tournamentId, // quizas innecesario
 });
@@ -252,13 +252,13 @@ export const getMatchPlayer = async (tournamentId, matchId, playerId) => {
 export const addMatchPlayer = async (
   tournamentId,
   matchId,
-  playerSubscriberId,
+  subscriberPlayerId,
   player
 ) => {
   const playerData = createMatchPlayerObjectFromPlayer(
     tournamentId,
     matchId,
-    playerSubscriberId,
+    subscriberPlayerId,
     player
   );
   await setDoc(
@@ -526,10 +526,10 @@ export const deleteTournament = async (tournamentId, userId, playersIds) => {
 export const subscribeToMatch = async (
   tournamentId,
   matchId,
-  player,
-  userId
+  subscriberPlayerId,
+  player
 ) => {
-  await addMatchPlayer(tournamentId, matchId, player, userId);
+  await addMatchPlayer(tournamentId, matchId, subscriberPlayerId, player);
   await updateDoc(getMatchDocRef(tournamentId, matchId), {
     players: arrayUnion(player.id),
   });
