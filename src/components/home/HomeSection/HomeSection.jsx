@@ -1,16 +1,11 @@
-// import Lottie from 'lottie-react';
-
 import Section from '../../UI/Section/Section';
 import SoccerFieldContainer from '../../SoccerField/SoccerFieldContainer';
-import LoadingBouncingSoccerBall from '../../UI/LoadingBouncingSoccerBall/LoadingBouncingSoccerBall';
 
 import styles from './HomeSection.module.css';
 
 import separateMatches from '../../../utils/separateMatches';
 
-// import bouncingBall from '../../../assets/bouncing-ball.json';
-
-const HomeSection = ({ matches, isLoading }) => {
+const HomeSection = ({ userPlayerProfile, tournaments, matches }) => {
   const {
     sortedUpcomingMatches,
     reverseSortedPreviousMatches,
@@ -20,50 +15,73 @@ const HomeSection = ({ matches, isLoading }) => {
 
   return (
     <>
-      {isLoading ? (
-        <LoadingBouncingSoccerBall />
-      ) : (
-        <Section>
-          {/* {sortedUpcomingMatches && <h2>Upcoming Matches:</h2> &&
-            sortedUpcomingMatches.length > 0 && (
-              <ul>
-                {sortedUpcomingMatches.map((match) => (
-                  <SoccerFieldContainer key={match.id} match={match} />
-                ))}
-              </ul>
-            )}
+      <Section>
+        <h2>Upcoming Matches:</h2>
+        <ul>
+          {sortedUpcomingMatches.map((match) => (
+            <SoccerFieldContainer
+              key={match.id}
+              userPlayerProfile={userPlayerProfile}
+              tournament={tournaments?.active?.find(
+                (tournament) => tournament.id === match.tournament
+              )}
+              match={match}
+            />
+          ))}
+        </ul>
+        <h2>Last Match:</h2>
+        <SoccerFieldContainer
+          userPlayerProfile={userPlayerProfile}
+          tournament={tournaments?.active?.find(
+            (tournament) => tournament.id === lastMatch.tournament
+          )}
+          match={lastMatch}
+        />
+      </Section>
 
-          {lastMatch && <h2>Last Match:</h2> && (
-            <SoccerFieldContainer match={lastMatch} />
-          )} */}
+      {/* TEMPORARY: JUST FOR TESTING INDIVIDUAL MATCH PURPOSES >>> */}
+      {/* <Section>
+        <h2>Test Match:</h2>
+      <SoccerFieldContainer
+        userPlayerProfile={userPlayerProfile}
+        tournament={tournaments?.active?.find(
+          (tournament) => tournament.id === sortedUpcomingMatches[0].tournament
+        )}
+        match={sortedUpcomingMatches[0]}
+      />
+      </Section> */}
+      {/* <<< TEMPORARY: JUST FOR TESTING INDIVIDUAL MATCH PURPOSES */}
 
-          {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES >>> */}
-          {sortedUpcomingMatches && <h2>Test Match:</h2> &&
-            sortedUpcomingMatches[0] && (
-              <SoccerFieldContainer match={sortedUpcomingMatches[0]} />
+      {/* TEMPORARY: JUST FOR TESTING MATCHES LISTS PURPOSES >>> */}
+      {/* <Section>
+        <h2>Upcoming Matches:</h2>
+      <ul>
+        {sortedUpcomingMatches.map((match) => (
+          <SoccerFieldContainer
+            key={match.id}
+            userPlayerProfile={userPlayerProfile}
+            tournament={tournaments?.active?.find(
+              (tournament) => tournament.id === match.tournament
             )}
-          {/* JUST FOR TESTING INDIVIDUAL MATCH PURPOSES <<< */}
-
-          {/* temporary >>> */}
-          {/* {sortedUpcomingMatches && <h2>Upcoming Matches:</h2> &&
-            sortedUpcomingMatches.length > 0 && (
-              <ul>
-                {sortedUpcomingMatches.map((match) => (
-                  <SoccerFieldContainer key={match.id} match={match} />
-                ))}
-              </ul>
+            match={match}
+          />
+        ))}
+      </ul>
+      <h2>Previous Matches:</h2>
+      <ul>
+        {reverseSortedPreviousMatches.map((match) => (
+          <SoccerFieldContainer
+            key={match.id}
+            userPlayerProfile={userPlayerProfile}
+            tournament={tournaments?.active?.find(
+              (tournament) => tournament.id === match.tournament
             )}
-          {reverseSortedPreviousMatches && <h2>Previous Matches:</h2> &&
-            reverseSortedPreviousMatches.length > 0 && (
-              <ul>
-                {reverseSortedPreviousMatches.map((match) => (
-                  <SoccerFieldContainer key={match.id} match={match} />
-                ))}
-              </ul>
-            )} */}
-          {/* temporary <<< */}
-        </Section>
-      )}
+            match={match}
+          />
+        ))}
+      </ul>
+      </Section> */}
+      {/* <<< TEMPORARY: JUST FOR TESTING MATCHES LISTS PURPOSES */}
     </>
   );
 };

@@ -26,11 +26,15 @@ const MatchesPage = () => {
     }
   }, [tournamentId]);
 
+  const tournamentsMatches = updatedActiveTournamentsMatches.filter(
+    (match) => match.tournament === tournamentId
+  );
+
   return (
     <>
       {updatedActiveTournamentsMatches && (
         <MatchesSection
-          matches={updatedActiveTournamentsMatches}
+          matches={tournamentsMatches}
           tournament={tournament || unsubscribedTournament}
         />
       )}

@@ -428,23 +428,62 @@ const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
     (error) => console.log(error)
   );
 
+// // add listener to multiple matchesDocs:
+// export const addMultipleMatchesListener = (
+//   tournamentId,
+//   MatchesIdsArray,
+//   setUpdatedMatches
+// ) => {
+//   const matchesQuery = query(
+//     getTournamentMatchesColRef(tournamentId),
+//     where(documentId(), 'in', MatchesIdsArray)
+//   );
+//   return onSnapshot(matchesQuery, (querySnapshot) => {
+//     const matchesArray = [];
+//     querySnapshot.forEach((matchDoc) => {
+//       matchesArray.push(createMatchObjectFromFirestore(matchDoc));
+//     });
+//     setUpdatedMatches(matchesArray);
+//   });
+// };
+
 // add listener to multiple matchesDocs:
 export const addMultipleMatchesListener = (
-  tournamentId,
-  MatchesIdsArray,
+  matchesArrays,
   setUpdatedMatches
 ) => {
-  const matchesQuery = query(
-    getTournamentMatchesColRef(tournamentId),
-    where(documentId(), 'in', MatchesIdsArray)
-  );
-  return onSnapshot(matchesQuery, (querySnapshot) => {
-    const matchesArray = [];
-    querySnapshot.forEach((matchDoc) => {
-      matchesArray.push(createMatchObjectFromFirestore(matchDoc));
-    });
-    setUpdatedMatches(matchesArray);
+  const unsubscribeFunctions = [];
+  matchesArrays.forEach((matchesArray) => {
+    if (matchesArray.length > 0) {
+      const tournamentId = matchesArray[0].tournamentId;
+      const matchesQuery = query(
+        getTournamentMatchesColRef(tournamentId),
+        where(
+          documentId(),
+          'in',
+          matchesArray.map((match) => match.id)
+        )
+      );
+      const unsubscribe = onSnapshot(matchesQuery, (querySnapshot) => {
+        const updatedMatches = [];
+        querySnapshot.forEach((matchDoc) => {
+          updatedMatches.push(createMatchObjectFromFirestore(matchDoc));
+        });
+        setUpdatedMatches((prevMatches) => {
+          const updatedMatchesArray = prevMatches
+            .concat(updatedMatches)
+            .filter(
+              (match, index, array) =>
+                index === array.findIndex((m) => m.id === match.id)
+            );
+          return updatedMatchesArray;
+        });
+      });
+      unsubscribeFunctions.push(unsubscribe);
+    }
   });
+
+  return () => unsubscribeFunctions.forEach((unsubscribe) => unsubscribe());
 };
 
 // add listener to multiple matchPlayersDocs:
@@ -454,21 +493,19 @@ export const addMultipleMatchPlayersListener = (
   MatchPlayersIdsArray,
   setUpdatedMatchPlayers
 ) => {
-  if (MatchPlayersIdsArray.length > 0) {
-    const matchPlayersQuery = query(
-      getMatchPlayersColRef(tournamentId, matchId),
-      where(documentId(), 'in', MatchPlayersIdsArray)
-    );
-    return onSnapshot(matchPlayersQuery, (querySnapshot) => {
-      const matchPlayersArray = [];
-      querySnapshot.forEach((matchPlayerDoc) => {
-        matchPlayersArray.push(createPlayerObjectFromFirestore(matchPlayerDoc));
-      });
-      setUpdatedMatchPlayers(matchPlayersArray);
+  const matchPlayersQuery = query(
+    getMatchPlayersColRef(tournamentId, matchId),
+    where(documentId(), 'in', MatchPlayersIdsArray)
+  );
+  return onSnapshot(matchPlayersQuery, (querySnapshot) => {
+    const matchPlayersArray = [];
+    querySnapshot.forEach((matchPlayerDoc) => {
+      matchPlayersArray.push(
+        createMatchPlayerObjectFromFirestore(matchPlayerDoc)
+      );
     });
-  } else {
-    setUpdatedMatchPlayers([]);
-  }
+    setUpdatedMatchPlayers(matchPlayersArray);
+  });
 };
 
 // SUBSCRIBERS
@@ -599,7 +636,7 @@ export const declineJoinTournamentRequest = async (tournament, player) => {
 // approve join tournament request:
 export const approveJoinTournamentRequest = async (tournament, player) => {
   await subscribeToTournament(tournament.id, player.id);
-  await declineJoinTournamentRequest(player, tournament);
+  await declineJoinTournamentRequest(tournament, player);
 };
 
 // MERGING

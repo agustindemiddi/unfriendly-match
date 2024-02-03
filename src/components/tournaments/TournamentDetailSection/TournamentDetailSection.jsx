@@ -7,7 +7,6 @@ import StandingsTable from './StandingsTable/StandingsTable';
 
 import styles from './TournamentDetailSection.module.css';
 
-import { getUserAuthCtx } from '../../../context/authContext';
 import {
   requestJoinTournament,
   cancelJoinTournamentRequest,
@@ -21,8 +20,8 @@ const TournamentDetailSection = ({
   userPlayerProfile,
   tournament,
   matches,
+  players,
 }) => {
-  const { updatedUserTournamentsPlayers } = getUserAuthCtx();
   const navigate = useNavigate();
 
   const { nextMatch, lastMatch } = separateMatches(matches);
@@ -39,7 +38,7 @@ const TournamentDetailSection = ({
 
   const handleUnsubscribeFromTournament = async () => {
     if (tournament.isActive) {
-      const tournamentPlayers = updatedUserTournamentsPlayers.filter((player) =>
+      const tournamentPlayers = players.filter((player) =>
         tournament.players.includes(player.id)
       );
 
@@ -128,13 +127,21 @@ const TournamentDetailSection = ({
           {nextMatch && (
             <>
               <h2>Next Match:</h2>
-              <SoccerFieldContainer match={nextMatch} />
+              <SoccerFieldContainer
+                userPlayerProfile={userPlayerProfile}
+                match={nextMatch}
+                tournament={tournament}
+              />
             </>
           )}
           {lastMatch && (
             <>
               <h2>Last Match:</h2>
-              <SoccerFieldContainer match={lastMatch} />
+              <SoccerFieldContainer
+                userPlayerProfile={userPlayerProfile}
+                match={lastMatch}
+                tournament={tournament}
+              />
             </>
           )}
         </div>

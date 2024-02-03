@@ -22,8 +22,10 @@ const AsideNavigationTournamentItem = ({ navItem }) => {
     }
   }, [location.pathname]);
 
+  const tournamentMatches = updatedActiveTournamentsMatches?.filter(match => match.tournament === tournamentId)
+
   const { reverseSortedListedAllMatches, reverseSortedPreviousMatches } =
-    separateMatches(updatedActiveTournamentsMatches || []);
+    separateMatches(tournamentMatches || []);
 
   const isSelectedTournament = navItem.id === tournamentId;
 

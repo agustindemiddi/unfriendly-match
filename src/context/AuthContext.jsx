@@ -12,7 +12,7 @@ import {
   addPlayerListener,
   addMultiplePlayersListener,
   addMultipleTournamentsListener,
-  getTournamentMatches,
+  // getTournamentMatches,
   addMultipleMatchesListener,
 } from '../utils/firebase/firestore/firestoreActions';
 
@@ -21,14 +21,14 @@ const authContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userPlayerProfile, setUserPlayerProfile] = useState(null);
-  const [updatedUserTournaments, setUpdatedUserTournaments] = useState(null);
+  const [updatedUserTournaments, setUpdatedUserTournaments] = useState([]);
   const [updatedUserTournamentsPlayers, setUpdatedUserTournamentsPlayers] =
     useState(null);
   // const [updatedTournamentMatches, setUpdatedTournamentMatches] =
   //   useState(null);
   const [updatedActiveTournamentsMatches, setUpdatedActiveTournamentsMatches] =
     useState(null);
-  const { tournamentId } = useParams();
+  // const { tournamentId } = useParams();
   const navigate = useNavigate();
 
   // add listener to user auth:
@@ -77,27 +77,52 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [updatedUserTournaments?.all]);
 
+  // // add listener to active tournaments matches:
+  // useEffect(() => {
+  //   if (updatedUserTournaments?.active?.length > 0) {
+  //     const activeTournamentsMatchesIds =
+  //       updatedUserTournaments?.active?.flatMap(
+  //         (tournament) => tournament.matches
+  //       );
+  //       if (activeTournamentsMatchesIds.length > 0) {
+  //       const unsubscribe = addMultipleMatchesListener(
+  //         tournamentId,
+  //         activeTournamentsMatchesIds,
+  //         setUpdatedActiveTournamentsMatches
+  //       );
+  //       return () => unsubscribe();
+  //     } else {
+  //       setUpdatedActiveTournamentsMatches([]);
+  //     }
+  //   } else {
+  //     setUpdatedActiveTournamentsMatches([]);
+  //   }
+  // }, [tournamentId, updatedUserTournaments?.active]);
+
   // add listener to active tournaments matches:
   useEffect(() => {
     if (updatedUserTournaments?.active?.length > 0) {
-      const activeTournamentsMatchesIds =
-        updatedUserTournaments?.active?.flatMap(
-          (tournament) => tournament.matches
-        );
-      if (activeTournamentsMatchesIds.length > 0) {
-        const unsubscribe = addMultipleMatchesListener(
-          tournamentId,
-          activeTournamentsMatchesIds,
-          setUpdatedActiveTournamentsMatches
-        );
-        return () => unsubscribe();
-      } else {
-        setUpdatedActiveTournamentsMatches([]);
-      }
+      const matchesArrays = updatedUserTournaments.active.map(
+        (activeTournament) => {
+          if (activeTournament.matches.length > 0) {
+            return activeTournament.matches.map((matchId) => ({
+              id: matchId,
+              tournamentId: activeTournament.id,
+            }));
+          } else {
+            return [];
+          }
+        }
+      );
+      const unsubscribe = addMultipleMatchesListener(
+        matchesArrays,
+        setUpdatedActiveTournamentsMatches
+      );
+      return () => unsubscribe();
     } else {
       setUpdatedActiveTournamentsMatches([]);
     }
-  }, [tournamentId, updatedUserTournaments?.active]);
+  }, [updatedUserTournaments?.active]);
 
   const userContacts =
     userPlayerProfile && updatedUserTournamentsPlayers

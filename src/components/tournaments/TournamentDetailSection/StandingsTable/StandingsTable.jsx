@@ -27,7 +27,11 @@ const StandingsTable = () => {
     }
   }, [tournament?.players]);
 
-  const finishedMatches = updatedActiveTournamentsMatches.filter(
+  const tournamentsMatches = updatedActiveTournamentsMatches.filter(
+    (match) => match.tournament === tournamentId
+  );
+
+  const finishedMatches = tournamentsMatches.filter(
     (match) => Object.keys(match.result).length > 0
   );
 

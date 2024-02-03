@@ -2,38 +2,15 @@ import { useState, useEffect } from 'react';
 
 import SoccerField from './SoccerField';
 
-import { getUserAuthCtx } from '../../context/authContext';
-import {
-  getMatchPlayers,
-  addMultipleMatchPlayersListener,
-  getTeams,
-} from '../../utils/firebase/firestore/firestoreActions';
+import { addMultipleMatchPlayersListener } from '../../utils/firebase/firestore/firestoreActions';
 import getMatchStatus from '../../utils/getMatchStatus';
-// import formatDate from '../../utils/formatDate';
 import { getStringFormattedLongDateTime } from '../../utils/getDates';
 import calculateCountdown from '../../utils/calculateCountdownToMatchSubscription';
 
-const SoccerFieldContainer = ({ userPlayerProfile, match }) => {
-  const { user, updatedUserTournaments } = getUserAuthCtx();
+const SoccerFieldContainer = ({ userPlayerProfile, tournament, match }) => {
   const [updatedMatchPlayers, setUpdatedMatchPlayers] = useState([]);
-  const [teams, setTeams] = useState({ teamA: [], teamB: [] });
   const [matchSubscriptionCountdown, setMatchSubscriptionCountdown] =
     useState('');
-
-  const { uid: userId } = user;
-  // const userId = userPlayerProfile.id;
-
-  const tournament = updatedUserTournaments?.all?.find(
-    (tournament) => tournament.id === match.tournament
-  );
-
-  const tournamentImage = tournament?.image;
-
-  const isTournamentPlayer = tournament?.players?.includes(userId);
-
-  const sortedUpdatedMatchPlayers = [...updatedMatchPlayers].sort(
-    (a, b) => a.matchSubscriptionDateTime - b.matchSubscriptionDateTime
-  );
 
   const {
     id: matchId,
@@ -45,51 +22,30 @@ const SoccerFieldContainer = ({ userPlayerProfile, match }) => {
     dateTime,
     address,
     playerQuota,
+    players,
     teamA,
     teamB,
     result,
     mvps,
   } = match;
 
+  // add listener to matchPlayersDocs:
   useEffect(() => {
-    const fetchPlayers = async () => {
-      try {
-        // Fetch match players:
-        const fetchedPlayers = await getMatchPlayers(tournamentId, matchId);
-
-        // add listener to matchPlayersDocs:
-        if (fetchedPlayers.length > 0) {
-          const matchPlayersIdsArray = fetchedPlayers.map(
-            (player) => player.id
-          );
-          const unsubscribe = addMultipleMatchPlayersListener(
-            tournamentId,
-            matchId,
-            matchPlayersIdsArray,
-            setUpdatedMatchPlayers
-          );
-          return () => unsubscribe();
-        }
-      } catch (error) {
-        console.error('Error fetching match players:', error);
-      }
-    };
-    fetchPlayers();
-  }, [tournamentId, matchId]);
-
-  useEffect(() => {
-    // get match teams:
-    if (Object.keys(result).length > 0) {
-      const fetchTeams = async () => {
-        const fetchedTeams = await getTeams(teamA, teamB);
-        setTeams(fetchedTeams);
-      };
-      fetchTeams();
+    if (players.length > 0) {
+      const unsubscribe = addMultipleMatchPlayersListener(
+        tournamentId,
+        matchId,
+        players,
+        setUpdatedMatchPlayers
+      );
+      return () => unsubscribe();
+    } else {
+      setUpdatedMatchPlayers([]);
     }
-  }, [result, teamA, teamB]);
+  }, [tournamentId, matchId, players]);
 
+  // set countdown to match date time subscription:
   useEffect(() => {
-    // set countdown to match date time subscription:
     const intervalId = setInterval(
       () =>
         setMatchSubscriptionCountdown(calculateCountdown(subscriptionDateTime)),
@@ -97,6 +53,20 @@ const SoccerFieldContainer = ({ userPlayerProfile, match }) => {
     );
     return () => clearInterval(intervalId);
   }, [subscriptionDateTime]);
+
+  const userId = userPlayerProfile?.id;
+
+  const sortedUpdatedMatchPlayers = [...updatedMatchPlayers].sort(
+    (a, b) => a.matchSubscriptionDateTime - b.matchSubscriptionDateTime
+  );
+
+  const updatedTeamA = updatedMatchPlayers.filter((matchPlayer) =>
+    teamA.includes(matchPlayer.id)
+  );
+  const updatedTeamB = updatedMatchPlayers.filter((matchPlayer) =>
+    teamB.includes(matchPlayer.id)
+  );
+  const teams = { teamA: updatedTeamA, teamB: updatedTeamB };
 
   const {
     isSubscriptionStarted,
@@ -115,6 +85,10 @@ const SoccerFieldContainer = ({ userPlayerProfile, match }) => {
     mvps,
     userId,
   });
+
+  const tournamentImage = tournament?.image;
+
+  const isTournamentPlayer = tournament?.players?.includes(userId);
 
   const formattedDateTime = getStringFormattedLongDateTime(dateTime);
   const formattedSubscriptionDateTime =

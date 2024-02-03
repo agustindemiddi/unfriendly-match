@@ -8,7 +8,11 @@ import { getUserAuthCtx } from '../../context/authContext';
 
 const MatchDetailPage = () => {
   const { tournamentId, matchId } = useParams();
-  const { updatedUserTournaments, updatedActiveTournamentsMatches } = getUserAuthCtx();
+  const {
+    userPlayerProfile,
+    updatedUserTournaments,
+    updatedActiveTournamentsMatches,
+  } = getUserAuthCtx();
   // const [matchFromUnsubscribedTournament, setMatchFromUnsubscribedTournament] =
   //   useState([]);
 
@@ -27,7 +31,13 @@ const MatchDetailPage = () => {
   //   (tournament) => tournament.id === tournamentId
   // )[0];
 
-  const match = updatedActiveTournamentsMatches?.find((match) => match.id === matchId);
+  const tournament = updatedUserTournaments?.all?.find(
+    (tournament) => tournament.id === tournamentId
+  );
+
+  const match = updatedActiveTournamentsMatches?.find(
+    (match) => match.id === matchId
+  );
 
   // return (
   //   <>
@@ -39,7 +49,17 @@ const MatchDetailPage = () => {
   //       ))}
   //   </>
   // );
-  return <>{match && <MatchDetailSection match={match} />}</>;
+  return (
+    <>
+      {userPlayerProfile && tournament && match && (
+        <MatchDetailSection
+          userPlayerProfile={userPlayerProfile}
+          tournament={tournament}
+          match={match}
+        />
+      )}
+    </>
+  );
 };
 
 export default MatchDetailPage;

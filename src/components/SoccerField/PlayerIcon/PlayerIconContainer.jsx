@@ -23,7 +23,6 @@ const PlayerIconContainer = ({
     matchId,
     userPlayerProfile
   ) => {
-    console.log(userPlayerProfile.displayName);
     if (!isTournamentPlayer) alert('You must join the tournament first!');
     if (isTournamentPlayer && isSubscriptionOpen && !isUserSubscribed)
       await subscribeToMatch(
