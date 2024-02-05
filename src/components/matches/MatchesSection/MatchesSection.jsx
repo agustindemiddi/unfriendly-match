@@ -6,11 +6,9 @@ import MatchesList from './MatchesList/MatchesList';
 
 import styles from './MatchesSection.module.css';
 
-import { getUserAuthCtx } from '../../../context/authContext';
 import separateMatches from '../../../utils/separateMatches';
 
-const MatchesSection = ({ tournament, matches }) => {
-  const { userPlayerProfile } = getUserAuthCtx();
+const MatchesSection = ({ userPlayerProfile, tournament, matches }) => {
   const navigate = useNavigate();
 
   const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
@@ -43,15 +41,18 @@ const MatchesSection = ({ tournament, matches }) => {
   return (
     <>
       <Section>
-        <h2>UPCOMING MATCHES</h2>
-        {sortedUpcomingMatches && sortedUpcomingMatches.length > 0 && (
-          <MatchesList matches={sortedUpcomingMatches} />
+        {sortedUpcomingMatches.length > 0 && (
+          <>
+            <h2>UPCOMING MATCHES:</h2>
+            <MatchesList matches={sortedUpcomingMatches} />
+          </>
         )}
-        <h2>PREVIOUS MATCHES</h2>
-        {reverseSortedPreviousMatches &&
-          reverseSortedPreviousMatches.length > 0 && (
+        {reverseSortedPreviousMatches.length > 0 && (
+          <>
+            <h2>PREVIOUS MATCHES:</h2>
             <MatchesList matches={reverseSortedPreviousMatches} />
-          )}
+          </>
+        )}
       </Section>
       <AsideActionsPanel adminActions={adminActions} actions={actions} />
     </>

@@ -1,15 +1,21 @@
-import Lottie from 'lottie-react';
-
 import ContactsSection from '../../components/contacts/ContactsSection/ContactsSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
 
-import bouncingBall from '../../assets/bouncing-ball.json';
+import LoadingBouncingSoccerBall from '../../components/UI/LoadingBouncingSoccerBall/LoadingBouncingSoccerBall';
 
 const ContactsPage = () => {
   const { userContacts } = getUserAuthCtx();
 
-  return <>{userContacts && <ContactsSection contacts={userContacts} />}</>;
+  return (
+    <>
+      {userContacts.length > 0 ? (
+        <ContactsSection contacts={userContacts} />
+      ) : (
+        <LoadingBouncingSoccerBall />
+      )}
+    </>
+  );
 };
 
 export default ContactsPage;

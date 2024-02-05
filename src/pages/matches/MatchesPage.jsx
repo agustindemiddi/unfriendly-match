@@ -5,14 +5,18 @@ import MatchesSection from '../../components/matches/MatchesSection/MatchesSecti
 
 import { getUserAuthCtx } from '../../context/authContext';
 import { getTournament } from '../../utils/firebase/firestore/firestoreActions';
+import LoadingBouncingSoccerBall from '../../components/UI/LoadingBouncingSoccerBall/LoadingBouncingSoccerBall';
 
 const MatchesPage = () => {
   const { tournamentId } = useParams();
-  const { updatedUserTournaments, updatedActiveTournamentsMatches } =
-    getUserAuthCtx();
-  const [unsubscribedTournament, setUnsubscribedTournament] = useState([]);
+  const {
+    userPlayerProfile,
+    updatedUserTournaments,
+    updatedActiveTournamentsMatches,
+  } = getUserAuthCtx();
+  const [unsubscribedTournament, setUnsubscribedTournament] = useState(null);
 
-  const tournament = updatedUserTournaments?.all?.find(
+  const tournament = updatedUserTournaments.all.find(
     (tournament) => tournament.id === tournamentId
   );
 
@@ -30,12 +34,23 @@ const MatchesPage = () => {
     (match) => match.tournament === tournamentId
   );
 
+  let isLoading = true;
+  if (
+    userPlayerProfile &&
+    (tournament || unsubscribedTournament) &&
+    tournamentsMatches
+  )
+    isLoading = false;
+
   return (
     <>
-      {updatedActiveTournamentsMatches && (
+      {isLoading ? (
+        <LoadingBouncingSoccerBall />
+      ) : (
         <MatchesSection
-          matches={tournamentsMatches}
+          userPlayerProfile={userPlayerProfile}
           tournament={tournament || unsubscribedTournament}
+          matches={tournamentsMatches}
         />
       )}
     </>

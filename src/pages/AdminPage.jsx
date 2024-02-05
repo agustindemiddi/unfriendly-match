@@ -3,6 +3,7 @@ import AdminSection from '../components/admin/AdminSection/AdminSection';
 
 import { getUserAuthCtx } from '../context/authContext';
 import { getPlayer } from '../utils/firebase/firestore/firestoreActions';
+import LoadingBouncingSoccerBall from '../components/UI/LoadingBouncingSoccerBall/LoadingBouncingSoccerBall';
 
 const AdminPage = () => {
   const {
@@ -82,17 +83,25 @@ const AdminPage = () => {
     }
   );
 
+  let isLoading = true;
+  if (
+    userPlayerProfile &&
+    convertedMergeRequestedPlayers &&
+    tournamentsWithJoinRequests
+  )
+    isLoading = false;
+
   return (
     <>
-      {userPlayerProfile &&
-        convertedMergeRequestedPlayers &&
-        tournamentsWithJoinRequests && ( // mejorar esto
-          <AdminSection
-            userPlayerProfile={userPlayerProfile}
-            mergeRequestedPlayers={convertedMergeRequestedPlayers}
-            tournamentsWithJoinRequests={tournamentsWithJoinRequests}
-          />
-        )}
+      {isLoading ? (
+        <LoadingBouncingSoccerBall />
+      ) : (
+        <AdminSection
+          userPlayerProfile={userPlayerProfile}
+          mergeRequestedPlayers={convertedMergeRequestedPlayers}
+          tournamentsWithJoinRequests={tournamentsWithJoinRequests}
+        />
+      )}
     </>
   );
 };

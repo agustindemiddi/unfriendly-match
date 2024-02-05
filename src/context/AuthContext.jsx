@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   addAuthListener,
@@ -12,7 +12,6 @@ import {
   addPlayerListener,
   addMultiplePlayersListener,
   addMultipleTournamentsListener,
-  // getTournamentMatches,
   addMultipleMatchesListener,
 } from '../utils/firebase/firestore/firestoreActions';
 
@@ -21,14 +20,15 @@ const authContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userPlayerProfile, setUserPlayerProfile] = useState(null);
-  const [updatedUserTournaments, setUpdatedUserTournaments] = useState([]);
+  const [updatedUserTournaments, setUpdatedUserTournaments] = useState({
+    all: [],
+    active: [],
+    finished: [],
+  });
   const [updatedUserTournamentsPlayers, setUpdatedUserTournamentsPlayers] =
-    useState(null);
-  // const [updatedTournamentMatches, setUpdatedTournamentMatches] =
-  //   useState(null);
+    useState([]);
   const [updatedActiveTournamentsMatches, setUpdatedActiveTournamentsMatches] =
-    useState(null);
-  // const { tournamentId } = useParams();
+    useState([]);
   const navigate = useNavigate();
 
   // add listener to user auth:
@@ -53,7 +53,11 @@ export const AuthContextProvider = ({ children }) => {
       );
       return () => unsubscribe();
     } else {
-      setUpdatedUserTournaments([]);
+      setUpdatedUserTournaments({
+        all: [],
+        active: [],
+        finished: [],
+      });
     }
   }, [userPlayerProfile?.tournaments.all]);
 
@@ -76,28 +80,6 @@ export const AuthContextProvider = ({ children }) => {
       setUpdatedUserTournamentsPlayers([]);
     }
   }, [updatedUserTournaments?.all]);
-
-  // // add listener to active tournaments matches:
-  // useEffect(() => {
-  //   if (updatedUserTournaments?.active?.length > 0) {
-  //     const activeTournamentsMatchesIds =
-  //       updatedUserTournaments?.active?.flatMap(
-  //         (tournament) => tournament.matches
-  //       );
-  //       if (activeTournamentsMatchesIds.length > 0) {
-  //       const unsubscribe = addMultipleMatchesListener(
-  //         tournamentId,
-  //         activeTournamentsMatchesIds,
-  //         setUpdatedActiveTournamentsMatches
-  //       );
-  //       return () => unsubscribe();
-  //     } else {
-  //       setUpdatedActiveTournamentsMatches([]);
-  //     }
-  //   } else {
-  //     setUpdatedActiveTournamentsMatches([]);
-  //   }
-  // }, [tournamentId, updatedUserTournaments?.active]);
 
   // add listener to active tournaments matches:
   useEffect(() => {
@@ -151,7 +133,6 @@ export const AuthContextProvider = ({ children }) => {
         user,
         userPlayerProfile,
         updatedUserTournaments,
-        // updatedTournamentMatches,
         updatedActiveTournamentsMatches,
         updatedUserTournamentsPlayers,
         userContacts,

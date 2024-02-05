@@ -316,7 +316,7 @@ export const getTournamentMatches = async (tournamentId) => {
 };
 
 // get all matches from multiple tournaments:
-export const getMatchesFromTournaments = async (tournamentsIdsArray) => {
+const getMatchesFromTournaments = async (tournamentsIdsArray) => {
   if (tournamentsIdsArray.length > 0) {
     const matchesArrays = await Promise.all(
       tournamentsIdsArray.map((tournamentId) =>
@@ -427,25 +427,6 @@ const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
     },
     (error) => console.log(error)
   );
-
-// // add listener to multiple matchesDocs:
-// export const addMultipleMatchesListener = (
-//   tournamentId,
-//   MatchesIdsArray,
-//   setUpdatedMatches
-// ) => {
-//   const matchesQuery = query(
-//     getTournamentMatchesColRef(tournamentId),
-//     where(documentId(), 'in', MatchesIdsArray)
-//   );
-//   return onSnapshot(matchesQuery, (querySnapshot) => {
-//     const matchesArray = [];
-//     querySnapshot.forEach((matchDoc) => {
-//       matchesArray.push(createMatchObjectFromFirestore(matchDoc));
-//     });
-//     setUpdatedMatches(matchesArray);
-//   });
-// };
 
 // add listener to multiple matchesDocs:
 export const addMultipleMatchesListener = (

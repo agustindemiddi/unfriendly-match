@@ -5,6 +5,7 @@ import TournamentDetailSection from '../../components/tournaments/TournamentDeta
 
 import { getUserAuthCtx } from '../../context/authContext';
 import { addTournamentListener } from '../../utils/firebase/firestore/firestoreActions';
+import LoadingBouncingSoccerBall from '../../components/UI/LoadingBouncingSoccerBall/LoadingBouncingSoccerBall';
 
 const TournamentDetailPage = () => {
   const { tournamentId } = useParams();
@@ -14,9 +15,9 @@ const TournamentDetailPage = () => {
     updatedActiveTournamentsMatches,
     updatedUserTournamentsPlayers,
   } = getUserAuthCtx();
-  const [unsubscribedTournament, setUnsubscribedTournament] = useState([]);
+  const [unsubscribedTournament, setUnsubscribedTournament] = useState(null);
 
-  const tournament = updatedUserTournaments?.all?.find(
+  const tournament = updatedUserTournaments.all.find(
     (tournament) => tournament.id === tournamentId
   );
 
@@ -31,24 +32,31 @@ const TournamentDetailPage = () => {
       setUnsubscribedTournament([]);
     }
   }, [tournamentId]);
-  
-  const tournamentMatches = updatedActiveTournamentsMatches?.filter(
+
+  const tournamentMatches = updatedActiveTournamentsMatches.filter(
     (match) => match.tournament === tournamentId
   );
 
+  let isLoading = true;
+  if (
+    userPlayerProfile &&
+    (tournament || unsubscribedTournament) &&
+    updatedUserTournamentsPlayers.length > 0
+  )
+    isLoading = false;
+
   return (
     <>
-      {userPlayerProfile &&
-        updatedUserTournaments &&
-        updatedActiveTournamentsMatches &&
-        updatedUserTournamentsPlayers && (
-          <TournamentDetailSection
-            userPlayerProfile={userPlayerProfile}
-            tournament={tournament || unsubscribedTournament}
-            matches={tournamentMatches}
-            players={updatedUserTournamentsPlayers}
-          />
-        )}
+      {isLoading ? (
+        <LoadingBouncingSoccerBall />
+      ) : (
+        <TournamentDetailSection
+          userPlayerProfile={userPlayerProfile}
+          tournament={tournament || unsubscribedTournament}
+          matches={tournamentMatches}
+          players={updatedUserTournamentsPlayers}
+        />
+      )}
     </>
   );
 };

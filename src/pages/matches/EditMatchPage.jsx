@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import EditMatchSection from '../../components/matches/EditMatchSection/EditMatchSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
-import { getPlayers } from '../../utils/firebase/firestore/firestoreActions';
+import LoadingBouncingSoccerBall from '../../components/UI/LoadingBouncingSoccerBall/LoadingBouncingSoccerBall';
 
 const EditMatchPage = () => {
   const { tournamentId, matchId } = useParams();
@@ -12,39 +12,48 @@ const EditMatchPage = () => {
     userPlayerProfile,
     updatedUserTournaments,
     updatedActiveTournamentsMatches,
+    updatedUserTournamentsPlayers,
   } = getUserAuthCtx();
-  const [tournamentPlayers, setTournamentPlayers] = useState(null);
-  const tournament = updatedUserTournaments?.all?.find(
+
+  const tournament = updatedUserTournaments.all.find(
     (tournament) => tournament.id === tournamentId
   );
 
-  useEffect(() => {
-    if (tournament?.players) {
-      const fetchPlayers = async () => {
-        const players = await getPlayers(tournament.players);
-        setTournamentPlayers(players);
-      };
-      fetchPlayers();
-    }
-  }, [tournament?.players]);
+  const updatedTournamentPlayers = updatedUserTournamentsPlayers.filter(
+    (player) => player.tournaments.all.includes(tournamentId)
+  );
 
-  const match = updatedActiveTournamentsMatches?.find((match) => match.id === matchId);
+  // fallback for finished tournament match? no, admin must re-open tournament and edit match (this way, all tournament players knows). so, no fallback but think of mechanism so admin knows that he/she cannot modify matches of finished tournaments
+  const match = updatedActiveTournamentsMatches.find(
+    (match) => match.id === matchId
+  );
 
-  const matchPlayers = tournamentPlayers?.filter((player) =>
+  const matchPlayers = updatedTournamentPlayers.filter((player) =>
     match?.players.includes(player.id)
   );
 
-  const availablePlayers = tournamentPlayers?.filter(
+  const availablePlayers = updatedTournamentPlayers.filter(
     (player) => !match?.players.includes(player.id)
   );
 
+  let isLoading = true;
+  if (
+    userPlayerProfile &&
+    tournament &&
+    updatedUserTournamentsPlayers.length > 0 &&
+    match
+  )
+    isLoading = false;
+
   return (
     <>
-      {userPlayerProfile && tournament && tournamentPlayers && match && (
+      {isLoading ? (
+        <LoadingBouncingSoccerBall />
+      ) : (
         <EditMatchSection
           userPlayerProfile={userPlayerProfile}
           tournament={tournament}
-          tournamentPlayers={tournamentPlayers}
+          tournamentPlayers={updatedTournamentPlayers}
           match={match}
           matchPlayers={matchPlayers}
           availablePlayers={availablePlayers}

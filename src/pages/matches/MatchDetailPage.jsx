@@ -5,6 +5,7 @@ import MatchDetailSection from '../../components/matches/MatchDetailSection/Matc
 
 import { getUserAuthCtx } from '../../context/authContext';
 // import { getMatch } from '../../utils/firebase/firestore/firestoreActions';
+import LoadingBouncingSoccerBall from '../../components/UI/LoadingBouncingSoccerBall/LoadingBouncingSoccerBall';
 
 const MatchDetailPage = () => {
   const { tournamentId, matchId } = useParams();
@@ -31,27 +32,22 @@ const MatchDetailPage = () => {
   //   (tournament) => tournament.id === tournamentId
   // )[0];
 
-  const tournament = updatedUserTournaments?.all?.find(
+  const tournament = updatedUserTournaments.all.find(
     (tournament) => tournament.id === tournamentId
   );
 
-  const match = updatedActiveTournamentsMatches?.find(
+  const match = updatedActiveTournamentsMatches.find(
     (match) => match.id === matchId
   );
 
-  // return (
-  //   <>
-  //     {match ||
-  //       (matchFromUnsubscribedTournament && (
-  //         <MatchDetailSection
-  //           match={match || matchFromUnsubscribedTournament}
-  //         />
-  //       ))}
-  //   </>
-  // );
+  let isLoading = true;
+  if (userPlayerProfile && tournament && match) isLoading = false;
+
   return (
     <>
-      {userPlayerProfile && tournament && match && (
+      {isLoading ? (
+        <LoadingBouncingSoccerBall />
+      ) : (
         <MatchDetailSection
           userPlayerProfile={userPlayerProfile}
           tournament={tournament}

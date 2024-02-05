@@ -8,22 +8,27 @@ import {
   getTournament,
   getPlayers,
 } from '../../utils/firebase/firestore/firestoreActions';
+import LoadingBouncingSoccerBall from '../../components/UI/LoadingBouncingSoccerBall/LoadingBouncingSoccerBall';
 
 const TournamentPlayersPage = () => {
   const { tournamentId } = useParams();
-  const { updatedUserTournaments, updatedUserTournamentsPlayers } =
-    getUserAuthCtx();
+  const {
+    userPlayerProfile,
+    updatedUserTournaments,
+    updatedUserTournamentsPlayers,
+  } = getUserAuthCtx();
   const [unsubscribedTournament, setUnsubscribedTournament] = useState(null);
   const [players, setPlayers] = useState([]);
 
-  const tournament = updatedUserTournaments?.all?.find(
+  const tournament = updatedUserTournaments.all.find(
     (tournament) => tournament.id === tournamentId
   );
 
-  const updatedTournamentPlayers = updatedUserTournamentsPlayers?.filter(
-    (player) => tournament?.players.includes(player.id)
+  const updatedTournamentPlayers = updatedUserTournamentsPlayers.filter(
+    (player) => player.tournaments.all.includes(tournamentId)
   );
 
+  // fetch if don't participate on tournament; maybe I can avoid second fetch even if first fetch is forcely done.
   useEffect(() => {
     const fetchTournamentAndPlayers = async () => {
       const fetchedTournament = await getTournament(tournamentId);
@@ -35,14 +40,22 @@ const TournamentPlayersPage = () => {
     fetchTournamentAndPlayers();
   }, [tournamentId]);
 
-  const showContent =
-    (tournament || unsubscribedTournament?.isPublic) &&
-    (updatedTournamentPlayers.length > 0 || players.length > 0);
+  let isLoading = true;
+  if (
+    (tournament || unsubscribedTournament) &&
+    (updatedTournamentPlayers.length > 0 || players.length > 0)
+  )
+    isLoading = false;
+
+  const showContent = tournament || unsubscribedTournament?.isPublic;
 
   return (
     <>
-      {showContent && (
+      {isLoading ? (
+        <LoadingBouncingSoccerBall />
+      ) : (
         <TournamentPlayersSection
+          userPlayerProfile={userPlayerProfile}
           tournament={tournament || unsubscribedTournament}
           players={updatedTournamentPlayers || players}
         />

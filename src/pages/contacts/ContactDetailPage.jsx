@@ -5,6 +5,7 @@ import ContactDetailSection from '../../components/contacts/ContactDetailSection
 
 import { getUserAuthCtx } from '../../context/authContext';
 import { getPlayer } from '../../utils/firebase/firestore/firestoreActions';
+import LoadingBouncingSoccerBall from '../../components/UI/LoadingBouncingSoccerBall/LoadingBouncingSoccerBall';
 
 const ContactDetailPage = () => {
   const { playerId } = useParams();
@@ -28,9 +29,20 @@ const ContactDetailPage = () => {
     contact = userContacts?.find((player) => player.id === playerId);
   }
 
+  let isLoading = true;
+  if (contact || player) isLoading = false;
+
   // missing fallback if !player.isPublic
 
-  return <>{contact && <ContactDetailSection player={contact || player} />}</>;
+  return (
+    <>
+      {isLoading ? (
+        <LoadingBouncingSoccerBall />
+      ) : (
+        <ContactDetailSection player={contact || player} />
+      )}
+    </>
+  );
 };
 
 export default ContactDetailPage;

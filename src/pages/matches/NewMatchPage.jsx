@@ -1,41 +1,44 @@
-import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import NewMatchSection from '../../components/matches/NewMatchSection/NewMatchSection';
 
 import { getUserAuthCtx } from '../../context/authContext';
-import { getPlayers } from '../../utils/firebase/firestore/firestoreActions';
+import LoadingBouncingSoccerBall from '../../components/UI/LoadingBouncingSoccerBall/LoadingBouncingSoccerBall';
 
 const NewMatchPage = () => {
   const { tournamentId } = useParams();
-  const { userPlayerProfile, updatedUserTournaments } = getUserAuthCtx();
-  const [tournamentPlayers, setTournamentPlayers] = useState(null);
-  const tournament = updatedUserTournaments?.all?.find(
+  const {
+    userPlayerProfile,
+    updatedUserTournaments,
+    updatedUserTournamentsPlayers,
+  } = getUserAuthCtx();
+
+  const tournament = updatedUserTournaments.all.find(
     (tournament) => tournament.id === tournamentId
   );
 
-  useEffect(() => {
-    if (tournament?.players) {
-      const fetchPlayers = async () => {
-        const players = await getPlayers(tournament.players);
-        setTournamentPlayers(players);
-      };
-      fetchPlayers();
-    }
-  }, [tournament?.players]);
+  const updatedTournamentPlayers = updatedUserTournamentsPlayers.filter(
+    (player) => player.tournaments.all.includes(tournamentId)
+  );
 
   // exclude user from available players:
-  const availablePlayers = tournamentPlayers?.filter(
+  const availablePlayers = updatedUserTournamentsPlayers.filter(
     (player) => player.id !== userPlayerProfile.id
   );
 
+  let isLoading = true;
+  if (userPlayerProfile && tournament && updatedTournamentPlayers.length > 0)
+    isLoading = false;
+
   return (
     <>
-      {userPlayerProfile && tournament && tournamentPlayers && (
+      {isLoading ? (
+        <LoadingBouncingSoccerBall />
+      ) : (
         <NewMatchSection
           userPlayerProfile={userPlayerProfile}
           tournament={tournament}
-          tournamentPlayers={tournamentPlayers}
+          tournamentPlayers={updatedTournamentPlayers}
           availablePlayers={availablePlayers}
         />
       )}

@@ -6,17 +6,18 @@ import TournamentPlayersList from './TournamentPlayersList/TournamentPlayersList
 
 import styles from './TournamentPlayersSection.module.css';
 
-import { getUserAuthCtx } from '../../../context/authContext';
-
-const TournamentPlayersSection = ({ tournament, players }) => {
-  const { userPlayerProfile } = getUserAuthCtx();
+const TournamentPlayersSection = ({
+  userPlayerProfile,
+  tournament,
+  players,
+}) => {
   const navigate = useNavigate();
 
   const isTournamentPlayer = tournament?.players?.includes(
     userPlayerProfile?.id
   );
 
-  const isAdmin = tournament?.admins?.includes(userPlayerProfile?.id);
+  const isAdmin = tournament.admins.includes(userPlayerProfile?.id);
 
   const adminActions = [];
   isTournamentPlayer &&
@@ -33,13 +34,21 @@ const TournamentPlayersSection = ({ tournament, players }) => {
     },
   ];
 
+  const showContent = isTournamentPlayer || tournament.isPublic;
+
   return (
     <>
-      <Section>
-        <h2>{tournament.name} players:</h2>
-        {players.length > 0 && <TournamentPlayersList players={players} />}
-      </Section>
-      <AsideActionsPanel adminActions={adminActions} actions={actions} />
+      {showContent ? (
+        <>
+          <Section>
+            <h2>{tournament.name} players:</h2>
+            {players.length > 0 && <TournamentPlayersList players={players} />}
+          </Section>
+          <AsideActionsPanel adminActions={adminActions} actions={actions} />
+        </>
+      ) : (
+        'This tournament is private'
+      )}
     </>
   );
 };
