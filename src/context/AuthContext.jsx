@@ -13,8 +13,8 @@ import {
   addMultiplePlayersListener,
   addTournamentListener,
   addMultipleTournamentsListener,
+  addMultipleMatchesArraysListener,
   addMultipleMatchesListener,
-  addListenerToMultipleMatchesFromOneTournament,
 } from '../utils/firebase/firestore/firestoreActions';
 
 const authContext = createContext();
@@ -47,8 +47,6 @@ export const AuthContextProvider = ({ children }) => {
     if (user) {
       const unsubscribe = addPlayerListener(user.uid, setUserPlayerProfile);
       return () => unsubscribe();
-    } else {
-      setUserPlayerProfile(null);
     }
   }, [user]);
 
@@ -60,12 +58,6 @@ export const AuthContextProvider = ({ children }) => {
         setUpdatedUserTournaments
       );
       return () => unsubscribe();
-    } else {
-      setUpdatedUserTournaments({
-        all: [],
-        active: [],
-        finished: [],
-      });
     }
   }, [userPlayerProfile?.tournaments.all]);
 
@@ -84,8 +76,6 @@ export const AuthContextProvider = ({ children }) => {
         setUpdatedUserTournamentsPlayers
       );
       return () => unsubscribe();
-    } else {
-      setUpdatedUserTournamentsPlayers([]);
     }
   }, [updatedUserTournaments?.all]);
 
@@ -104,13 +94,11 @@ export const AuthContextProvider = ({ children }) => {
           }
         }
       );
-      const unsubscribe = addMultipleMatchesListener(
+      const unsubscribe = addMultipleMatchesArraysListener(
         matchesArrays,
         setUpdatedActiveTournamentsMatches
       );
       return () => unsubscribe();
-    } else {
-      setUpdatedActiveTournamentsMatches([]);
     }
   }, [updatedUserTournaments?.active]);
 
@@ -147,7 +135,7 @@ export const AuthContextProvider = ({ children }) => {
       !userPlayerProfile?.tournaments.all.includes(tournamentId) &&
       unsubscribedTournament
     ) {
-      const unsubscribe = addListenerToMultipleMatchesFromOneTournament(
+      const unsubscribe = addMultipleMatchesListener(
         tournamentId,
         unsubscribedTournament.matches,
         setUnsubscribedTournamentMatches

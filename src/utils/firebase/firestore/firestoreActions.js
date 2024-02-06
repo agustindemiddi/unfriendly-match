@@ -58,17 +58,17 @@ const createPlayerObjectFromFirestore = (playerDoc) => {
   const playerData = {
     ...playerDoc.data(),
     id: playerDoc.id,
-    creationDateTime: playerDoc.data()?.creationDateTime?.toDate(),
-    image: playerDoc.data()?.image || '/default-user.svg',
+    creationDateTime: playerDoc.data().creationDateTime.toDate(),
+    image: playerDoc.data().image || '/default-user.svg',
   };
-  if (playerDoc.data()?.mergeRequests?.length > 0)
+  if (playerDoc.data().mergeRequests?.length > 0)
     playerData.mergeRequests = playerDoc
       .data()
       .mergeRequests.map((mergeRequest) => ({
         ...mergeRequest,
         requestDateTime: mergeRequest.requestDateTime.toDate(),
       }));
-  if (playerDoc.data()?.previousNonVerifiedPlayerProfiles?.length > 0)
+  if (playerDoc.data().previousNonVerifiedPlayerProfiles?.length > 0)
     playerData.previousNonVerifiedPlayerProfiles = playerDoc
       .data()
       .previousNonVerifiedPlayerProfiles.map(
@@ -87,10 +87,10 @@ const createTournamentObjectFromFirestore = (tournamentDoc) => {
   const tournamentData = {
     ...tournamentDoc.data(),
     id: tournamentDoc.id,
-    creationDateTime: tournamentDoc.data().creationDateTime?.toDate(),
-    terminationDate: tournamentDoc.data().terminationDate?.toDate(),
+    creationDateTime: tournamentDoc.data().creationDateTime.toDate(),
+    terminationDate: tournamentDoc.data().terminationDate.toDate(),
   };
-  if (tournamentDoc.data()?.joinRequests?.length > 0)
+  if (tournamentDoc.data().joinRequests?.length > 0)
     tournamentData.joinRequests = tournamentDoc
       .data()
       .joinRequests.map((joinRequest) => ({
@@ -103,9 +103,9 @@ const createTournamentObjectFromFirestore = (tournamentDoc) => {
 const createMatchObjectFromFirestore = (matchDoc) => ({
   ...matchDoc.data(),
   id: matchDoc.id,
-  creationDateTime: matchDoc.data().creationDateTime?.toDate(),
+  creationDateTime: matchDoc.data().creationDateTime.toDate(),
   subscriptionDateTime: matchDoc.data().subscriptionDateTime?.toDate(),
-  dateTime: matchDoc.data().dateTime?.toDate(),
+  dateTime: matchDoc.data().dateTime.toDate(),
 });
 
 const createMatchPlayerObjectFromPlayer = (
@@ -130,7 +130,7 @@ const createMatchPlayerObjectFromFirestore = (matchPlayerDoc) => ({
   id: matchPlayerDoc.id,
   matchSubscriptionDateTime: matchPlayerDoc
     .data()
-    .matchSubscriptionDateTime?.toDate(),
+    .matchSubscriptionDateTime.toDate(),
 });
 
 const createMatchPlayerObjectFromMerge = (player, nonVerifiedMatchPlayer) => ({
@@ -428,7 +428,8 @@ const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
     (error) => console.log(error)
   );
 
-export const addListenerToMultipleMatchesFromOneTournament = (
+// add listener to multiple matchesDocs:
+export const addMultipleMatchesListener = (
   tournamentId,
   MatchesIdsArray,
   setUpdatedMatches
@@ -446,8 +447,8 @@ export const addListenerToMultipleMatchesFromOneTournament = (
   });
 };
 
-// add listener to multiple matchesDocs:
-export const addMultipleMatchesListener = (
+// add listener to multiple matchesDocs arrays:
+export const addMultipleMatchesArraysListener = (
   matchesArrays,
   setUpdatedMatches
 ) => {
