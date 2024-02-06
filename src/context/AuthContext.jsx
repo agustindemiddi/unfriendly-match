@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
   addAuthListener,
@@ -11,6 +11,7 @@ import {
 import {
   addPlayerListener,
   addMultiplePlayersListener,
+  addTournamentListener,
   addMultipleTournamentsListener,
   addMultipleMatchesListener,
 } from '../utils/firebase/firestore/firestoreActions';
@@ -18,6 +19,7 @@ import {
 const authContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
+  const { tournamentId } = useParams();
   const [user, setUser] = useState(null);
   const [userPlayerProfile, setUserPlayerProfile] = useState(null);
   const [updatedUserTournaments, setUpdatedUserTournaments] = useState({
@@ -29,6 +31,9 @@ export const AuthContextProvider = ({ children }) => {
     useState([]);
   const [updatedActiveTournamentsMatches, setUpdatedActiveTournamentsMatches] =
     useState([]);
+  const [unsubscribedTournament, setUnsubscribedTournament] = useState(null);
+  const [unsubscribedTournamentPlayers, setUnsubscribedTournamentPlayers] =
+    useState(null);
   const navigate = useNavigate();
 
   // add listener to user auth:
@@ -106,6 +111,33 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [updatedUserTournaments?.active]);
 
+  useEffect(() => {
+    if (
+      location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
+      !userPlayerProfile?.tournaments.all.includes(tournamentId)
+    ) {
+      const unsubscribe = addTournamentListener(
+        tournamentId,
+        setUnsubscribedTournament
+      );
+      return () => unsubscribe();
+    }
+  }, [tournamentId]);
+
+  useEffect(() => {
+    if (
+      location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
+      !userPlayerProfile?.tournaments.all.includes(tournamentId) &&
+      unsubscribedTournament
+    ) {
+      const unsubscribe = addMultiplePlayersListener(
+        unsubscribedTournament.players,
+        setUnsubscribedTournamentPlayers
+      );
+      return () => unsubscribe();
+    }
+  }, [tournamentId, unsubscribedTournament]);
+
   const userContacts =
     userPlayerProfile && updatedUserTournamentsPlayers
       ? updatedUserTournamentsPlayers
@@ -136,6 +168,8 @@ export const AuthContextProvider = ({ children }) => {
         updatedActiveTournamentsMatches,
         updatedUserTournamentsPlayers,
         userContacts,
+        unsubscribedTournament,
+        unsubscribedTournamentPlayers,
         handleGoogleSignIn,
         handleEmailSignIn,
         handleSignOut,
