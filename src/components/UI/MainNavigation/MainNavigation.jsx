@@ -22,7 +22,7 @@ const sections = [
 ];
 
 const MainNavigation = () => {
-  const { user, handleSignOut } = getUserAuthCtx();
+  const { user, handleLogout } = getUserAuthCtx();
 
   return (
     <>
@@ -47,7 +47,7 @@ const MainNavigation = () => {
           {user ? (
             <div className={styles.user}>
               <Button
-                onClick={handleSignOut}
+                onClick={handleLogout}
                 shape='round'
                 icon={<LogoutOutlined />}>
                 Sign out

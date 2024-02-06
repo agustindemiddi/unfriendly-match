@@ -153,14 +153,14 @@ export const AuthContextProvider = ({ children }) => {
 
   // auth.useDeviceLanguage(); // test how it works
 
-  const handleGoogleSignIn = async () => await signInWithGoogle();
+  const handleGoogleLogin = async () => await signInWithGoogle();
 
-  const handleEmailSignIn = async (formModeIsSignIn, email, password) =>
+  const handleEmailLogin = async (formModeIsSignIn, email, password) =>
     formModeIsSignIn
       ? await signInWithEmail(email, password)
       : await signUpWithEmail(email, password);
 
-  const handleSignOut = async () => {
+  const handleLogout = async () => {
     await logout();
     navigate('/signin');
   };
@@ -177,9 +177,9 @@ export const AuthContextProvider = ({ children }) => {
         unsubscribedTournament,
         unsubscribedTournamentPlayers,
         unsubscribedTournamentMatches,
-        handleGoogleSignIn,
-        handleEmailSignIn,
-        handleSignOut,
+        handleGoogleLogin,
+        handleEmailLogin,
+        handleLogout,
       }}>
       {children}
     </authContext.Provider>

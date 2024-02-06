@@ -6,7 +6,7 @@ import EmailForm from './EmailForm/EmailForm';
 
 import styles from './SignInSection.module.css';
 
-const SignInSection = ({ handleGoogleSignIn }) => {
+const SignInSection = ({ handleEmailLogin, handleGoogleLogin }) => {
   const [formModeIsSignIn, setFormModeIsSignIn] = useState(true);
 
   return (
@@ -15,9 +15,10 @@ const SignInSection = ({ handleGoogleSignIn }) => {
         <EmailForm
           formModeIsSignIn={formModeIsSignIn}
           setFormModeIsSignIn={setFormModeIsSignIn}
+          handleEmailLogin={handleEmailLogin}
         />
         <p>or</p>
-        <GoogleButton onClick={handleGoogleSignIn} />
+        <GoogleButton onClick={handleGoogleLogin} />
       </div>
     </Section>
   );

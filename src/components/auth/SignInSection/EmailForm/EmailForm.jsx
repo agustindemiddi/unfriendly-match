@@ -2,13 +2,14 @@ import { useRef } from 'react';
 
 import styles from './EmailForm.module.css';
 
-import { getUserAuthCtx } from '../../../../context/authContext';
-
-const EmailForm = ({ formModeIsSignIn, setFormModeIsSignIn }) => {
+const EmailForm = ({
+  formModeIsSignIn,
+  setFormModeIsSignIn,
+  handleEmailLogin,
+}) => {
   const emailInput = useRef();
   const passwordInput = useRef();
   const repeatPasswordInput = useRef();
-  const { handleEmailSignIn } = getUserAuthCtx();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -16,7 +17,7 @@ const EmailForm = ({ formModeIsSignIn, setFormModeIsSignIn }) => {
       if (passwordInput.current.value !== repeatPasswordInput.current.value)
         return;
     }
-    handleEmailSignIn(
+    handleEmailLogin(
       formModeIsSignIn,
       emailInput.current.value,
       passwordInput.current.value
