@@ -14,6 +14,7 @@ import {
   addTournamentListener,
   addMultipleTournamentsListener,
   addMultipleMatchesListener,
+  addListenerToMultipleMatchesFromOneTournament,
 } from '../utils/firebase/firestore/firestoreActions';
 
 const authContext = createContext();
@@ -33,7 +34,9 @@ export const AuthContextProvider = ({ children }) => {
     useState([]);
   const [unsubscribedTournament, setUnsubscribedTournament] = useState(null);
   const [unsubscribedTournamentPlayers, setUnsubscribedTournamentPlayers] =
-    useState(null);
+    useState([]);
+  const [unsubscribedTournamentMatches, setUnsubscribedTournamentMatches] =
+    useState([]);
   const navigate = useNavigate();
 
   // add listener to user auth:
@@ -138,6 +141,21 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [tournamentId, unsubscribedTournament]);
 
+  useEffect(() => {
+    if (
+      location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
+      !userPlayerProfile?.tournaments.all.includes(tournamentId) &&
+      unsubscribedTournament
+    ) {
+      const unsubscribe = addListenerToMultipleMatchesFromOneTournament(
+        tournamentId,
+        unsubscribedTournament.matches,
+        setUnsubscribedTournamentMatches
+      );
+      return () => unsubscribe();
+    }
+  }, [tournamentId, unsubscribedTournament]);
+
   const userContacts =
     userPlayerProfile && updatedUserTournamentsPlayers
       ? updatedUserTournamentsPlayers
@@ -170,6 +188,7 @@ export const AuthContextProvider = ({ children }) => {
         userContacts,
         unsubscribedTournament,
         unsubscribedTournamentPlayers,
+        unsubscribedTournamentMatches,
         handleGoogleSignIn,
         handleEmailSignIn,
         handleSignOut,

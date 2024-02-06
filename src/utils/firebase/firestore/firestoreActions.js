@@ -428,6 +428,24 @@ const addMatchListener = (tournamentId, matchId, setUpdatedMatch) =>
     (error) => console.log(error)
   );
 
+export const addListenerToMultipleMatchesFromOneTournament = (
+  tournamentId,
+  MatchesIdsArray,
+  setUpdatedMatches
+) => {
+  const matchesQuery = query(
+    getTournamentMatchesColRef(tournamentId),
+    where(documentId(), 'in', MatchesIdsArray)
+  );
+  return onSnapshot(matchesQuery, (querySnapshot) => {
+    const matchesArray = [];
+    querySnapshot.forEach((matchDoc) => {
+      matchesArray.push(createMatchObjectFromFirestore(matchDoc));
+    });
+    setUpdatedMatches(matchesArray);
+  });
+};
+
 // add listener to multiple matchesDocs:
 export const addMultipleMatchesListener = (
   matchesArrays,

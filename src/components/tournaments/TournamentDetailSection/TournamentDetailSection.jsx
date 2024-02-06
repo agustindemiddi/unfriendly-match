@@ -123,31 +123,33 @@ const TournamentDetailSection = ({
   return (
     <>
       <Section row>
-        <div className={styles.matches}>
-          {nextMatch && (
-            <>
-              <h2>Next Match:</h2>
-              <SoccerFieldContainer
-                userPlayerProfile={userPlayerProfile}
-                match={nextMatch}
-                tournament={tournament}
-              />
-            </>
-          )}
-          {lastMatch && (
-            <>
-              <h2>Last Match:</h2>
-              <SoccerFieldContainer
-                userPlayerProfile={userPlayerProfile}
-                match={lastMatch}
-                tournament={tournament}
-              />
-            </>
-          )}
-        </div>
+        {isTournamentPlayer && (
+          <div className={styles.matches}>
+            {nextMatch && (
+              <>
+                <h2>Next Match:</h2>
+                <SoccerFieldContainer
+                  userPlayerProfile={userPlayerProfile}
+                  match={nextMatch}
+                  tournament={tournament}
+                />
+              </>
+            )}
+            {lastMatch && (
+              <>
+                <h2>Last Match:</h2>
+                <SoccerFieldContainer
+                  userPlayerProfile={userPlayerProfile}
+                  match={lastMatch}
+                  tournament={tournament}
+                />
+              </>
+            )}
+          </div>
+        )}
 
         <div className={styles.standings}>
-          <StandingsTable />
+          <StandingsTable matches={matches} players={players} />
         </div>
       </Section>
       <AsideActionsPanel

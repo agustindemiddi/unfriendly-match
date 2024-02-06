@@ -14,21 +14,26 @@ const TournamentDetailPage = () => {
     updatedUserTournamentsPlayers,
     unsubscribedTournament,
     unsubscribedTournamentPlayers,
+    unsubscribedTournamentMatches,
   } = getUserAuthCtx();
 
-  const tournament = updatedUserTournaments.all.find(
+  const updatedTournament = updatedUserTournaments.all.find(
     (tournament) => tournament.id === tournamentId
   );
 
-  const tournamentMatches = updatedActiveTournamentsMatches.filter(
+  const updatedTournamentMatches = updatedActiveTournamentsMatches.filter(
     (match) => match.tournament === tournamentId
+  );
+
+  const updatedTournamentPlayers = updatedUserTournamentsPlayers.filter(
+    (player) => player.tournaments.all.includes(tournamentId)
   );
 
   let isLoading = true;
   if (
     userPlayerProfile &&
-    (tournament || unsubscribedTournament) &&
-    (updatedUserTournamentsPlayers.length > 0 ||
+    (updatedTournament || unsubscribedTournament) &&
+    (updatedTournamentPlayers.length > 0 ||
       unsubscribedTournamentPlayers.length > 0)
   )
     isLoading = false;
@@ -40,10 +45,16 @@ const TournamentDetailPage = () => {
       ) : (
         <TournamentDetailSection
           userPlayerProfile={userPlayerProfile}
-          tournament={tournament || unsubscribedTournament}
-          matches={tournamentMatches}
+          tournament={updatedTournament || unsubscribedTournament}
+          matches={
+            updatedTournamentMatches.length > 0
+              ? updatedTournamentMatches
+              : unsubscribedTournamentMatches
+          }
           players={
-            updatedUserTournamentsPlayers || unsubscribedTournamentPlayers
+            updatedTournamentPlayers.length > 0
+              ? updatedTournamentPlayers
+              : unsubscribedTournamentPlayers
           }
         />
       )}

@@ -1,37 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-
 import styles from './StandingsTable.module.css';
 
-import { getUserAuthCtx } from '../../../../context/authContext';
-import { getPlayers } from '../../../../utils/firebase/firestore/firestoreActions';
 import { calculateTournamentStats } from '../../../../utils/calculateTournamentStats';
 
-const StandingsTable = () => {
-  const { tournamentId } = useParams();
-  const { updatedUserTournaments, updatedActiveTournamentsMatches } =
-    getUserAuthCtx();
-  const [tournamentPlayers, setTournamentPlayers] = useState([]);
-
-  const tournament = updatedUserTournaments?.all?.find(
-    (tournament) => tournament.id === tournamentId
-  );
-
-  useEffect(() => {
-    if (tournament) {
-      const fetchTournamentPlayers = async () => {
-        const players = await getPlayers(tournament.players);
-        setTournamentPlayers(players);
-      };
-      fetchTournamentPlayers();
-    }
-  }, [tournament?.players]);
-
-  const tournamentsMatches = updatedActiveTournamentsMatches.filter(
-    (match) => match.tournament === tournamentId
-  );
-
-  const finishedMatches = tournamentsMatches.filter(
+const StandingsTable = ({ matches, players }) => {
+  const finishedMatches = matches.filter(
     (match) => Object.keys(match.result).length > 0
   );
 
@@ -67,8 +39,7 @@ const StandingsTable = () => {
           return (
             <tr key={index}>
               <td>
-                {tournamentPlayers.find((player) => player.id === playerId)
-                  ?.displayName || 'N/A'}
+                {players.find((player) => player.id === playerId)?.displayName}
               </td>
               <td>{matchesPlayed}</td>
               <td>{points}</td>
