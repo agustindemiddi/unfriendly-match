@@ -102,6 +102,7 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [updatedUserTournaments?.active]);
 
+  // add listener to unsubscribed tournament:
   useEffect(() => {
     if (
       location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
@@ -115,6 +116,7 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [tournamentId]);
 
+  // add listener to unsubscribed tournament players:
   useEffect(() => {
     if (
       location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
@@ -129,11 +131,12 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [tournamentId, unsubscribedTournament]);
 
+  // add listener to unsubscribed tournament matches:
   useEffect(() => {
     if (
       location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
       !userPlayerProfile?.tournaments.all.includes(tournamentId) &&
-      unsubscribedTournament
+      unsubscribedTournament?.matches.length > 0
     ) {
       const unsubscribe = addMultipleMatchesListener(
         tournamentId,

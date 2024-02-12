@@ -522,6 +522,21 @@ export const subscribeToTournament = async (tournamentId, playerId) => {
 
 // unsubscribe user from tournament:
 export const unsubscribeFromTournament = async (tournamentId, playerId) => {
+  const matches = await getTournamentMatches(tournamentId);
+  const upcomingMatches = matches.filter(
+    (match) => match.dateTime >= new Date()
+  );
+  const userSubscribedUpcomingMatches = upcomingMatches.filter((match) =>
+    match.players.includes(playerId)
+  );
+  if (userSubscribedUpcomingMatches.length > 0) {
+    userSubscribedUpcomingMatches.forEach(async (match) => {
+      await deleteDoc(getMatchPlayerDocRef(tournamentId, match.id, playerId));
+      await updateDoc(getMatchDocRef(tournamentId, match.id), {
+        players: arrayRemove(playerId),
+      });
+    });
+  }
   await updateDoc(getTournamentDocRef(tournamentId), {
     players: arrayRemove(playerId),
   });

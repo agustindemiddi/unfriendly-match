@@ -16,27 +16,35 @@ const HomeSection = ({ userPlayerProfile, tournaments, matches }) => {
   return (
     <>
       <Section>
-        <h2>Upcoming Matches:</h2>
-        <ul>
-          {sortedUpcomingMatches.map((match) => (
+        {sortedUpcomingMatches.length > 0 && (
+          <>
+            <h2>Upcoming Matches:</h2>
+            <ul>
+              {sortedUpcomingMatches.map((match) => (
+                <SoccerFieldContainer
+                  key={match.id}
+                  userPlayerProfile={userPlayerProfile}
+                  tournament={tournaments?.active?.find(
+                    (tournament) => tournament.id === match.tournament
+                  )}
+                  match={match}
+                />
+              ))}
+            </ul>
+          </>
+        )}
+        {lastMatch && (
+          <>
+            <h2>Last Match:</h2>
             <SoccerFieldContainer
-              key={match.id}
               userPlayerProfile={userPlayerProfile}
               tournament={tournaments?.active?.find(
-                (tournament) => tournament.id === match.tournament
+                (tournament) => tournament.id === lastMatch.tournament
               )}
-              match={match}
+              match={lastMatch}
             />
-          ))}
-        </ul>
-        <h2>Last Match:</h2>
-        <SoccerFieldContainer
-          userPlayerProfile={userPlayerProfile}
-          tournament={tournaments?.active?.find(
-            (tournament) => tournament.id === lastMatch.tournament
-          )}
-          match={lastMatch}
-        />
+          </>
+        )}
       </Section>
 
       {/* TEMPORARY: JUST FOR TESTING INDIVIDUAL MATCH PURPOSES >>> */}
