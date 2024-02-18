@@ -27,7 +27,7 @@ const PlayerIcon = ({
           )}
           <img className={styles.playerIcon} src={image} alt='Player image' />
           {displayName ? (
-            <Link to={`/${playerId}`} onClick={()=>console.log(playerId)}>
+            <Link to={`/${playerId}`}>
               <span className={styles.hidden}>{displayName}</span>
             </Link>
           ) : null}

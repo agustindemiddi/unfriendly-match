@@ -71,7 +71,7 @@ const SoccerField = ({
                   <p>You can join this match by clicking here</p>
                 </>
               )}
-              {isSubscriptionEnded && Object.keys(result).length === 0 && (
+              {isSubscriptionEnded && (
                 <>
                   <p>Subscription to this match is closed</p>
                   <p>Awaiting for admin to submit the result</p>
@@ -145,6 +145,7 @@ const SoccerField = ({
                           <PlayerIconContainer
                             image={player.image}
                             displayName={player.displayName}
+                            playerId={player.id}
                           />
                         )}
                       </li>
@@ -191,6 +192,7 @@ const SoccerField = ({
                     <PlayerIconContainer
                       image={player.image}
                       displayName={player.displayName}
+                      playerId={player.id}
                     />
                   </li>
                 ))}
@@ -212,6 +214,7 @@ const SoccerField = ({
                     <PlayerIconContainer
                       image={player.image}
                       displayName={player.displayName}
+                      playerId={player.id}
                     />
                   </li>
                 ))}
