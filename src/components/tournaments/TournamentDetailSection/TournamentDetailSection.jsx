@@ -18,6 +18,7 @@ import copyUrlToClipboard from '../../../utils/copyUrlToClipboard';
 
 const TournamentDetailSection = ({
   userPlayerProfile,
+  isTournamentPlayer,
   tournament,
   matches,
   players,
@@ -26,9 +27,11 @@ const TournamentDetailSection = ({
 
   const { nextMatch, lastMatch } = separateMatches(matches);
 
-  const isTournamentPlayer = tournament?.players?.includes(
-    userPlayerProfile?.id
-  );
+  // const isTournamentPlayer = tournament?.players?.includes(
+  //   userPlayerProfile?.id
+  // );
+
+  // console.log(isTournamentPlayer);
 
   const isAdmin = tournament?.admins?.includes(userPlayerProfile.id);
 
