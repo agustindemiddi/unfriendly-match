@@ -88,7 +88,7 @@ const SoccerFieldContainer = ({ userPlayerProfile, tournament, match }) => {
 
   const tournamentImage = tournament?.image;
 
-  const isTournamentPlayer = tournament?.players?.includes(userId);
+  const isTournamentPlayer = tournament?.players?.active.includes(userId);
 
   const formattedDateTime = getStringFormattedLongDateTime(dateTime);
   const formattedSubscriptionDateTime =

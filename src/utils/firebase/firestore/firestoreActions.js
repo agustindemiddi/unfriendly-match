@@ -216,7 +216,7 @@ export const addNonVerifiedPlayerToTournament = async (
 ) => {
   await setDoc(getPlayerDocRef(playerId), playerData);
   await updateDoc(getTournamentDocRef(tournamentId), {
-    players: arrayUnion(playerId),
+    'players.active': arrayUnion(playerId),
   });
 };
 
@@ -509,7 +509,8 @@ export const addMultipleMatchPlayersListener = (
 // subscribe user to tournament:
 export const subscribeToTournament = async (tournamentId, playerId) => {
   await updateDoc(getTournamentDocRef(tournamentId), {
-    players: arrayUnion(playerId),
+    'players.inactive': arrayRemove(playerId),
+    'players.active': arrayUnion(playerId),
   });
   await updateDoc(getPlayerDocRef(playerId), {
     'tournaments.all': arrayUnion(tournamentId),
@@ -535,7 +536,8 @@ export const unsubscribeFromTournament = async (tournamentId, playerId) => {
     });
   }
   await updateDoc(getTournamentDocRef(tournamentId), {
-    players: arrayRemove(playerId),
+    'players.inactive': arrayUnion(playerId),
+    'players.active': arrayRemove(playerId),
   });
   await updateDoc(getPlayerDocRef(playerId), {
     'tournaments.all': arrayRemove(tournamentId),
@@ -596,7 +598,7 @@ export const unsubscribeFromMatch = async (tournamentId, matchId, playerId) => {
 // request join tournament:
 export const requestJoinTournament = async (tournament, player) => {
   if (
-    tournament.joinRequests?.some(
+    tournament.joinRequests.some(
       (joinRequest) => joinRequest.requestedBy === player.id
     )
   ) {
@@ -622,7 +624,7 @@ export const requestJoinTournament = async (tournament, player) => {
 
 // cancel join tournament request:
 export const cancelJoinTournamentRequest = async (tournament, player) => {
-  const request = tournament.joinRequests?.find(
+  const request = tournament.joinRequests.find(
     (joinRequest) => joinRequest.requestedBy === player.id
   );
   await updateDoc(getTournamentDocRef(tournament.id), {
@@ -633,7 +635,7 @@ export const cancelJoinTournamentRequest = async (tournament, player) => {
 
 // decline join tournament request:
 export const declineJoinTournamentRequest = async (tournament, player) => {
-  const request = tournament.joinRequests?.find(
+  const request = tournament.joinRequests.find(
     (joinRequest) => joinRequest.requestedBy.id === player.id
   );
   const declinedRequest = {

@@ -187,7 +187,11 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
 
       creator: tournament?.creator || userPlayerProfile?.id,
       admins: tournament?.admins || [userPlayerProfile?.id],
-      players: tournament?.players || [userPlayerProfile?.id],
+      players: {
+        active: tournament?.players.active || [userPlayerProfile?.id],
+        inactive: tournament?.players.inactive || [], 
+      },
+      joinRequests: tournament?.joinRequests || [],
       matches: tournament?.matches || [],
     };
 

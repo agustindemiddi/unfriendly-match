@@ -20,7 +20,8 @@ const TournamentDetailSection = ({
   userPlayerProfile,
   tournament,
   matches,
-  players,
+  activePlayers,
+  inactivePlayers,
 }) => {
   const { tournamentId } = useParams();
   const navigate = useNavigate();
@@ -38,15 +39,15 @@ const TournamentDetailSection = ({
 
   const handleUnsubscribeFromTournament = async () => {
     if (tournament.isActive) {
-      const tournamentPlayers = players.filter((player) =>
-        tournament.players.includes(player.id)
-      );
+      // const tournamentPlayers = activePlayers.filter((player) =>
+      //   tournament.players.active.includes(player.id)
+      // );
 
-      const tournamentVerifiedPlayers = tournamentPlayers.filter(
+      const tournamentVerifiedPlayers = activePlayers.filter(
         (player) => player.isVerified
       );
 
-      const nonVerifiedPlayersIds = tournamentPlayers
+      const nonVerifiedPlayersIds = activePlayers
         .filter((player) => !player.isVerified)
         .map((player) => player.id);
 
@@ -149,7 +150,11 @@ const TournamentDetailSection = ({
         )}
 
         <div className={styles.standings}>
-          <StandingsTable matches={matches} players={players} />
+          <StandingsTable
+            matches={matches}
+            activePlayers={activePlayers}
+            inactivePlayers={inactivePlayers}
+          />
         </div>
       </Section>
       <AsideActionsPanel

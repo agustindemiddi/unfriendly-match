@@ -36,7 +36,8 @@ export const AuthContextProvider = ({ children }) => {
     useState([]);
   const [updatedTournament, setUpdatedTournament] = useState(null);
   const [updatedTournamentMatches, setUpdatedTournamentMatches] = useState([]);
-  const [updatedTournamentPlayers, setUpdatedTournamentPlayers] = useState([]);
+  const [updatedTournamentActivePlayers, setUpdatedTournamentActivePlayers] = useState([]);
+  const [updatedTournamentInactivePlayers, setUpdatedTournamentInactivePlayers] = useState([]);
   const navigate = useNavigate();
 
   // add listener to user auth:
@@ -90,7 +91,7 @@ export const AuthContextProvider = ({ children }) => {
       const tournamentPlayersIds = Array.from(
         new Set(
           updatedUserTournaments?.all?.flatMap(
-            (tournament) => tournament.players
+            (tournament) => tournament.players.active
           )
         )
       );
@@ -133,7 +134,7 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [tournamentId, updatedTournament]);
 
-  // add listener to tournament players:
+  // add listener to tournament active players:
   useEffect(() => {
     if (
       location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
@@ -141,17 +142,32 @@ export const AuthContextProvider = ({ children }) => {
       updatedTournament
     ) {
       const unsubscribe = addMultiplePlayersListener(
-        updatedTournament.players,
-        setUpdatedTournamentPlayers
+        updatedTournament.players.active,
+        setUpdatedTournamentActivePlayers
+      );
+      return () => unsubscribe();
+    }
+  }, [tournamentId, updatedTournament]);
+
+  // add listener to tournament inactive players:
+  useEffect(() => {
+    if (
+      location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
+      // !userPlayerProfile?.tournaments.all.includes(tournamentId) &&
+      updatedTournament?.players.inactive.length > 0
+    ) {
+      const unsubscribe = addMultiplePlayersListener(
+        updatedTournament.players.inactive,
+        setUpdatedTournamentInactivePlayers
       );
       return () => unsubscribe();
     }
   }, [tournamentId, updatedTournament]);
 
   const updatedUserContacts =
-    userPlayerProfile && updatedUserTournamentsPlayers // creo que la condicion userPlayerProfile es redundante
+    updatedUserTournamentsPlayers.length > 0
       ? updatedUserTournamentsPlayers
-          ?.filter((player) => player.isVerified)
+          .filter((player) => player.isVerified)
           .filter((player) => player.id !== userPlayerProfile.id)
       : [];
 
@@ -180,7 +196,8 @@ export const AuthContextProvider = ({ children }) => {
         updatedUserContacts,
         updatedTournament,
         updatedTournamentMatches,
-        updatedTournamentPlayers,
+        updatedTournamentActivePlayers,
+        updatedTournamentInactivePlayers,
         handleGoogleLogin,
         handleEmailLogin,
         handleLogout,

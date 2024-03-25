@@ -8,14 +8,15 @@ const TournamentDetailPage = () => {
     userPlayerProfile,
     updatedTournament,
     updatedTournamentMatches,
-    updatedTournamentPlayers,
+    updatedTournamentActivePlayers,
+    updatedTournamentInactivePlayers,
   } = getUserAuthCtx();
 
   let isLoading = true;
   if (
     userPlayerProfile &&
     updatedTournament &&
-    updatedTournamentPlayers.length > 0
+    updatedTournamentActivePlayers.length > 0
   )
     isLoading = false;
 
@@ -28,7 +29,8 @@ const TournamentDetailPage = () => {
           userPlayerProfile={userPlayerProfile}
           tournament={updatedTournament}
           matches={updatedTournamentMatches}
-          players={updatedTournamentPlayers}
+          activePlayers={updatedTournamentActivePlayers}
+          inactivePlayers={updatedTournamentInactivePlayers}
         />
       )}
     </>

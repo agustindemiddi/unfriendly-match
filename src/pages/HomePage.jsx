@@ -7,7 +7,7 @@ const HomePage = () => {
   const {
     userPlayerProfile,
     updatedUserTournaments,
-    updatedActiveTournamentsMatches,
+    updatedUserActiveTournamentsMatches,
   } = getUserAuthCtx();
 
   // this will change for (new) users without tournaments n/or matches yet
@@ -15,7 +15,7 @@ const HomePage = () => {
   if (
     userPlayerProfile &&
     updatedUserTournaments.all.length > 0 &&
-    updatedActiveTournamentsMatches.length > 0
+    updatedUserActiveTournamentsMatches.length > 0
   )
     isLoading = false;
 
@@ -27,7 +27,7 @@ const HomePage = () => {
         <HomeSection
           userPlayerProfile={userPlayerProfile}
           tournaments={updatedUserTournaments}
-          matches={updatedActiveTournamentsMatches}
+          matches={updatedUserActiveTournamentsMatches}
         />
       )}
     </>

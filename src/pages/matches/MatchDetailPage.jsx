@@ -12,7 +12,7 @@ const MatchDetailPage = () => {
   const {
     userPlayerProfile,
     updatedUserTournaments,
-    updatedActiveTournamentsMatches,
+    updatedTournamentMatches,
   } = getUserAuthCtx();
   // const [matchFromUnsubscribedTournament, setMatchFromUnsubscribedTournament] =
   //   useState([]);
@@ -36,9 +36,7 @@ const MatchDetailPage = () => {
     (tournament) => tournament.id === tournamentId
   );
 
-  const match = updatedActiveTournamentsMatches.find(
-    (match) => match.id === matchId
-  );
+  const match = updatedTournamentMatches.find((match) => match.id === matchId);
 
   let isLoading = true;
   if (userPlayerProfile && tournament && match) isLoading = false;

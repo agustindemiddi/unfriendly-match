@@ -6,13 +6,19 @@ import LoadingBouncingSoccerBall from '../../components/UI/LoadingBouncingSoccer
 const TournamentsPage = () => {
   const { updatedUserTournaments } = getUserAuthCtx();
 
+  // return (
+  //   <>
+  //     {updatedUserTournaments.all.length > 0 ? (
+  //       <TournamentsSection tournaments={updatedUserTournaments} />
+  //     ) : (
+  //       <LoadingBouncingSoccerBall />
+  //     )}
+  //   </>
+  // );
+
   return (
     <>
-      {updatedUserTournaments.all.length > 0 ? (
-        <TournamentsSection tournaments={updatedUserTournaments} />
-      ) : (
-        <LoadingBouncingSoccerBall />
-      )}
+      <TournamentsSection tournaments={updatedUserTournaments} />
     </>
   );
 };

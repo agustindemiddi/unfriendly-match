@@ -13,7 +13,7 @@ const TournamentPlayersSection = ({
 }) => {
   const navigate = useNavigate();
 
-  const isTournamentPlayer = tournament?.players?.includes(
+  const isTournamentPlayer = tournament?.players?.active.includes(
     userPlayerProfile?.id
   );
 

@@ -12,7 +12,7 @@ const MatchesPage = () => {
   const {
     userPlayerProfile,
     updatedUserTournaments,
-    updatedActiveTournamentsMatches,
+    updatedTournamentMatches,
   } = getUserAuthCtx();
   const [unsubscribedTournament, setUnsubscribedTournament] = useState(null);
 
@@ -30,7 +30,7 @@ const MatchesPage = () => {
     }
   }, [tournamentId]);
 
-  const tournamentsMatches = updatedActiveTournamentsMatches.filter(
+  const tournamentsMatches = updatedTournamentMatches.filter(
     (match) => match.tournament === tournamentId
   );
 

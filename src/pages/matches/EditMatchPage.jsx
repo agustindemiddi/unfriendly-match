@@ -11,8 +11,9 @@ const EditMatchPage = () => {
   const {
     userPlayerProfile,
     updatedUserTournaments,
-    updatedActiveTournamentsMatches,
+    updatedTournamentMatches,
     updatedUserTournamentsPlayers,
+    updatedTournamentInactivePlayers,
   } = getUserAuthCtx();
 
   const tournament = updatedUserTournaments.all.find(
@@ -23,16 +24,16 @@ const EditMatchPage = () => {
     (player) => player.tournaments.all.includes(tournamentId)
   );
 
-  // fallback for finished tournament match? no, admin must re-open tournament and edit match (this way, all tournament players knows). so, no fallback but think of mechanism so admin knows that he/she cannot modify matches of finished tournaments
-  const match = updatedActiveTournamentsMatches.find(
-    (match) => match.id === matchId
-  );
+  const allTournamentPlayers = [...updatedTournamentPlayers, ...updatedTournamentInactivePlayers];
 
-  const matchPlayers = updatedTournamentPlayers.filter((player) =>
+  // fallback for finished tournament match? no, admin must re-open tournament and edit match (this way, all tournament players knows). so, no fallback but think of mechanism so admin knows that he/she cannot modify matches of finished tournaments
+  const match = updatedTournamentMatches.find((match) => match.id === matchId);
+
+  const matchPlayers = allTournamentPlayers.filter((player) =>
     match?.players.includes(player.id)
   );
 
-  const availablePlayers = updatedTournamentPlayers.filter(
+  const availablePlayers = allTournamentPlayers.filter(
     (player) => !match?.players.includes(player.id)
   );
 
@@ -53,7 +54,7 @@ const EditMatchPage = () => {
         <EditMatchSection
           userPlayerProfile={userPlayerProfile}
           tournament={tournament}
-          tournamentPlayers={updatedTournamentPlayers}
+          tournamentPlayers={allTournamentPlayers}
           match={match}
           matchPlayers={matchPlayers}
           availablePlayers={availablePlayers}

@@ -1,13 +1,17 @@
 import styles from './StandingsTable.module.css';
 
+// import {  } from '../../utils/firebase/firestore/firestoreActions';
 import { calculateTournamentStats } from '../../../../utils/calculateTournamentStats';
 
-const StandingsTable = ({ matches, players }) => {
+// const StandingsTable = ({ matches, players }) => {
+const StandingsTable = ({ matches, activePlayers, inactivePlayers }) => {
   const finishedMatches = matches.filter(
     (match) => Object.keys(match.result).length > 0
   );
 
   const tournamentStats = calculateTournamentStats(finishedMatches);
+
+  const allPlayers = [...activePlayers, ...inactivePlayers];
 
   return (
     <table className={styles.standingsTable}>
@@ -39,7 +43,10 @@ const StandingsTable = ({ matches, players }) => {
           return (
             <tr key={index}>
               <td>
-                {players.find((player) => player.id === playerId)?.displayName}
+                {
+                  allPlayers.find((player) => player.id === playerId)
+                    ?.displayName
+                }
               </td>
               <td>{matchesPlayed}</td>
               <td>{points}</td>
