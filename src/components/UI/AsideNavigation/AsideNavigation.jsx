@@ -19,7 +19,7 @@ const AsideNavigation = () => {
 
   useEffect(() => {
     if (
-      updatedUserTournaments &&
+      updatedUserTournaments.active.length > 0 &&
       location.pathname.startsWith('/tournaments')
     ) {
       setNavTree((prevState) => {

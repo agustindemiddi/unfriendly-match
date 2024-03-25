@@ -11,7 +11,7 @@ import separateMatches from '../../../../../utils/separateMatches';
 const AsideNavigationTournamentItem = ({ navItem }) => {
   const [isMatchesLocation, setIsMatchesLocation] = useState(false);
   const { tournamentId } = useParams();
-  const { updatedActiveTournamentsMatches } = getUserAuthCtx();
+  const { updatedTournamentMatches } = getUserAuthCtx();
   const location = useLocation();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const AsideNavigationTournamentItem = ({ navItem }) => {
     }
   }, [location.pathname]);
 
-  const tournamentMatches = updatedActiveTournamentsMatches?.filter(match => match.tournament === tournamentId)
+  const tournamentMatches = updatedTournamentMatches?.filter(match => match.tournament === tournamentId)
 
   const { reverseSortedListedAllMatches, reverseSortedPreviousMatches } =
     separateMatches(tournamentMatches || []);
