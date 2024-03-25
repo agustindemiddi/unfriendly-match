@@ -28,21 +28,21 @@ export const AuthContextProvider = ({ children }) => {
     active: [],
     finished: [],
   });
+  const [
+    updatedUserActiveTournamentsMatches,
+    setUpdatedUserActiveTournamentsMatches,
+  ] = useState([]);
   const [updatedUserTournamentsPlayers, setUpdatedUserTournamentsPlayers] =
     useState([]);
-  const [updatedActiveTournamentsMatches, setUpdatedActiveTournamentsMatches] =
-    useState([]);
-  const [unsubscribedTournament, setUnsubscribedTournament] = useState(null);
-  const [unsubscribedTournamentPlayers, setUnsubscribedTournamentPlayers] =
-    useState([]);
-  const [unsubscribedTournamentMatches, setUnsubscribedTournamentMatches] =
-    useState([]);
+  const [updatedTournament, setUpdatedTournament] = useState(null);
+  const [updatedTournamentMatches, setUpdatedTournamentMatches] = useState([]);
+  const [updatedTournamentPlayers, setUpdatedTournamentPlayers] = useState([]);
   const navigate = useNavigate();
 
   // add listener to user auth:
   useEffect(() => addAuthListener(setUser), []);
 
-  // add listener to user player:
+  // add listener to user player profile:
   useEffect(() => {
     if (user) {
       const unsubscribe = addPlayerListener(user.uid, setUserPlayerProfile);
@@ -61,7 +61,30 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [userPlayerProfile?.tournaments.all]);
 
-  // add listener to user contacts:
+  // add listener to user active tournaments matches:
+  useEffect(() => {
+    if (updatedUserTournaments?.active?.length > 0) {
+      const matchesArrays = updatedUserTournaments.active.map(
+        (activeTournament) => {
+          if (activeTournament.matches.length > 0) {
+            return activeTournament.matches.map((matchId) => ({
+              id: matchId,
+              tournamentId: activeTournament.id,
+            }));
+          } else {
+            return [];
+          }
+        }
+      );
+      const unsubscribe = addMultipleMatchesArraysListener(
+        matchesArrays,
+        setUpdatedUserActiveTournamentsMatches
+      );
+      return () => unsubscribe();
+    }
+  }, [updatedUserTournaments?.active]);
+
+  // add listener to user tournaments players:
   useEffect(() => {
     if (updatedUserTournaments?.all?.length > 0) {
       const tournamentPlayersIds = Array.from(
@@ -79,76 +102,54 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [updatedUserTournaments?.all]);
 
-  // add listener to active tournaments matches:
-  useEffect(() => {
-    if (updatedUserTournaments?.active?.length > 0) {
-      const matchesArrays = updatedUserTournaments.active.map(
-        (activeTournament) => {
-          if (activeTournament.matches.length > 0) {
-            return activeTournament.matches.map((matchId) => ({
-              id: matchId,
-              tournamentId: activeTournament.id,
-            }));
-          } else {
-            return [];
-          }
-        }
-      );
-      const unsubscribe = addMultipleMatchesArraysListener(
-        matchesArrays,
-        setUpdatedActiveTournamentsMatches
-      );
-      return () => unsubscribe();
-    }
-  }, [updatedUserTournaments?.active]);
-
-  // add listener to unsubscribed tournament:
+  // add listener to tournament:
   useEffect(() => {
     if (
-      location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
-      !userPlayerProfile?.tournaments.all.includes(tournamentId)
+      location.pathname.startsWith(`/tournaments/${tournamentId}`)
+      // location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
+      // !userPlayerProfile?.tournaments.all.includes(tournamentId)
     ) {
       const unsubscribe = addTournamentListener(
         tournamentId,
-        setUnsubscribedTournament
+        setUpdatedTournament
       );
       return () => unsubscribe();
     }
   }, [tournamentId]);
 
-  // add listener to unsubscribed tournament players:
+  // add listener to tournament matches:
   useEffect(() => {
     if (
       location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
-      !userPlayerProfile?.tournaments.all.includes(tournamentId) &&
-      unsubscribedTournament
-    ) {
-      const unsubscribe = addMultiplePlayersListener(
-        unsubscribedTournament.players,
-        setUnsubscribedTournamentPlayers
-      );
-      return () => unsubscribe();
-    }
-  }, [tournamentId, unsubscribedTournament]);
-
-  // add listener to unsubscribed tournament matches:
-  useEffect(() => {
-    if (
-      location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
-      !userPlayerProfile?.tournaments.all.includes(tournamentId) &&
-      unsubscribedTournament?.matches.length > 0
+      // !userPlayerProfile?.tournaments.all.includes(tournamentId) &&
+      updatedTournament?.matches.length > 0
     ) {
       const unsubscribe = addMultipleMatchesListener(
         tournamentId,
-        unsubscribedTournament.matches,
-        setUnsubscribedTournamentMatches
+        updatedTournament.matches,
+        setUpdatedTournamentMatches
       );
       return () => unsubscribe();
     }
-  }, [tournamentId, unsubscribedTournament]);
+  }, [tournamentId, updatedTournament]);
 
-  const userContacts =
-    userPlayerProfile && updatedUserTournamentsPlayers
+  // add listener to tournament players:
+  useEffect(() => {
+    if (
+      location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
+      // !userPlayerProfile?.tournaments.all.includes(tournamentId) &&
+      updatedTournament
+    ) {
+      const unsubscribe = addMultiplePlayersListener(
+        updatedTournament.players,
+        setUpdatedTournamentPlayers
+      );
+      return () => unsubscribe();
+    }
+  }, [tournamentId, updatedTournament]);
+
+  const updatedUserContacts =
+    userPlayerProfile && updatedUserTournamentsPlayers // creo que la condicion userPlayerProfile es redundante
       ? updatedUserTournamentsPlayers
           ?.filter((player) => player.isVerified)
           .filter((player) => player.id !== userPlayerProfile.id)
@@ -174,12 +175,12 @@ export const AuthContextProvider = ({ children }) => {
         user,
         userPlayerProfile,
         updatedUserTournaments,
-        updatedActiveTournamentsMatches,
+        updatedUserActiveTournamentsMatches,
         updatedUserTournamentsPlayers,
-        userContacts,
-        unsubscribedTournament,
-        unsubscribedTournamentPlayers,
-        unsubscribedTournamentMatches,
+        updatedUserContacts,
+        updatedTournament,
+        updatedTournamentMatches,
+        updatedTournamentPlayers,
         handleGoogleLogin,
         handleEmailLogin,
         handleLogout,

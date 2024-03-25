@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import Section from '../../UI/Section/Section';
 import AsideActionsPanel from '../../UI/AsideActionsPanel/AsideActionsPanel';
@@ -18,24 +18,21 @@ import copyUrlToClipboard from '../../../utils/copyUrlToClipboard';
 
 const TournamentDetailSection = ({
   userPlayerProfile,
-  isTournamentPlayer,
   tournament,
   matches,
   players,
 }) => {
+  const { tournamentId } = useParams();
   const navigate = useNavigate();
 
   const { nextMatch, lastMatch } = separateMatches(matches);
 
-  // const isTournamentPlayer = tournament?.players?.includes(
-  //   userPlayerProfile?.id
-  // );
+  const isTournamentPlayer =
+    userPlayerProfile.tournaments.all.includes(tournamentId);
 
-  // console.log(isTournamentPlayer);
+  const isAdmin = tournament.admins.includes(userPlayerProfile.id);
 
-  const isAdmin = tournament?.admins?.includes(userPlayerProfile.id);
-
-  const isJoinTournamentRequestDone = tournament?.joinRequests?.some(
+  const isJoinTournamentRequestDone = tournament.joinRequests.some(
     (joinRequest) => joinRequest.requestedBy === userPlayerProfile.id
   );
 
