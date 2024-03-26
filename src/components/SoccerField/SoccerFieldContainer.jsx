@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 
 import SoccerField from './SoccerField';
 
-import { addMultipleMatchPlayersListener } from '../../utils/firebase/firestore/firestoreActions';
+import {
+  addMultipleMatchPlayersListener,
+  deleteMatch,
+} from '../../utils/firebase/firestore/firestoreActions';
 import getMatchStatus from '../../utils/getMatchStatus';
 import { getStringFormattedLongDateTime } from '../../utils/getDates';
 import calculateCountdown from '../../utils/calculateCountdownToMatchSubscription';
@@ -89,10 +92,15 @@ const SoccerFieldContainer = ({ userPlayerProfile, tournament, match }) => {
   const tournamentImage = tournament?.image;
 
   const isTournamentPlayer = tournament?.players?.active.includes(userId);
+  const isAdmin = admins.includes(userId);
 
   const formattedDateTime = getStringFormattedLongDateTime(dateTime);
   const formattedSubscriptionDateTime =
     getStringFormattedLongDateTime(subscriptionDateTime);
+
+  const handleDeleteMatch = () => {
+    deleteMatch(tournamentId, matchId);
+  };
 
   return (
     <SoccerField
@@ -120,6 +128,8 @@ const SoccerFieldContainer = ({ userPlayerProfile, tournament, match }) => {
         isUserSubscribed,
         matchId,
         isTournamentPlayer,
+        isAdmin,
+        handleDeleteMatch,
       }}
     />
   );

@@ -15,6 +15,7 @@ const PlayerIconContainer = ({
   tournamentId,
   matchId,
   isTournamentPlayer,
+  isAdmin,
 }) => {
   const { userPlayerProfile } = getUserAuthCtx();
 
@@ -34,7 +35,7 @@ const PlayerIconContainer = ({
   };
 
   const handleUnsubscribeFromMatch = async (tournamentId, matchId, userId) => {
-    if (playerId === userId && isSubscriptionOpen && isUserSubscribed)
+    if (isSubscriptionOpen && (playerId === userId && isUserSubscribed) || isAdmin)
       await unsubscribeFromMatch(tournamentId, matchId, userId);
   };
 
@@ -57,8 +58,9 @@ const PlayerIconContainer = ({
         )
       }
       handleUnsubscribeFromMatch={() =>
-        handleUnsubscribeFromMatch(tournamentId, matchId, userPlayerProfile.id)
+        handleUnsubscribeFromMatch(tournamentId, matchId, playerId)
       }
+      isAdmin={isAdmin}
     />
   );
 };

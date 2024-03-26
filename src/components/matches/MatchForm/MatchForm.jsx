@@ -252,6 +252,7 @@ const MatchForm = ({
     const matchData = {
       creationDateTime: match?.creationDateTime || new Date(),
       creator: match?.creator || userPlayerProfile.id,
+      admins: match?.admins || [userPlayerProfile.id],
       tournament: tournamentId,
       mvps: match?.mvps || [],
 

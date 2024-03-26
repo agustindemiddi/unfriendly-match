@@ -8,7 +8,7 @@ const SoccerField = ({
   matchProps: {
     tournamentId,
     // creator,
-    // admins,
+    admins,
     // creationDateTime,
     subscriptionDateTime,
     dateTime,
@@ -29,6 +29,8 @@ const SoccerField = ({
     isUserSubscribed,
     matchId,
     isTournamentPlayer,
+    isAdmin,
+    handleDeleteMatch,
   },
 }) => {
   const { teamA, teamB } = teams;
@@ -44,6 +46,8 @@ const SoccerField = ({
           <p>{address}</p>
         </div>
       </div>
+
+      {isAdmin && <button onClick={handleDeleteMatch}>Delete match</button>}
 
       <div
         className={`${styles.soccerField} ${
@@ -140,6 +144,7 @@ const SoccerField = ({
                             tournamentId={tournamentId}
                             matchId={matchId}
                             isTournamentPlayer={isTournamentPlayer}
+                            isAdmin={isAdmin}
                           />
                         ) : (
                           <PlayerIconContainer
