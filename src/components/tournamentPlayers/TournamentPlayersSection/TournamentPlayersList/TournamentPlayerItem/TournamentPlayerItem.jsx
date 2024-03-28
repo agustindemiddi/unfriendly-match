@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import styles from './TournamentPlayerItem.module.css';
 
@@ -11,6 +11,7 @@ import {
 const TournamentPlayerItem = ({ player }) => {
   const { tournamentId } = useParams();
   const { userPlayerProfile } = getUserAuthCtx();
+  const navigate = useNavigate();
 
   const isMergeRequestDone = player?.mergeRequests?.some(
     (mergeRequest) => mergeRequest.requestedBy === userPlayerProfile.id
@@ -19,6 +20,12 @@ const TournamentPlayerItem = ({ player }) => {
   return (
     <div style={{ border: '1px solid' }}>
       <p>{player.displayName}</p>
+      {!player.isVerified && player.createdBy === userPlayerProfile.id && (
+        <button
+          onClick={() => navigate(`${player.id}/edit`, {state: player })}>
+          EDIT PLAYER
+        </button>
+      )}
       <button onClick={() => console.log(player)}>LOG PLAYER INFO</button>
       {!player.isVerified && player.createdBy !== userPlayerProfile.id && (
         <button

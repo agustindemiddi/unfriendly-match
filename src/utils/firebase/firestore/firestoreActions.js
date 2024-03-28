@@ -184,7 +184,7 @@ export const getPlayer = async (playerId) => {
 };
 
 // edit player:
-const editPlayer = async (playerId, playerData) =>
+export const editPlayer = async (playerId, playerData) =>
   await updateDoc(getPlayerDocRef(playerId), playerData);
 
 // get tournament:
