@@ -926,3 +926,10 @@ export const mergePlayers = async (
     }
   }
 };
+
+// TOURNAMENT CREATOR ACTIONS
+// make admin:
+export const makeTournamentAdmin = async (tournamentId, playerId) =>
+  await updateDoc(getTournamentDocRef(tournamentId), {
+    admins: arrayUnion(playerId),
+  });

@@ -8,9 +8,10 @@ import {
   cancelMergeRequest,
   unsubscribeFromTournament,
   deleteNonVerifiedPlayer,
+  makeTournamentAdmin,
 } from '../../../../../utils/firebase/firestore/firestoreActions';
 
-const TournamentPlayerItem = ({ player }) => {
+const TournamentPlayerItem = ({ player, isUserCreator, isAdmin }) => {
   const { tournamentId } = useParams();
   const { userPlayerProfile } = getUserAuthCtx();
   const navigate = useNavigate();
@@ -39,6 +40,14 @@ const TournamentPlayerItem = ({ player }) => {
       {!player.isVerified && player.createdBy === userPlayerProfile.id && (
         <button onClick={handleDeleteNonVerifiedPlayer}>DELETE PLAYER</button>
       )}
+      {isUserCreator &&
+        !isAdmin &&
+        player.isVerified &&
+        player.id !== userPlayerProfile.id && (
+          <button onClick={() => makeTournamentAdmin(tournamentId, player.id)}>
+            MAKE TOURNAMENT ADMIN
+          </button>
+        )}
       <button onClick={() => console.log(player)}>LOG PLAYER INFO</button>
       {!player.isVerified && player.createdBy !== userPlayerProfile.id && (
         <button

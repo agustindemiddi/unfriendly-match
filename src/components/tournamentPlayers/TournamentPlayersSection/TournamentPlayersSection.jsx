@@ -17,11 +17,15 @@ const TournamentPlayersSection = ({
     userPlayerProfile?.id
   );
 
-  const isAdmin = tournament.admins.includes(userPlayerProfile?.id);
+  const isUserAdmin = tournament.admins.includes(userPlayerProfile.id);
+
+  const isUserCreator = tournament.creator === userPlayerProfile.id;
+
+  const admins = tournament.admins;
 
   const adminActions = [];
   isTournamentPlayer &&
-    isAdmin &&
+    isUserAdmin &&
     adminActions.push({
       label: 'Create provisory player',
       onAction: () => navigate(`/tournaments/${tournament.id}/players/new`),
@@ -42,7 +46,13 @@ const TournamentPlayersSection = ({
         <>
           <Section>
             <h2>{tournament.name} players:</h2>
-            {players.length > 0 && <TournamentPlayersList players={players} />}
+            {players.length > 0 && (
+              <TournamentPlayersList
+                players={players}
+                isUserCreator={isUserCreator}
+                admins={admins}
+              />
+            )}
           </Section>
           <AsideActionsPanel adminActions={adminActions} actions={actions} />
         </>
