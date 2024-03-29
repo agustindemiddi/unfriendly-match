@@ -187,6 +187,11 @@ export const getPlayer = async (playerId) => {
 export const editPlayer = async (playerId, playerData) =>
   await updateDoc(getPlayerDocRef(playerId), playerData);
 
+// delete player:
+const deletePlayer = async (playerId) => {
+  await deleteDoc(getPlayerDocRef(playerId));
+};
+
 // get tournament:
 export const getTournament = async (tournamentId) => {
   const tournamentDoc = await getDocument(getTournamentDocRef(tournamentId));
@@ -597,6 +602,12 @@ export const unsubscribeFromTournament = async (tournamentId, playerId) => {
     'tournaments.active': arrayRemove(tournamentId),
     'tournaments.finished': arrayRemove(tournamentId),
   });
+};
+
+// delete non-verified player and unsubscribe from tournament: // (repeats some unnecessary actions from unsubscribeFromTournament)
+export const deleteNonVerifiedPlayer = async (tournamentId, playerId) => {
+  await unsubscribeFromTournament(tournamentId, playerId);
+  await deletePlayer(playerId);
 };
 
 // // delete tournament:

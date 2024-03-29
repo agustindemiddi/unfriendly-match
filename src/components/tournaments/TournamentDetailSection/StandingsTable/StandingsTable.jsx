@@ -1,6 +1,5 @@
 import styles from './StandingsTable.module.css';
 
-// import {  } from '../../utils/firebase/firestore/firestoreActions';
 import { calculateTournamentStats } from '../../../../utils/calculateTournamentStats';
 
 // const StandingsTable = ({ matches, players }) => {
@@ -11,7 +10,11 @@ const StandingsTable = ({ matches, activePlayers, inactivePlayers }) => {
 
   const tournamentStats = calculateTournamentStats(finishedMatches);
 
-  const allPlayers = [...activePlayers, ...inactivePlayers];
+  const allPlayers = [...activePlayers, ...inactivePlayers]; // allPlayers includes all inactive players except nonVerifiedPlayers that where deleted due to non belonging to any tournament so they were deleted from DB
+
+  const currentTournamentPlayers = tournamentStats.filter((player) =>
+    allPlayers.some((allPlayer) => allPlayer.id === Object.keys(player)[0])
+  );
 
   return (
     <table className={styles.standingsTable}>
@@ -28,7 +31,7 @@ const StandingsTable = ({ matches, activePlayers, inactivePlayers }) => {
         </tr>
       </thead>
       <tbody>
-        {tournamentStats.map((playerStats, index) => {
+        {currentTournamentPlayers.map((playerStats, index) => {
           const playerId = Object.keys(playerStats)[0];
           const {
             matchesPlayed,

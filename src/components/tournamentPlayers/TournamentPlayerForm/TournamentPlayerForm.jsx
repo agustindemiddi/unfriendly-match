@@ -21,11 +21,11 @@ const TournamentPlayerForm = ({ userPlayerProfile, player }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const playerId = player.id || uuidv4();
+    const playerId = player?.id || uuidv4();
 
     const displayName = nameInput.current.value;
     const playerData = {
-      creationDateTime: player.creationDateTime || new Date(),
+      creationDateTime: player?.creationDateTime || new Date(),
       isVerified: false,
       isPublic: false,
       displayName: displayName,
@@ -33,23 +33,23 @@ const TournamentPlayerForm = ({ userPlayerProfile, player }) => {
       image: '',
       description: '',
       tournaments: {
-        all: player.tournaments.all || [tournamentId],
-        active: player.tournaments.active || [tournamentId],
-        finished: player.tournaments.finished || [],
+        all: player?.tournaments.all || [tournamentId],
+        active: player?.tournaments.active || [tournamentId],
+        finished: player?.tournaments.finished || [],
       },
-      createdBy: player.createdBy || userPlayerProfile.id,
+      createdBy: player?.createdBy || userPlayerProfile.id,
     };
 
     if (player) {
       await editPlayer(playerId, playerData);
-      alert(`You have successfully edited ${player.displayName}'s name`);
+      alert(`You have successfully edited ${displayName}'s name`);
     } else {
       await addNonVerifiedPlayerToTournament(
         tournamentId,
         playerId,
         playerData
       );
-      alert(`You have successfully created the player ${player.displayName}`);
+      alert(`You have successfully created the player ${displayName}`);
     }
 
     // nameInput.current.value = '';

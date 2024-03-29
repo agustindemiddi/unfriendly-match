@@ -6,6 +6,8 @@ import { getUserAuthCtx } from '../../../../../context/authContext';
 import {
   requestMerge,
   cancelMergeRequest,
+  unsubscribeFromTournament,
+  deleteNonVerifiedPlayer,
 } from '../../../../../utils/firebase/firestore/firestoreActions';
 
 const TournamentPlayerItem = ({ player }) => {
@@ -17,22 +19,34 @@ const TournamentPlayerItem = ({ player }) => {
     (mergeRequest) => mergeRequest.requestedBy === userPlayerProfile.id
   );
 
+  const handleDeleteNonVerifiedPlayer = async () => {
+    if (player.tournaments.all.length === 1) {
+      await deleteNonVerifiedPlayer(tournamentId, player.id);
+    } else {
+      await unsubscribeFromTournament(tournamentId, player.id);
+    }
+  };
+
   return (
     <div style={{ border: '1px solid' }}>
       <p>{player.displayName}</p>
       {!player.isVerified && player.createdBy === userPlayerProfile.id && (
         <button
-          onClick={() => navigate(`${player.id}/edit`, {state: player })}>
+          onClick={() => navigate(`${player.id}/edit`, { state: player })}>
           EDIT PLAYER
         </button>
+      )}
+      {!player.isVerified && player.createdBy === userPlayerProfile.id && (
+        <button onClick={handleDeleteNonVerifiedPlayer}>DELETE PLAYER</button>
       )}
       <button onClick={() => console.log(player)}>LOG PLAYER INFO</button>
       {!player.isVerified && player.createdBy !== userPlayerProfile.id && (
         <button
           onClick={
             isMergeRequestDone
-              ? () => cancelMergeRequest(userPlayerProfile, player)
-              : () => requestMerge(userPlayerProfile, player, tournamentId)
+              ? async () => await cancelMergeRequest(userPlayerProfile, player)
+              : async () =>
+                  await requestMerge(userPlayerProfile, player, tournamentId)
           }>
           {isMergeRequestDone ? 'CANCEL MERGE REQUEST' : 'REQUEST MERGE'}
         </button>
