@@ -9,6 +9,7 @@ import {
   unsubscribeFromTournament,
   deleteNonVerifiedPlayer,
   makeTournamentAdmin,
+  undoTournamentAdmin,
 } from '../../../../../utils/firebase/firestore/firestoreActions';
 
 const TournamentPlayerItem = ({ player, isUserCreator, isAdmin }) => {
@@ -41,11 +42,15 @@ const TournamentPlayerItem = ({ player, isUserCreator, isAdmin }) => {
         <button onClick={handleDeleteNonVerifiedPlayer}>DELETE PLAYER</button>
       )}
       {isUserCreator &&
-        !isAdmin &&
         player.isVerified &&
         player.id !== userPlayerProfile.id && (
-          <button onClick={() => makeTournamentAdmin(tournamentId, player.id)}>
-            MAKE TOURNAMENT ADMIN
+          <button
+            onClick={
+              isAdmin
+                ? () => undoTournamentAdmin(tournamentId, player.id)
+                : () => makeTournamentAdmin(tournamentId, player.id)
+            }>
+            {isAdmin ? 'UNDO TOURNAMENT ADMIN' : 'MAKE TOURNAMENT ADMIN'}
           </button>
         )}
       <button onClick={() => console.log(player)}>LOG PLAYER INFO</button>

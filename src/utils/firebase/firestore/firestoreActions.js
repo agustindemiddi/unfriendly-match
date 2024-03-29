@@ -933,3 +933,9 @@ export const makeTournamentAdmin = async (tournamentId, playerId) =>
   await updateDoc(getTournamentDocRef(tournamentId), {
     admins: arrayUnion(playerId),
   });
+
+// undo admin:
+export const undoTournamentAdmin = async (tournamentId, playerId) =>
+  await updateDoc(getTournamentDocRef(tournamentId), {
+    admins: arrayRemove(playerId),
+  });
