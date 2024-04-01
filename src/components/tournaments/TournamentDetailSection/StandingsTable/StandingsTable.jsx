@@ -27,7 +27,7 @@ const StandingsTable = ({ matches, activePlayers, inactivePlayers }) => {
           <th>Wins</th>
           <th>Draws</th>
           <th>Loses</th>
-          <th>Goals Difference</th>
+          <th>Goal Difference</th>
         </tr>
       </thead>
       <tbody>

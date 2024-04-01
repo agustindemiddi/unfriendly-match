@@ -53,7 +53,7 @@ const TournamentPlayerItem = ({ player, isUserCreator, isAdmin }) => {
             {isAdmin ? 'UNDO TOURNAMENT ADMIN' : 'MAKE TOURNAMENT ADMIN'}
           </button>
         )}
-      <button onClick={() => console.log(player)}>LOG PLAYER INFO</button>
+      {/* <button onClick={() => console.log(player)}>LOG PLAYER INFO</button> */}
       {!player.isVerified && player.createdBy !== userPlayerProfile.id && (
         <button
           onClick={

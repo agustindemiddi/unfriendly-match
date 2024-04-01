@@ -162,7 +162,7 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
 
     const tournamentData = {
       creationDateTime: tournament?.creationDateTime || new Date(),
-      isActive: tournament?.isActive || true,
+      isActive: tournament?.isActive ?? true,
 
       name:
         nameInputRef.current.value ||

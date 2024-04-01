@@ -786,6 +786,7 @@ export const mergePlayers = async (
   adminId
 ) => {
   if (verifiedPlayer.isVerified && !nonVerifiedPlayer.isVerified) {
+    // maybe this check is unnecesary
     try {
       let matchesWithConflict = [];
 
@@ -860,10 +861,10 @@ export const mergePlayers = async (
 
           if (matchesWithConflict.length === 0) {
             await updateDoc(getTournamentDocRef(tournamentId), {
-              players: arrayRemove(nonVerifiedPlayer.id),
+              'players.active': arrayRemove(nonVerifiedPlayer.id),
             });
             await updateDoc(getTournamentDocRef(tournamentId), {
-              players: arrayUnion(verifiedPlayer.id),
+              'players.active': arrayUnion(verifiedPlayer.id), // si solo se puede mergear estando adentro del torneo, esto es innecesario
             });
           }
         })
@@ -925,6 +926,74 @@ export const mergePlayers = async (
       console.log('error.message:', error.message);
     }
   }
+};
+
+// finish tournament:
+export const finishTournament = async (tournamentId) => {
+  await updateDoc(getTournamentDocRef(tournamentId), {
+    result: {
+      champion: {
+        id: '1',
+        points: 40,
+        matches: 15,
+      },
+      goldenBoot: {
+        id: '2',
+        goalDifference: 53,
+        matches: 10,
+      },
+      mvp: {
+        id: '3',
+        mvpTimes: 4,
+        matches: 11,
+      },
+      poopChampion: {
+        id: '4',
+        points: 4,
+        matches: 16,
+      },
+      poopBoot: {
+        id: '5',
+        goalDifference: -55,
+        matches: 15,
+      },
+    },
+    isActive: false,
+  });
+};
+
+// reopen tournament: // (must add newTerminationDate)
+export const reopenTournament = async (tournamentId) => {
+  await updateDoc(getTournamentDocRef(tournamentId), {
+    result: {
+      champion: {
+        id: '',
+        points: null,
+        matches: null,
+      },
+      goldenBoot: {
+        id: '',
+        goalDifference: null,
+        matches: null,
+      },
+      mvp: {
+        id: '',
+        mvpTimes: null,
+        matches: null,
+      },
+      poopChampion: {
+        id: '',
+        points: null,
+        matches: null,
+      },
+      poopBoot: {
+        id: '',
+        goalDifference: null,
+        matches: null,
+      },
+    },
+    isActive: true,
+  });
 };
 
 // TOURNAMENT CREATOR ACTIONS

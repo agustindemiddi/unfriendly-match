@@ -12,6 +12,8 @@ import {
   cancelJoinTournamentRequest,
   unsubscribeFromTournament,
   deleteTournament,
+  finishTournament,
+  reopenTournament,
 } from '../../../utils/firebase/firestore/firestoreActions';
 import separateMatches from '../../../utils/separateMatches';
 import copyUrlToClipboard from '../../../utils/copyUrlToClipboard';
@@ -30,8 +32,14 @@ const TournamentDetailSection = ({
 
   const isTournamentPlayer =
     userPlayerProfile.tournaments.all.includes(tournamentId);
+  // tournament?.players?.active.includes(userPlayerProfile?.id);
 
   const isAdmin = tournament.admins.includes(userPlayerProfile.id);
+
+  const creator = activePlayers.find(
+    // add fallbacks if creator left tournament and test
+    (player) => player.id === tournament.creator
+  );
 
   const isJoinTournamentRequestDone = tournament.joinRequests.some(
     (joinRequest) => joinRequest.requestedBy === userPlayerProfile.id
@@ -66,7 +74,7 @@ const TournamentDetailSection = ({
       }
     } else {
       alert(
-        `You cannot unsubscribe from finished tournaments. Contact ${tournament.creator} and ask to delete the tournament.`
+        `You cannot unsubscribe from finished tournaments. Contact ${creator.displayName} and ask to delete the tournament.`
       );
     }
 
@@ -88,16 +96,28 @@ const TournamentDetailSection = ({
   const adminActions = [];
   isTournamentPlayer &&
     isAdmin &&
-    adminActions.push(
-      {
-        label: 'Create match',
-        onAction: () => navigate(`/tournaments/${tournament.id}/matches/new`),
-      },
-      {
-        label: 'Edit tournament',
-        onAction: () => navigate(`/tournaments/${tournament.id}/edit`),
-      }
-    );
+    (tournament.isActive
+      ? adminActions.push(
+          {
+            label: 'Create match',
+            onAction: () =>
+              navigate(`/tournaments/${tournament.id}/matches/new`),
+          },
+          {
+            label: 'Edit tournament',
+            onAction: () => navigate(`/tournaments/${tournament.id}/edit`),
+          },
+          {
+            label: 'Finish tournament',
+            onAction: () => finishTournament(tournamentId),
+            color: 'redish',
+          }
+        )
+      : adminActions.push({
+          label: 'Reopen tournament',
+          onAction: () => reopenTournament(tournamentId),
+          color: 'redish',
+        }));
 
   const actions = [];
   isTournamentPlayer &&
@@ -121,47 +141,62 @@ const TournamentDetailSection = ({
       }
     );
 
+  const showContent = isTournamentPlayer || tournament.isPublic;
+  // const hideContent = !tournament.isPublic && !isTournamentPlayer;
+  const showAsideActionsPanel = isTournamentPlayer || tournament.isActive;
+
   return (
     <>
-      <Section row>
-        {isTournamentPlayer && (
-          <div className={styles.matches}>
-            {nextMatch && (
-              <>
-                <h2>Next Match:</h2>
-                <SoccerFieldContainer
-                  userPlayerProfile={userPlayerProfile}
-                  match={nextMatch}
-                  tournament={tournament}
-                />
-              </>
+      {showContent ? (
+        <>
+          <Section row>
+            {tournament.isActive && isTournamentPlayer && (
+              <div className={styles.matches}>
+                {nextMatch && (
+                  <>
+                    <h2>Next Match:</h2>
+                    <SoccerFieldContainer
+                      userPlayerProfile={userPlayerProfile}
+                      match={nextMatch}
+                      tournament={tournament}
+                    />
+                  </>
+                )}
+                {lastMatch && (
+                  <>
+                    <h2>Last Match:</h2>
+                    <SoccerFieldContainer
+                      userPlayerProfile={userPlayerProfile}
+                      match={lastMatch}
+                      tournament={tournament}
+                    />
+                  </>
+                )}
+              </div>
             )}
-            {lastMatch && (
-              <>
-                <h2>Last Match:</h2>
-                <SoccerFieldContainer
-                  userPlayerProfile={userPlayerProfile}
-                  match={lastMatch}
-                  tournament={tournament}
-                />
-              </>
-            )}
-          </div>
-        )}
+            {!tournament.isActive && <h2>CAMPEON: COCO</h2>}
 
-        <div className={styles.standings}>
-          <StandingsTable
-            matches={matches}
-            activePlayers={activePlayers}
-            inactivePlayers={inactivePlayers}
-          />
-        </div>
-      </Section>
-      <AsideActionsPanel
-        initialAction={initialAction}
-        adminActions={adminActions}
-        actions={actions}
-      />
+            <div className={styles.standings}>
+              <StandingsTable
+                matches={matches}
+                activePlayers={activePlayers}
+                inactivePlayers={inactivePlayers}
+              />
+            </div>
+          </Section>
+          {showAsideActionsPanel && (
+            <AsideActionsPanel
+              initialAction={initialAction}
+              adminActions={adminActions}
+              actions={actions}
+            />
+          )}
+        </>
+      ) : (
+        <Section>
+          <h2>This tournament is private</h2>
+        </Section>
+      )}
     </>
   );
 };
