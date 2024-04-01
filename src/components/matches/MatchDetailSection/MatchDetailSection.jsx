@@ -13,6 +13,7 @@ const MatchDetailSection = ({ userPlayerProfile, tournament, match }) => {
 
   const adminActions = [];
   isAdmin &&
+    tournament.isActive &&
     adminActions.push({
       label: 'Edit match',
       onAction: () => navigate('edit'),

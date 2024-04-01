@@ -26,6 +26,7 @@ const TournamentPlayersSection = ({
   const adminActions = [];
   isTournamentPlayer &&
     isUserAdmin &&
+    tournament.isActive &&
     adminActions.push({
       label: 'Create provisory player',
       onAction: () => navigate(`/tournaments/${tournament.id}/players/new`),

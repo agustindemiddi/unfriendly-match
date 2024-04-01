@@ -45,38 +45,71 @@ const TournamentDetailSection = ({
     (joinRequest) => joinRequest.requestedBy === userPlayerProfile.id
   );
 
+
+  // getTournamentResult:
+
+  console.log(matches);
+
+  const result = {
+    champion: {
+      id: '1',
+      points: 40,
+      matches: 15,
+    },
+    goldenBoot: {
+      id: '2',
+      goalDifference: 53,
+      matches: 10,
+    },
+    mvp: {
+      id: '3',
+      mvpTimes: 4,
+      matches: 11,
+    },
+    poopChampion: {
+      id: '4',
+      points: 4,
+      matches: 16,
+    },
+    poopBoot: {
+      id: '5',
+      goalDifference: -55,
+      matches: 15,
+    },
+  };
+
   const handleUnsubscribeFromTournament = async () => {
-    if (tournament.isActive) {
-      // const tournamentPlayers = activePlayers.filter((player) =>
-      //   tournament.players.active.includes(player.id)
-      // );
+    // if (tournament.isActive) {
+    // const tournamentPlayers = activePlayers.filter((player) =>
+    //   tournament.players.active.includes(player.id)
+    // );
 
-      const tournamentVerifiedPlayers = activePlayers.filter(
-        (player) => player.isVerified
-      );
+    const tournamentVerifiedPlayers = activePlayers.filter(
+      (player) => player.isVerified
+    );
 
-      const nonVerifiedPlayersIds = activePlayers
-        .filter((player) => !player.isVerified)
-        .map((player) => player.id);
+    const nonVerifiedPlayersIds = activePlayers
+      .filter((player) => !player.isVerified)
+      .map((player) => player.id);
 
-      if (tournamentVerifiedPlayers.length > 1) {
-        await unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
-        alert(`You have successfully abandoned ${tournament.name}.`);
-      } else {
-        deleteTournament(
-          tournament.id,
-          userPlayerProfile.id,
-          nonVerifiedPlayersIds
-        );
-        alert(
-          `You have successfully abandoned the tournament. You were the last player of ${tournament.name}, so the tournament was deleted from the database.`
-        );
-      }
+    if (tournamentVerifiedPlayers.length > 1) {
+      await unsubscribeFromTournament(tournament.id, userPlayerProfile.id);
+      alert(`You have successfully abandoned ${tournament.name}.`);
     } else {
+      deleteTournament(
+        tournament.id,
+        userPlayerProfile.id,
+        nonVerifiedPlayersIds
+      );
       alert(
-        `You cannot unsubscribe from finished tournaments. Contact ${creator.displayName} and ask to delete the tournament.`
+        `You have successfully abandoned the tournament. You were the last player of ${tournament.name}, so the tournament was deleted from the database.`
       );
     }
+    // } else {
+    //   alert(
+    //     `You cannot unsubscribe from finished tournaments. Contact ${creator.displayName} and ask to delete the tournament.`
+    //   );
+    // }
 
     navigate('..');
   };

@@ -1,4 +1,5 @@
 export const calculateTournamentStats = (tournamentMatches) => {
+  console.log(tournamentMatches.length);
   const updatePlayerStats = (
     playerId,
     teamGoals,

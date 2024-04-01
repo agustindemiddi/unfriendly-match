@@ -22,6 +22,7 @@ const MatchesSection = ({ userPlayerProfile, tournament, matches }) => {
 
   const adminActions = [];
   isAdmin &&
+    tournament.isActive &&
     adminActions.push({
       label: 'Create match',
       onAction: () => {
