@@ -45,10 +45,7 @@ const TournamentDetailSection = ({
     (joinRequest) => joinRequest.requestedBy === userPlayerProfile.id
   );
 
-
   // getTournamentResult:
-
-  console.log(matches);
 
   const result = {
     champion: {

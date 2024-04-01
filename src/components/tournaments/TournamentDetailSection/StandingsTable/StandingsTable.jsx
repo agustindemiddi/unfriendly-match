@@ -16,53 +16,69 @@ const StandingsTable = ({ matches, activePlayers, inactivePlayers }) => {
     allPlayers.some((allPlayer) => allPlayer.id === Object.keys(player)[0])
   );
 
-  return (
-    <table className={styles.standingsTable}>
-      <thead>
-        <tr>
-          <th>Player</th>
-          <th>Matches Played</th>
-          <th>Points</th>
-          <th>Average</th>
-          <th>Wins</th>
-          <th>Draws</th>
-          <th>Loses</th>
-          <th>Goal Difference</th>
-        </tr>
-      </thead>
-      <tbody>
-        {currentTournamentPlayers.map((playerStats, index) => {
-          const playerId = Object.keys(playerStats)[0];
-          const {
-            matchesPlayed,
-            points,
-            average,
-            wins,
-            draws,
-            loses,
-            goalsDifference,
-          } = Object.values(playerStats)[0];
+  const totalMatches = Object.values(tournamentStats[0])[0].totalMatches;
+  const requiredPlayedMatchesPercentage = Object.values(tournamentStats[0])[0]
+    .requiredPlayedMatchesPercentage;
 
-          return (
-            <tr key={index}>
-              <td>
-                {
-                  allPlayers.find((player) => player.id === playerId)
-                    ?.displayName
-                }
-              </td>
-              <td>{matchesPlayed}</td>
-              <td>{points}</td>
-              <td>{average}</td>
-              <td>{wins}</td>
-              <td>{draws}</td>
-              <td>{loses}</td>
-              <td>{goalsDifference}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+  return (
+    <>
+      {/* temporary header style; change! */}
+      <header className={styles.standingsTable}>
+        Total tournament matches: {totalMatches} // Championship required:{' '}
+        {requiredPlayedMatchesPercentage}%
+      </header>
+      <table className={styles.standingsTable}>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Matches Played</th>
+            <th>Matches Played %</th>
+            <th>Points</th>
+            <th>Average</th>
+            <th>Wins</th>
+            <th>Draws</th>
+            <th>Loses</th>
+            <th>Goal Difference</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentTournamentPlayers.map((playerStats, index) => {
+            const playerId = Object.keys(playerStats)[0];
+            const {
+              matchesPlayed,
+              playedMatchesPercentage,
+              points,
+              average,
+              wins,
+              draws,
+              loses,
+              goalsDifference,
+            } = Object.values(playerStats)[0];
+
+            return (
+              <tr key={index}>
+                <td>
+                  {
+                    allPlayers.find((player) => player.id === playerId)
+                      ?.displayName
+                  }
+                </td>
+                <td>
+                  <sup>{matchesPlayed}</sup> / <sub>{totalMatches}</sub>
+                </td>
+                <td>{playedMatchesPercentage}%</td>
+                <td>{points}</td>
+                <td>{average}</td>
+                <td>{wins}</td>
+                <td>{draws}</td>
+                <td>{loses}</td>
+                <td>{goalsDifference}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
   );
 };
 

@@ -1,5 +1,7 @@
 export const calculateTournamentStats = (tournamentMatches) => {
-  console.log(tournamentMatches.length);
+  const totalMatches = tournamentMatches.length;
+  const requiredPlayedMatchesPercentage = 50;
+
   const updatePlayerStats = (
     playerId,
     teamGoals,
@@ -61,16 +63,24 @@ export const calculateTournamentStats = (tournamentMatches) => {
             ? parseFloat((points / matchesPlayed).toFixed(2))
             : parseFloat(points / matchesPlayed)
           : 0;
+        const playedMatchesPercentage = matchesPlayed
+          ? ((matchesPlayed / totalMatches) * 100) % 1 !== 0
+            ? parseFloat(((matchesPlayed / totalMatches) * 100).toFixed(2))
+            : parseFloat((matchesPlayed / totalMatches) * 100)
+          : 0;
 
         return {
           [playerId]: {
             matchesPlayed,
+            playedMatchesPercentage,
+            points,
+            average,
             wins,
             draws,
             loses,
             goalsDifference,
-            points,
-            average,
+            totalMatches,
+            requiredPlayedMatchesPercentage,
           },
         };
       }
