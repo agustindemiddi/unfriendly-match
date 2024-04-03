@@ -58,6 +58,11 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
       ? getInputFormattedTerminationDate(tournament.terminationDate)
       : getInputFormattedTerminationDate()
   );
+  const [requiredParticipation, setRequiredParticipation] = useState(
+    tournament?.requiredParticipation === 0 || tournament?.requiredParticipation
+      ? tournament?.requiredParticipation
+      : 50
+  );
   const [pointsPerGameWon, setPointsPerGameWon] = useState(3);
   const hasMvpEnabledInput = useRef();
   const isPublicInput = useRef();
@@ -164,8 +169,6 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
       creationDateTime: tournament?.creationDateTime || new Date(),
       isActive: tournament?.isActive ?? true,
 
-      requiredParticipation: 50, // temporary hardcoded
-
       name:
         nameInputRef.current.value ||
         `${userPlayerProfile?.displayName}'s Tournament`,
@@ -183,6 +186,10 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
       defaultMatchSubscriptionTime: defaultMatchSubscriptionTime || '',
       image: tournamentImage || '',
       terminationDate: new Date(`${terminationDate}T23:59:59`),
+      requiredParticipation:
+        requiredParticipation === 0 || requiredParticipation
+          ? requiredParticipation
+          : 50,
       pointsPerGameWon: tournament?.pointsPerGameWon || pointsPerGameWon,
       hasMvpEnabled: hasMvpEnabledInput?.current?.checked || false,
       isPublic: isPublicInput.current.checked || false,
@@ -191,7 +198,7 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
       admins: tournament?.admins || [userPlayerProfile?.id],
       players: {
         active: tournament?.players.active || [userPlayerProfile?.id],
-        inactive: tournament?.players.inactive || [], 
+        inactive: tournament?.players.inactive || [],
       },
       joinRequests: tournament?.joinRequests || [],
       matches: tournament?.matches || [],
@@ -220,8 +227,8 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
             type='text'
             name='tournament-name'
             placeholder='Tournament name'
-            ref={nameInputRef}
             defaultValue={tournamentName}
+            ref={nameInputRef}
             autoFocus
             required
           />
@@ -403,6 +410,35 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
             <legend>Tournament ends around {terminationDate}</legend>
           )}
         </fieldset>
+
+        {isCustomMode && (
+          <fieldset className={styles.requiredParticipation}>
+            <legend>Specify required participation:</legend>
+            <input
+              type='number'
+              name='required-participation'
+              onChange={(event) =>
+                setRequiredParticipation(parseInt(event.target.value))
+              }
+              value={requiredParticipation}
+              min={0}
+              max={100}
+              step={5}
+              required
+            />
+            <legend>
+              {requiredParticipation === 0
+                ? `Player doesn't have any specific participation requirement to be
+                champion`
+                : requiredParticipation === 100
+                ? `Player must participate in all matches to be champion (not
+                  recommended)`
+                : `Player must participate in at least ${requiredParticipation}% of
+                  the matches to be champion`}
+            </legend>
+          </fieldset>
+        )}
+
         {!tournament && isCustomMode && (
           <fieldset className={styles.pointsPerGameWon}>
             <legend>Points per match won:</legend>

@@ -255,7 +255,9 @@ const TournamentDetailSection = ({
                   allPlayers={allPlayers}
                 />
               </div>
-            ) : <button>Create match</button>}
+            ) : (
+              <button>Create match</button>
+            )}
           </Section>
           {showAsideActionsPanel && (
             <AsideActionsPanel

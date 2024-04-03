@@ -481,6 +481,8 @@ const MatchForm = ({
                   name='result-team-a'
                   defaultValue={match?.result.teamA}
                   ref={teamAResultInputRef}
+                  min={0}
+                  max={100}
                 />
                 {teamA.length > 0 && (
                   <ul>
@@ -498,6 +500,8 @@ const MatchForm = ({
                   name='result-team-b'
                   defaultValue={match?.result.teamB}
                   ref={teamBResultInputRef}
+                  min={0}
+                  max={100}
                 />
                 {teamB.length > 0 && (
                   <ul>
