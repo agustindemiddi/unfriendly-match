@@ -1,6 +1,7 @@
+import { sortByPoints } from '../utils/sortTournamentStats';
+
 export const calculateTournamentStats = (tournamentMatches) => {
   const totalMatches = tournamentMatches.length;
-  const requiredPlayedMatchesPercentage = 50;
 
   const updatePlayerStats = (
     playerId,
@@ -14,7 +15,7 @@ export const calculateTournamentStats = (tournamentMatches) => {
         wins: 0,
         draws: 0,
         loses: 0,
-        goalsDifference: 0,
+        goalDifference: 0,
       };
     }
 
@@ -28,7 +29,7 @@ export const calculateTournamentStats = (tournamentMatches) => {
       playerStats[playerId].draws += 1;
     }
 
-    playerStats[playerId].goalsDifference += teamGoals - opponentGoals;
+    playerStats[playerId].goalDifference += teamGoals - opponentGoals;
   };
 
   const calculatePlayersStats = (matches) => {
@@ -56,17 +57,17 @@ export const calculateTournamentStats = (tournamentMatches) => {
 
     const playersStats = Object.entries(playerStats).map(
       ([playerId, stats]) => {
-        const { wins, draws, loses, goalsDifference, matchesPlayed } = stats;
+        const { wins, draws, loses, goalDifference, matchesPlayed } = stats;
         const points = wins * 3 + draws;
         const average = matchesPlayed
           ? (points / matchesPlayed) % 1 !== 0
-            ? parseFloat((points / matchesPlayed).toFixed(2))
-            : parseFloat(points / matchesPlayed)
+            ? (points / matchesPlayed).toFixed(2)
+            : points / matchesPlayed
           : 0;
         const playedMatchesPercentage = matchesPlayed
           ? ((matchesPlayed / totalMatches) * 100) % 1 !== 0
-            ? parseFloat(((matchesPlayed / totalMatches) * 100).toFixed(2))
-            : parseFloat((matchesPlayed / totalMatches) * 100)
+            ? ((matchesPlayed / totalMatches) * 100).toFixed(2)
+            : (matchesPlayed / totalMatches) * 100
           : 0;
 
         return {
@@ -78,9 +79,7 @@ export const calculateTournamentStats = (tournamentMatches) => {
             wins,
             draws,
             loses,
-            goalsDifference,
-            totalMatches,
-            requiredPlayedMatchesPercentage,
+            goalDifference,
           },
         };
       }
@@ -91,16 +90,45 @@ export const calculateTournamentStats = (tournamentMatches) => {
 
   const playersStats = calculatePlayersStats(tournamentMatches);
 
-  const sortedPlayersStats = [...playersStats].sort((a, b) => {
-    const statsA = Object.values(a)[0];
-    const statsB = Object.values(b)[0];
+  return sortByPoints(playersStats);
+};
 
-    if (statsB.points !== statsA.points) {
-      return statsB.points - statsA.points;
-    }
-
-    return statsB.goalsDifference - statsA.goalsDifference;
-  });
-
-  return sortedPlayersStats;
+export const getTournamentResults = (
+  championStats,
+  goldenBootStats,
+  // // mvpStats,
+  // poopChampionStats,
+  poopBootStats
+) => {
+  // console.log('championStats', championStats);
+  return {
+    results: {
+      champion: {
+        id: Object.keys(championStats)[0],
+        points: Object.values(championStats)[0].points,
+        matches: Object.values(championStats)[0].matchesPlayed,
+      },
+      goldenBoot: {
+        id: Object.keys(goldenBootStats)[0],
+        goalDifference: Object.values(goldenBootStats)[0].goalDifference,
+        matches: Object.values(goldenBootStats)[0].matchesPlayed,
+      },
+      // // mvp: {
+      // //   id: Object.keys(mvpStats)[0],
+      // //   mvpTimes: Object.values(mvpStats)[0].mvpTimes,
+      // //   matches: Object.values(mvpStats)[0].matchesPlayed,
+      // // },
+      // poopChampion: {
+      //   id: Object.keys(poopChampionStats)[0],
+      //   points: Object.values(poopChampionStats)[0].points,
+      //   matches: Object.values(poopChampionStats)[0].matchesPlayed,
+      // },
+      poopBoot: {
+        id: Object.keys(poopBootStats)[0],
+        goalDifference: Object.values(poopBootStats)[0].goalDifference,
+        matches: Object.values(poopBootStats)[0].matchesPlayed,
+      },
+    },
+    isActive: false,
+  };
 };

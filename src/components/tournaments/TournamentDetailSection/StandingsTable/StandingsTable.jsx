@@ -1,40 +1,26 @@
 import styles from './StandingsTable.module.css';
 
-import { calculateTournamentStats } from '../../../../utils/calculateTournamentStats';
-
-// const StandingsTable = ({ matches, players }) => {
-const StandingsTable = ({ matches, activePlayers, inactivePlayers }) => {
-  const finishedMatches = matches.filter(
-    (match) => Object.keys(match.result).length > 0
-  );
-
-  const tournamentStats = calculateTournamentStats(finishedMatches);
-
-  const allPlayers = [...activePlayers, ...inactivePlayers]; // allPlayers includes all inactive players except nonVerifiedPlayers that where deleted due to non belonging to any tournament so they were deleted from DB
-
-  const currentTournamentPlayers = tournamentStats.filter((player) =>
-    allPlayers.some((allPlayer) => allPlayer.id === Object.keys(player)[0])
-  );
-
-  const totalMatches = Object.values(tournamentStats[0])[0].totalMatches;
-  const requiredPlayedMatchesPercentage = Object.values(tournamentStats[0])[0]
-    .requiredPlayedMatchesPercentage;
-
+const StandingsTable = ({
+  totalMatches,
+  requiredParticipation,
+  currentTournamentPlayers,
+  allPlayers,
+}) => {
   return (
     <>
       {/* temporary header style; change! */}
       <header className={styles.standingsTable}>
         Total tournament matches: {totalMatches} // Championship required:{' '}
-        {requiredPlayedMatchesPercentage}%
+        {requiredParticipation}%
       </header>
       <table className={styles.standingsTable}>
         <thead>
           <tr>
             <th>Player</th>
             <th>Matches Played</th>
-            <th>Matches Played %</th>
+            {/* <th>Matches Played %</th> */}
             <th>Points</th>
-            <th>Average</th>
+            {/* <th>Average</th> */}
             <th>Wins</th>
             <th>Draws</th>
             <th>Loses</th>
@@ -48,11 +34,11 @@ const StandingsTable = ({ matches, activePlayers, inactivePlayers }) => {
               matchesPlayed,
               playedMatchesPercentage,
               points,
-              average,
+              // average,
               wins,
               draws,
               loses,
-              goalsDifference,
+              goalDifference,
             } = Object.values(playerStats)[0];
 
             return (
@@ -64,15 +50,15 @@ const StandingsTable = ({ matches, activePlayers, inactivePlayers }) => {
                   }
                 </td>
                 <td>
-                  <sup>{matchesPlayed}</sup> / <sub>{totalMatches}</sub>
+                  {matchesPlayed} ({Math.ceil(playedMatchesPercentage)}%)
                 </td>
-                <td>{playedMatchesPercentage}%</td>
+                {/* <td>{Math.ceil(playedMatchesPercentage)}%</td> */}
                 <td>{points}</td>
-                <td>{average}</td>
+                {/* <td>{average}</td> */}
                 <td>{wins}</td>
                 <td>{draws}</td>
                 <td>{loses}</td>
-                <td>{goalsDifference}</td>
+                <td>{goalDifference}</td>
               </tr>
             );
           })}

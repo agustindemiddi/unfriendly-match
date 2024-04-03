@@ -929,43 +929,14 @@ export const mergePlayers = async (
 };
 
 // finish tournament:
-export const finishTournament = async (tournamentId) => {
-  await updateDoc(getTournamentDocRef(tournamentId), {
-    result: {
-      champion: {
-        id: '1',
-        points: 40,
-        matches: 15,
-      },
-      goldenBoot: {
-        id: '2',
-        goalDifference: 53,
-        matches: 10,
-      },
-      mvp: {
-        id: '3',
-        mvpTimes: 4,
-        matches: 11,
-      },
-      poopChampion: {
-        id: '4',
-        points: 4,
-        matches: 16,
-      },
-      poopBoot: {
-        id: '5',
-        goalDifference: -55,
-        matches: 15,
-      },
-    },
-    isActive: false,
-  });
+export const finishTournament = async (tournamentId, tournamentResults) => {
+  await updateDoc(getTournamentDocRef(tournamentId), tournamentResults);
 };
 
 // reopen tournament: // (must add newTerminationDate)
 export const reopenTournament = async (tournamentId) => {
   await updateDoc(getTournamentDocRef(tournamentId), {
-    result: {
+    results: {
       champion: {
         id: '',
         points: null,
@@ -976,16 +947,16 @@ export const reopenTournament = async (tournamentId) => {
         goalDifference: null,
         matches: null,
       },
-      mvp: {
-        id: '',
-        mvpTimes: null,
-        matches: null,
-      },
-      poopChampion: {
-        id: '',
-        points: null,
-        matches: null,
-      },
+      // mvp: {
+      //   id: '',
+      //   mvpTimes: null,
+      //   matches: null,
+      // },
+      // poopChampion: {
+      //   id: '',
+      //   points: null,
+      //   matches: null,
+      // },
       poopBoot: {
         id: '',
         goalDifference: null,

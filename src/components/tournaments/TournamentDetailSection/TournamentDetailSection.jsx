@@ -17,6 +17,15 @@ import {
 } from '../../../utils/firebase/firestore/firestoreActions';
 import separateMatches from '../../../utils/separateMatches';
 import copyUrlToClipboard from '../../../utils/copyUrlToClipboard';
+import {
+  calculateTournamentStats,
+  getTournamentResults,
+} from '../../../utils/calculateTournamentStats';
+import {
+  sortByPoints,
+  sortByGoalDifference,
+  sortReverseByGoalDifference,
+} from '../../../utils/sortTournamentStats';
 
 const TournamentDetailSection = ({
   userPlayerProfile,
@@ -29,6 +38,19 @@ const TournamentDetailSection = ({
   const navigate = useNavigate();
 
   const { nextMatch, lastMatch } = separateMatches(matches);
+
+  const totalMatches = matches.length;
+
+  const finishedMatches = matches.filter(
+    (match) => Object.keys(match.result).length > 0
+  );
+  const tournamentStats = calculateTournamentStats(finishedMatches);
+
+  const allPlayers = [...activePlayers, ...inactivePlayers]; // allPlayers includes all inactive players except nonVerifiedPlayers that where deleted due to non belonging to any tournament so they were deleted from DB
+
+  const currentTournamentPlayers = tournamentStats.filter((player) =>
+    allPlayers.some((allPlayer) => allPlayer.id === Object.keys(player)[0])
+  );
 
   const isTournamentPlayer =
     userPlayerProfile.tournaments.all.includes(tournamentId);
@@ -45,35 +67,7 @@ const TournamentDetailSection = ({
     (joinRequest) => joinRequest.requestedBy === userPlayerProfile.id
   );
 
-  // getTournamentResult:
-
-  const result = {
-    champion: {
-      id: '1',
-      points: 40,
-      matches: 15,
-    },
-    goldenBoot: {
-      id: '2',
-      goalDifference: 53,
-      matches: 10,
-    },
-    mvp: {
-      id: '3',
-      mvpTimes: 4,
-      matches: 11,
-    },
-    poopChampion: {
-      id: '4',
-      points: 4,
-      matches: 16,
-    },
-    poopBoot: {
-      id: '5',
-      goalDifference: -55,
-      matches: 15,
-    },
-  };
+  const requiredParticipation = tournament.requiredParticipation;
 
   const handleUnsubscribeFromTournament = async () => {
     // if (tournament.isActive) {
@@ -136,18 +130,47 @@ const TournamentDetailSection = ({
           {
             label: 'Edit tournament',
             onAction: () => navigate(`/tournaments/${tournament.id}/edit`),
-          },
-          {
-            label: 'Finish tournament',
-            onAction: () => finishTournament(tournamentId),
-            color: 'redish',
           }
+          // {
+          //   label: 'Finish tournament',
+          //   onAction: () => {
+          //     const champion = tournamentStats[0];
+          //     const goldenBoot = sortByGoalDifference(tournamentStats)[0];
+          //     const poopBoot = sortReverseByGoalDifference(tournamentStats)[0];
+          //     const tournamentResults = getTournamentResults(
+          //       champion,
+          //       goldenBoot,
+          //       poopBoot
+          //     );
+          //     return finishTournament(tournamentId, tournamentResults);
+          //   },
+          //   color: 'redish',
+          // }
         )
       : adminActions.push({
           label: 'Reopen tournament',
           onAction: () => reopenTournament(tournamentId),
           color: 'redish',
         }));
+  isTournamentPlayer &&
+    isAdmin &&
+    tournament.isActive &&
+    totalMatches > 0 &&
+    adminActions.push({
+      label: 'Finish tournament',
+      onAction: () => {
+        const champion = tournamentStats[0];
+        const goldenBoot = sortByGoalDifference(tournamentStats)[0];
+        const poopBoot = sortReverseByGoalDifference(tournamentStats)[0];
+        const tournamentResults = getTournamentResults(
+          champion,
+          goldenBoot,
+          poopBoot
+        );
+        return finishTournament(tournamentId, tournamentResults);
+      },
+      color: 'redish',
+    });
 
   const actions = [];
   isTournamentPlayer &&
@@ -175,11 +198,21 @@ const TournamentDetailSection = ({
   // const hideContent = !tournament.isPublic && !isTournamentPlayer;
   const showAsideActionsPanel = isTournamentPlayer || tournament.isActive;
 
+  const champion = allPlayers.find(
+    (player) => player.id === tournament.results?.champion.id
+  );
+  const goldenBoot = allPlayers.find(
+    (player) => player.id === tournament.results?.goldenBoot.id
+  );
+  const poopBoot = allPlayers.find(
+    (player) => player.id === tournament.results?.poopBoot.id
+  );
+
   return (
     <>
       {showContent ? (
         <>
-          <Section row>
+          <Section row={tournament.isActive ? true : false}>
             {tournament.isActive && isTournamentPlayer && (
               <div className={styles.matches}>
                 {nextMatch && (
@@ -204,15 +237,25 @@ const TournamentDetailSection = ({
                 )}
               </div>
             )}
-            {!tournament.isActive && <h2>CAMPEON: COCO</h2>}
+            {!tournament.isActive && (
+              <>
+                <h2>Results:</h2>
+                <p>Champion: {champion?.displayName}</p>
+                <p>Golden Boot: {goldenBoot?.displayName}</p>
+                <p>Poop Boot: {poopBoot?.displayName}</p>
+              </>
+            )}
 
-            <div className={styles.standings}>
-              <StandingsTable
-                matches={matches}
-                activePlayers={activePlayers}
-                inactivePlayers={inactivePlayers}
-              />
-            </div>
+            {totalMatches > 0 ? (
+              <div className={styles.standings}>
+                <StandingsTable
+                  totalMatches={totalMatches}
+                  requiredParticipation={requiredParticipation}
+                  currentTournamentPlayers={currentTournamentPlayers}
+                  allPlayers={allPlayers}
+                />
+              </div>
+            ) : <button>Create match</button>}
           </Section>
           {showAsideActionsPanel && (
             <AsideActionsPanel

@@ -164,6 +164,8 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
       creationDateTime: tournament?.creationDateTime || new Date(),
       isActive: tournament?.isActive ?? true,
 
+      requiredParticipation: 50, // temporary hardcoded
+
       name:
         nameInputRef.current.value ||
         `${userPlayerProfile?.displayName}'s Tournament`,
