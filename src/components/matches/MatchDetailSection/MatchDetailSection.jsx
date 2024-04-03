@@ -9,7 +9,11 @@ import styles from './MatchDetailSection.module.css';
 const MatchDetailSection = ({ userPlayerProfile, tournament, match }) => {
   const navigate = useNavigate();
 
-  const isAdmin = match?.admins?.includes(userPlayerProfile?.id);
+  const isAdmin =
+    tournament.admins.includes(userPlayerProfile?.id) ||
+    match.admins.includes(userPlayerProfile?.id);
+
+  console.log(isAdmin);
 
   const adminActions = [];
   isAdmin &&

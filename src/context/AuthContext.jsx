@@ -122,23 +122,6 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [tournamentId]);
 
-  // // add listener to tournament matches:
-  // useEffect(() => {
-  //   if (
-  //     location.pathname.startsWith(`/tournaments/${tournamentId}`) &&
-  //     // !userPlayerProfile?.tournaments.all.includes(tournamentId) &&
-  //     // updatedTournament?.matches.length > 0
-  //     updatedTournament
-  //   ) {
-  //     const unsubscribe = addMultipleMatchesListener(
-  //       tournamentId,
-  //       updatedTournament.matches,
-  //       setUpdatedTournamentMatches
-  //     );
-  //     return () => unsubscribe();
-  //   }
-  // }, [tournamentId, updatedTournament]);
-
   // add listener to tournament matches:
   useEffect(() => {
     if (
