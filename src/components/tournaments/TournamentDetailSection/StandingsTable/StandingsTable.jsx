@@ -9,10 +9,10 @@ const StandingsTable = ({
   return (
     <>
       {/* temporary header style; change! */}
-      <header className={styles.standingsTable}>
+      {/* <header className={styles.standingsTable}>
         Total tournament matches: {totalMatches} // Championship required:{' '}
         {requiredParticipation}%
-      </header>
+      </header> */}
       <table className={styles.standingsTable}>
         <thead>
           <tr>
@@ -42,24 +42,24 @@ const StandingsTable = ({
             } = Object.values(playerStats)[0];
 
             return (
-              // <tr key={index}>
-              <tr
+              <tr key={index}>
+                {/* <tr
                 key={index}
                 className={
                   playedMatchesPercentage > requiredParticipation
                     ? styles.reach
                     : styles.unreach
-                }>
+                }> */}
                 <td>
                   {
                     allPlayers.find((player) => player.id === playerId)
                       ?.displayName
                   }
                 </td>
-                <td>
+                {/* <td>
                   {matchesPlayed} ({Math.ceil(playedMatchesPercentage)}%)
-                </td>
-                {/* <td>{matchesPlayed}</td> */}
+                </td> */}
+                <td>{matchesPlayed}</td>
                 {/* <td>{Math.ceil(playedMatchesPercentage)}%</td> */}
                 <td>{points}</td>
                 {/* <td>{average}</td> */}

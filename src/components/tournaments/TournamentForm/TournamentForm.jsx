@@ -411,7 +411,7 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
           )}
         </fieldset>
 
-        {isCustomMode && (
+        {/* {isCustomMode && (
           <fieldset className={styles.requiredParticipation}>
             <legend>Specify required participation:</legend>
             <input
@@ -437,9 +437,9 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
                   the matches to be champion`}
             </legend>
           </fieldset>
-        )}
+        )} */}
 
-        {!tournament && isCustomMode && (
+        {/* {!tournament && isCustomMode && (
           <fieldset className={styles.pointsPerGameWon}>
             <legend>Points per match won:</legend>
             {pointsPerGameWonOptions.map((points) => (
@@ -456,16 +456,18 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
               </button>
             ))}
           </fieldset>
-        )}
-        {!tournament && isCustomMode && (
+        )} */}
+
+        {/* {!tournament && isCustomMode && (
           <fieldset>
             <label>
               <input type='checkbox' name='has-mvp' ref={hasMvpEnabledInput} />
               <span>Enable MVP voting.</span>
             </label>
           </fieldset>
-        )}
-        <fieldset>
+        )} */}
+
+        {/* <fieldset>
           <label>
             <input
               type='checkbox'
@@ -475,7 +477,7 @@ const TournamentForm = ({ isCustomMode, userPlayerProfile, tournament }) => {
             />
             <span>This is a public tournament.</span>
           </label>
-        </fieldset>
+        </fieldset> */}
         <button type='submit'>
           {tournament ? 'Update Tournament' : 'Create Tournament'}
         </button>
