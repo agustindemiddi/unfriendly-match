@@ -42,7 +42,14 @@ const StandingsTable = ({
             } = Object.values(playerStats)[0];
 
             return (
-              <tr key={index}>
+              // <tr key={index}>
+              <tr
+                key={index}
+                className={
+                  playedMatchesPercentage > requiredParticipation
+                    ? styles.reach
+                    : styles.unreach
+                }>
                 <td>
                   {
                     allPlayers.find((player) => player.id === playerId)
@@ -52,6 +59,7 @@ const StandingsTable = ({
                 <td>
                   {matchesPlayed} ({Math.ceil(playedMatchesPercentage)}%)
                 </td>
+                {/* <td>{matchesPlayed}</td> */}
                 {/* <td>{Math.ceil(playedMatchesPercentage)}%</td> */}
                 <td>{points}</td>
                 {/* <td>{average}</td> */}

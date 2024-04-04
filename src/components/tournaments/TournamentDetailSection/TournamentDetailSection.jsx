@@ -131,21 +131,6 @@ const TournamentDetailSection = ({
             label: 'Edit tournament',
             onAction: () => navigate(`/tournaments/${tournament.id}/edit`),
           }
-          // {
-          //   label: 'Finish tournament',
-          //   onAction: () => {
-          //     const champion = tournamentStats[0];
-          //     const goldenBoot = sortByGoalDifference(tournamentStats)[0];
-          //     const poopBoot = sortReverseByGoalDifference(tournamentStats)[0];
-          //     const tournamentResults = getTournamentResults(
-          //       champion,
-          //       goldenBoot,
-          //       poopBoot
-          //     );
-          //     return finishTournament(tournamentId, tournamentResults);
-          //   },
-          //   color: 'redish',
-          // }
         )
       : adminActions.push({
           label: 'Reopen tournament',

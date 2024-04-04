@@ -3,3 +3,11 @@
   border-radius: 0.5rem;
   padding: 1rem;
 }
+
+.reach {
+  color: lightgreen;
+}
+
+.unreach {
+  color: red;
+}
