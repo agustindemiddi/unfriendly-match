@@ -18,9 +18,9 @@ const SoccerFieldContainer = ({ userPlayerProfile, tournament, match }) => {
   const {
     id: matchId,
     tournament: tournamentId,
-    creator,
-    admins,
-    creationDateTime,
+    creator: matchCreator,
+    admins: matchAdmins,
+    // creationDateTime,
     subscriptionDateTime,
     dateTime,
     address,
@@ -91,8 +91,14 @@ const SoccerFieldContainer = ({ userPlayerProfile, tournament, match }) => {
 
   const tournamentImage = tournament?.image;
 
-  const isTournamentPlayer = tournament?.players?.active.includes(userId);
-  const isAdmin = admins.includes(userId);
+  const isUserTournamentPlayer = tournament?.players?.active.includes(userId);
+  const isUserTournamentCreator = tournament.creator === userId;
+  const isUserTournamentAdmin = tournament.admins.includes(userId);
+  const isUserMatchCreator = matchCreator === userId;
+  const isUserMatchAdmin = matchAdmins.includes(userId);
+
+  const tournamentCreator = tournament.creator;
+  const tournamentAdmins = tournament.admins;
 
   const formattedDateTime = getStringFormattedLongDateTime(dateTime);
   const formattedSubscriptionDateTime =
@@ -106,8 +112,6 @@ const SoccerFieldContainer = ({ userPlayerProfile, tournament, match }) => {
     <SoccerField
       matchProps={{
         tournamentId,
-        // creator,
-        // admins,
         // creationDateTime,
         subscriptionDateTime,
         dateTime,
@@ -127,8 +131,15 @@ const SoccerFieldContainer = ({ userPlayerProfile, tournament, match }) => {
         matchSubscriptionCountdown,
         isUserSubscribed,
         matchId,
-        isTournamentPlayer,
-        isAdmin,
+        isUserTournamentPlayer,
+        isUserTournamentCreator,
+        isUserTournamentAdmin,
+        isUserMatchCreator,
+        isUserMatchAdmin,
+        tournamentCreator,
+        tournamentAdmins,
+        matchCreator,
+        matchAdmins,
         handleDeleteMatch,
       }}
     />

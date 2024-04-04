@@ -11,13 +11,13 @@ const PlayerIcon = ({
   userId,
   handleSubscribeToMatch,
   handleUnsubscribeFromMatch,
-  isAdmin,
+  hasUserAdminActions,
 }) => {
   return (
     <>
       {image ? (
         <div className={styles.playerIconContainer}>
-          {isSubscriptionOpen && (isAdmin || playerId === userId) && (
+          {isSubscriptionOpen && (playerId === userId || hasUserAdminActions) && (
             <div
               className={`${styles.unsubscribe} ${
                 isUserSubscribed ? styles.unsubscribeIsUserSubscribed : ''

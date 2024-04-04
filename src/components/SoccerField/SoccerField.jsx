@@ -7,8 +7,6 @@ import styles from './SoccerField.module.css';
 const SoccerField = ({
   matchProps: {
     tournamentId,
-    // creator,
-    admins,
     // creationDateTime,
     subscriptionDateTime,
     dateTime,
@@ -28,8 +26,15 @@ const SoccerField = ({
     matchSubscriptionCountdown,
     isUserSubscribed,
     matchId,
-    isTournamentPlayer,
-    isAdmin,
+    isUserTournamentPlayer,
+    isUserTournamentCreator,
+    isUserTournamentAdmin,
+    isUserMatchCreator,
+    isUserMatchAdmin,
+    tournamentCreator,
+    tournamentAdmins,
+    matchCreator,
+    matchAdmins,
     handleDeleteMatch,
   },
 }) => {
@@ -47,7 +52,12 @@ const SoccerField = ({
         </div>
       </div>
 
-      {isAdmin && <button onClick={handleDeleteMatch}>Delete match</button>}
+      {(isUserTournamentCreator || // check later with matchCreator and matchAdmin w/o being userTournamentAdmin
+        isUserTournamentAdmin ||
+        isUserMatchCreator ||
+        isUserMatchAdmin) && (
+        <button onClick={handleDeleteMatch}>Delete match</button>
+      )}
 
       <div
         className={`${styles.soccerField} ${
@@ -105,7 +115,7 @@ const SoccerField = ({
                       }
                       key={`empty-${index}`}>
                       <PlayerIconContainer
-                        isTournamentPlayer={isTournamentPlayer}
+                        isUserTournamentPlayer={isUserTournamentPlayer}
                       />
                     </li>
                   ))}
@@ -143,8 +153,15 @@ const SoccerField = ({
                             playerId={player.id}
                             tournamentId={tournamentId}
                             matchId={matchId}
-                            isTournamentPlayer={isTournamentPlayer}
-                            isAdmin={isAdmin}
+                            isUserTournamentPlayer={isUserTournamentPlayer}
+                            isUserTournamentCreator={isUserTournamentCreator}
+                            isUserTournamentAdmin={isUserTournamentAdmin}
+                            isUserMatchCreator={isUserMatchCreator}
+                            isUserMatchAdmin={isUserMatchAdmin}
+                            tournamentCreator={tournamentCreator}
+                            tournamentAdmins={tournamentAdmins}
+                            matchCreator={matchCreator}
+                            matchAdmins={matchAdmins}
                           />
                         ) : (
                           <PlayerIconContainer
@@ -177,7 +194,7 @@ const SoccerField = ({
                           isUserSubscribed={isUserSubscribed}
                           tournamentId={tournamentId}
                           matchId={matchId}
-                          isTournamentPlayer={isTournamentPlayer}
+                          isUserTournamentPlayer={isUserTournamentPlayer}
                         />
                       </li>
                     ))}

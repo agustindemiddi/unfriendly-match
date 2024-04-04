@@ -14,28 +14,55 @@ const PlayerIconContainer = ({
   playerId,
   tournamentId,
   matchId,
-  isTournamentPlayer,
-  isAdmin,
+  isUserTournamentPlayer,
+  isUserTournamentCreator,
+  isUserTournamentAdmin,
+  isUserMatchCreator,
+  isUserMatchAdmin,
+  tournamentCreator,
+  tournamentAdmins,
+  matchCreator,
+  matchAdmins,
 }) => {
   const { userPlayerProfile } = getUserAuthCtx();
+
+  const hasUserAdminActions =
+    isUserTournamentCreator ||
+    (isUserTournamentAdmin &&
+      tournamentCreator !== playerId &&
+      !tournamentAdmins.includes(playerId)) ||
+    (isUserMatchCreator &&
+      tournamentCreator !== playerId &&
+      !tournamentAdmins.includes(playerId)) ||
+    (isUserMatchAdmin &&
+      tournamentCreator !== playerId &&
+      !tournamentAdmins.includes(playerId) &&
+      matchCreator !== playerId &&
+      !matchAdmins.includes(playerId));
 
   const handleSubscribeToMatch = async (
     tournamentId,
     matchId,
     userPlayerProfile
   ) => {
-    if (!isTournamentPlayer) alert('You must join the tournament first!');
-    if (isTournamentPlayer && isSubscriptionOpen && !isUserSubscribed)
+    if (!isUserTournamentPlayer) {
+      alert('You must join the tournament first!');
+    } else if (isSubscriptionOpen && !isUserSubscribed) {
       await subscribeToMatch(
         tournamentId,
         matchId,
         userPlayerProfile.id,
         userPlayerProfile
       );
+    }
   };
 
   const handleUnsubscribeFromMatch = async (tournamentId, matchId, userId) => {
-    if (isSubscriptionOpen && (playerId === userId && isUserSubscribed) || isAdmin)
+    if (
+      isSubscriptionOpen &&
+      // ((playerId === userId && isUserSubscribed) || hasUserAdminActions) // check if '&& isUserSubscribed' is redundant
+      (playerId === userId || hasUserAdminActions)
+    )
       await unsubscribeFromMatch(tournamentId, matchId, userId);
   };
 
@@ -60,7 +87,7 @@ const PlayerIconContainer = ({
       handleUnsubscribeFromMatch={() =>
         handleUnsubscribeFromMatch(tournamentId, matchId, playerId)
       }
-      isAdmin={isAdmin}
+      hasUserAdminActions={hasUserAdminActions}
     />
   );
 };
