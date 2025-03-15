@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import { AuthContextProvider } from './context/authContext';
+import { AuthContextProvider } from './context/authContext.jsx';
 
 import RootLayout from './components/UI/RootLayout/RootLayout';
 import ErrorPage from './pages/ErrorPage';
